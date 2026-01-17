@@ -20,10 +20,10 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isFetchingEvidence, setIsFetchingEvidence] = useState(false);
 
-  // Hidden admin mode toggle: Ctrl+Shift+A
+  // Hidden admin mode toggle: Ctrl+Shift+A (Windows/Linux) or Cmd+Shift+A (Mac)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
         e.preventDefault();
         setIsAdminMode(prev => !prev);
       }
