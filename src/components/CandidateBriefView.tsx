@@ -24,16 +24,16 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-      className="max-w-lg mx-auto"
+      transition={{ duration: 0.14, ease: [0.25, 0.1, 0.25, 1] }}
+      className="max-w-xl mx-auto"
     >
-      {/* Back */}
+      {/* Back — subtle hover lift */}
       <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.15, delay: 0.05 }}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.12, delay: 0.02, ease: [0.25, 0.1, 0.25, 1] }}
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-16"
+        className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 mb-20"
       >
         <ArrowLeft className="w-4 h-4" />
         New evaluation
@@ -74,14 +74,14 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         <ActionSection candidateName={brief.candidateName} />
       )}
 
-      {/* Footer */}
+      {/* Footer — understated */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.2, delay: 0.35 }}
-        className="pt-16 pb-8 border-t border-border"
+        transition={{ duration: 0.14, delay: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+        className="pt-20 pb-10 border-t border-border/60"
       >
-        <p className="text-xs text-muted-foreground tracking-wider">
+        <p className="text-xs text-muted-foreground/70 tracking-wider">
           HumIQ
         </p>
       </motion.footer>

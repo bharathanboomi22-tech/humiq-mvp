@@ -15,42 +15,42 @@ export function ActionSection({ candidateName }: ActionSectionProps) {
 
   return (
     <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2, delay: 0.3 }}
-      className="mb-16"
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.14, delay: 0.24, ease: [0.25, 0.1, 0.25, 1] }}
+      className="mb-20"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-2.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-150"
       >
         Take Action
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.15 }}
-          className="mt-8 space-y-8"
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
+          className="mt-10 space-y-10"
         >
           {/* Draft outreach */}
           <div>
-            <p className="text-sm text-muted-foreground mb-3">
+            <p className="text-sm text-muted-foreground mb-4">
               Draft outreach message:
             </p>
-            <pre className="text-sm text-foreground/75 leading-relaxed whitespace-pre-wrap p-4 bg-card rounded border border-border">
+            <pre className="text-[15px] text-foreground/80 leading-relaxed whitespace-pre-wrap p-5 bg-card rounded-lg border border-border/60">
               {draftMessage}
             </pre>
           </div>
 
           {/* Role framing */}
           <div>
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-sm text-muted-foreground mb-3">
               Suggested role framing:
             </p>
-            <p className="text-sm text-foreground/75 leading-relaxed">
+            <p className="text-[15px] text-foreground/80 leading-relaxed">
               Founding Engineer — full ownership of [core system]. 
               Report directly to founders. Equity stake.
             </p>
@@ -58,10 +58,10 @@ export function ActionSection({ candidateName }: ActionSectionProps) {
 
           {/* First 30 days */}
           <div>
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-sm text-muted-foreground mb-3">
               Suggested first 30 days:
             </p>
-            <p className="text-sm text-foreground/75 leading-relaxed">
+            <p className="text-[15px] text-foreground/80 leading-relaxed">
               Ship one complete feature end-to-end. 
               Make one architectural decision that will last.
             </p>

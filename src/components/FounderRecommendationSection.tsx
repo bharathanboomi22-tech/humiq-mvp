@@ -16,26 +16,26 @@ export function FounderRecommendationSection({ recommendation }: FounderRecommen
 
   return (
     <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2, delay: 0.25 }}
-      className="mb-16"
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.14, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+      className="mb-20"
     >
-      <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-8">
+      <h2 className="text-xs uppercase tracking-widest text-muted-foreground/90 mb-10">
         Founder Recommendation
       </h2>
 
-      {/* Verdict */}
-      <p className="text-foreground font-medium mb-6">
+      {/* Verdict — decisive but grounded */}
+      <p className="text-foreground font-medium text-lg mb-7">
         {verdictLabels[recommendation.verdict]}
       </p>
 
-      {/* Reasons — max 2 */}
-      <ul className="space-y-3">
+      {/* Reasons — max 2, readable */}
+      <ul className="space-y-4">
         {recommendation.reasons.slice(0, 2).map((reason, index) => (
-          <li key={index} className="flex items-start gap-3">
-            <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
-            <p className="text-sm text-foreground/75 leading-relaxed">
+          <li key={index} className="flex items-start gap-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60 mt-2.5 flex-shrink-0" />
+            <p className="text-[15px] text-foreground/80 leading-relaxed">
               {reason}
             </p>
           </li>
