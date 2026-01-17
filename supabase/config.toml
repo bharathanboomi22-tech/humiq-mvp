@@ -2,3 +2,6 @@ project_id = "fxsoinlbjxjtxcxmkdwd"
 
 [functions.analyze-candidate]
 verify_jwt = false
+
+[functions.fetch-github-evidence]
+verify_jwt = false
