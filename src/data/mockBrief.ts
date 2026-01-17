@@ -35,22 +35,22 @@ export const mockBrief: CandidateBrief = {
 
   signalSynthesis: [
     {
-      name: 'Ownership Signal',
+      name: 'Ownership',
       level: 'high',
       evidence: 'Multiple projects taken from zero to production with ongoing maintenance.',
     },
     {
-      name: 'Judgment Signal',
+      name: 'Judgment',
       level: 'medium',
       evidence: 'Technical blog shows nuanced thinking, but limited evidence of product tradeoff decisions.',
     },
     {
-      name: 'Execution Signal',
+      name: 'Execution',
       level: 'high',
       evidence: 'Shipped SaaS MVP in 6 weeks with paying customers — clear bias toward action.',
     },
     {
-      name: 'Communication Signal',
+      name: 'Communication',
       level: 'medium',
       evidence: 'Strong written communication; unclear how she collaborates in real-time with founders.',
     },
@@ -75,7 +75,6 @@ export const mockBrief: CandidateBrief = {
     riskToValidate: 'Handling ambiguity when product direction is unclear',
     question: 'Tell me about a time you had to build something when you did not know what the right solution was. How did you decide what to do first?',
     strongAnswer: 'Describes a structured approach to reducing uncertainty — talks to users, builds cheapest test, iterates based on signal.',
-    weakAnswer: 'Waited for clarity, asked for more requirements, or built something comprehensive without validation.',
   },
 
   recommendation: {
@@ -84,20 +83,5 @@ export const mockBrief: CandidateBrief = {
       'Strong evidence of shipping complete products independently — rare founder-engineer trait.',
       'Primary risk (team collaboration) is testable in a 30-minute conversation.',
     ],
-  },
-
-  actionLayer: {
-    outreachMessage: `Hi Sarah,
-
-I came across your work — particularly your distributed task queue and the invoice automation product you shipped. The combination of systems depth and product intuition is rare.
-
-We're building [Company] and looking for a founding engineer. If you're open to exploring, I'd love to share more about what we're working on.
-
-No pressure either way — I just wanted to reach out directly.
-
-Best,
-[Your name]`,
-    roleFraming: 'Founding Engineer — Full ownership of technical decisions, directly shaping product direction with founders.',
-    first30Days: 'Ship one customer-facing feature end-to-end. Own the technical architecture decision for core infrastructure. Establish engineering culture and development workflow.',
   },
 };

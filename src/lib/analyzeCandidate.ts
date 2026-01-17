@@ -5,6 +5,7 @@ interface AnalyzeCandidateInput {
   linkedinUrl: string;
   githubUrl: string;
   websiteUrl?: string;
+  context?: string; // Optional context from founder
   rawWorkEvidence?: string; // Internal field - operator-provided evidence
 }
 
@@ -18,6 +19,7 @@ export async function analyzeCandidate(input: AnalyzeCandidateInput): Promise<Ca
       linkedinUrl: input.linkedinUrl,
       githubUrl: input.githubUrl,
       websiteUrl: input.websiteUrl,
+      context: input.context,
       rawWorkEvidence: input.rawWorkEvidence || '', // Empty triggers insufficient evidence path
     }
   });

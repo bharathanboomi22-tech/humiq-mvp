@@ -52,7 +52,6 @@ If Raw Work Evidence is empty or contains no concrete work artifacts, output EXA
 - risksUnknowns: [] (empty array)
 - validationPlan: Must include one reasoning-based question (no tech trivia, no invented details)
 - recommendation.reasons: [] (empty array)
-- actionLayer: Empty strings
 
 NEVER:
 - Guess or infer skills from links
@@ -105,17 +104,17 @@ const analysisToolSchema = {
             properties: {
               id: { type: "string" },
               title: { type: "string", description: "Short artifact title from evidence" },
-              url: { type: "string", description: "Link to the artifact" },
+              url: { type: "string", description: "Optional link to the artifact" },
               whatItIs: { type: "string", description: "One plain-language sentence. No jargon." },
-              whyItMatters: { type: "string", description: "Tie explicitly to Ownership, Judgment, Execution, or Communication" },
+              whyItMatters: { type: "string", description: "Founder lens - why this matters for a founding engineer role" },
               signals: {
                 type: "array",
                 maxItems: 2,
-                items: { type: "string", enum: ["Ownership", "Judgment", "Execution", "Communication"] },
+                items: { type: "string", enum: ["Shipping", "Ownership", "Judgment", "Product Sense", "Communication"] },
                 description: "Choose 1-2 ONLY. Over-tagging destroys trust."
               }
             },
-            required: ["id", "title", "url", "whatItIs", "whyItMatters", "signals"]
+            required: ["id", "title", "whatItIs", "whyItMatters", "signals"]
           },
           description: "Empty array if evidence is insufficient. Max 3 artifacts from Raw Work Evidence ONLY."
         },
@@ -130,7 +129,7 @@ const analysisToolSchema = {
             },
             required: ["name", "level", "evidence"]
           },
-          description: "Empty array if evidence is insufficient."
+          description: "Empty array if evidence is insufficient. Four rows: Ownership, Judgment, Execution, Communication."
         },
         risksUnknowns: {
           type: "array",
@@ -139,19 +138,18 @@ const analysisToolSchema = {
             type: "object",
             properties: {
               id: { type: "string" },
-              description: { type: "string", description: "Specific, honest risk or unknown. Do NOT soften language. Missing evidence = explicit unknown." }
+              description: { type: "string", description: "Specific, honest risk or unknown. Missing evidence = explicit unknown." }
             },
             required: ["id", "description"]
           },
-          description: "Empty array if evidence is insufficient."
+          description: "Empty array if evidence is insufficient. Max 3 items."
         },
         validationPlan: {
           type: "object",
           properties: {
-            riskToValidate: { type: "string", description: "The biggest risk to validate" },
-            question: { type: "string", description: "One precise question that forces reasoning. No tech trivia. No invented details." },
-            strongAnswer: { type: "string", description: "What a strong answer sounds like (one sentence)" },
-            weakAnswer: { type: "string", description: "What a weak answer sounds like (one sentence)" }
+            riskToValidate: { type: "string", description: "The biggest risk (one clear sentence)" },
+            question: { type: "string", description: "One interview question that forces reasoning. No tech trivia." },
+            strongAnswer: { type: "string", description: "What a strong answer sounds like (one sentence)" }
           },
           required: ["riskToValidate", "question", "strongAnswer"],
           description: "ALWAYS required. Even for insufficient evidence, provide a reasoning-based question."
@@ -164,22 +162,13 @@ const analysisToolSchema = {
               type: "array",
               maxItems: 2,
               items: { type: "string" },
-              description: "Max 2 bullets. Empty array if evidence is insufficient."
+              description: "Plain-language recommendation. Max 2 bullets. Empty array if evidence is insufficient."
             }
           },
           required: ["verdict", "reasons"]
-        },
-        actionLayer: {
-          type: "object",
-          properties: {
-            outreachMessage: { type: "string", description: "Draft outreach grounded in Raw Work Evidence. Empty string if evidence is insufficient." },
-            roleFraming: { type: "string", description: "Role framing. Empty string if evidence is insufficient." },
-            first30Days: { type: "string", description: "First 30 days expectations. Empty string if evidence is insufficient." }
-          },
-          required: ["outreachMessage", "roleFraming", "first30Days"]
         }
       },
-      required: ["candidateName", "verdict", "confidence", "rationale", "workArtifacts", "signalSynthesis", "risksUnknowns", "validationPlan", "recommendation", "actionLayer"]
+      required: ["candidateName", "verdict", "confidence", "rationale", "workArtifacts", "signalSynthesis", "risksUnknowns", "validationPlan", "recommendation"]
     }
   }
 };
@@ -190,9 +179,10 @@ serve(async (req) => {
   }
 
   try {
-    const { linkedinUrl, githubUrl, websiteUrl, rawWorkEvidence } = await req.json();
+    const { linkedinUrl, githubUrl, websiteUrl, context, rawWorkEvidence } = await req.json();
     
     console.log("Analyzing candidate:", { linkedinUrl, githubUrl, websiteUrl });
+    console.log("Context provided:", !!context);
     console.log("Raw Work Evidence provided:", !!rawWorkEvidence);
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -208,6 +198,7 @@ ${linkedinUrl ? `- LinkedIn: ${linkedinUrl}` : "- LinkedIn: Not provided"}
 ${githubUrl ? `- GitHub: ${githubUrl}` : "- GitHub: Not provided"}
 ${websiteUrl ? `- Portfolio: ${websiteUrl}` : ""}
 
+${context ? `ADDITIONAL CONTEXT:\n${context}\n` : ""}
 ---
 
 RAW WORK EVIDENCE (ONLY source of truth for evaluation):
@@ -221,7 +212,7 @@ If "RAW WORK EVIDENCE" above is empty, contains only "(No evidence provided)", o
 2. Set rationale to "There is not enough verified public work evidence to evaluate ownership or execution."
 3. Return empty arrays for workArtifacts, signalSynthesis, risksUnknowns
 4. Provide a validationPlan with a reasoning-based question (no tech trivia)
-5. Return empty recommendation.reasons and actionLayer fields
+5. Return empty recommendation.reasons
 
 If evidence IS provided, extract real artifacts and reason conservatively.
 

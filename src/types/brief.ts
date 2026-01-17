@@ -5,14 +5,14 @@ export type SignalLevel = 'high' | 'medium' | 'low';
 export interface WorkArtifact {
   id: string;
   title: string;
-  url: string;
+  url?: string; // Optional external link
   whatItIs: string;
   whyItMatters: string;
-  signals: string[]; // Max 2 signals
+  signals: string[]; // Max 2 signals: Shipping, Ownership, Judgment, Product Sense, Communication
 }
 
 export interface SignalSynthesis {
-  name: string;
+  name: string; // Ownership, Judgment, Execution, Communication
   level: SignalLevel;
   evidence: string;
 }
@@ -26,18 +26,11 @@ export interface ValidationPlan {
   riskToValidate: string;
   question: string;
   strongAnswer?: string;
-  weakAnswer?: string;
 }
 
 export interface FounderRecommendation {
   verdict: VerdictType;
-  reasons: string[]; // Max 2 reasons
-}
-
-export interface ActionLayer {
-  outreachMessage: string;
-  roleFraming: string;
-  first30Days: string;
+  reasons: string[]; // Max 2 reasons - plain language
 }
 
 export interface CandidateBrief {
@@ -50,11 +43,11 @@ export interface CandidateBrief {
   risksUnknowns: RiskUnknown[];
   validationPlan: ValidationPlan;
   recommendation: FounderRecommendation;
-  actionLayer: ActionLayer;
 }
 
 export interface CandidateInput {
   linkedinUrl: string;
   githubUrl: string;
   websiteUrl?: string;
+  context?: string;
 }

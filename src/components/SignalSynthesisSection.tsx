@@ -22,12 +22,9 @@ export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps)
       transition={{ duration: 0.14, delay: 0.08, ease: 'easeOut' }}
       className="py-12 border-t border-border"
     >
-      <h2 className="font-display text-lg font-medium text-foreground mb-1">
+      <h2 className="font-display text-lg font-medium text-foreground mb-8">
         What This Evidence Suggests
       </h2>
-      <p className="text-xs text-muted-foreground mb-8">
-        Interpretation, not raw data
-      </p>
 
       <div className="space-y-5">
         {signals.map((signal, index) => (

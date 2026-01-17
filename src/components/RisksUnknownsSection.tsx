@@ -16,12 +16,9 @@ export function RisksUnknownsSection({ risks }: RisksUnknownsSectionProps) {
       transition={{ duration: 0.14, delay: 0.12, ease: 'easeOut' }}
       className="py-12 border-t border-border"
     >
-      <h2 className="font-display text-lg font-medium text-foreground mb-1">
-        Key Risks & Unknowns
+      <h2 className="font-display text-lg font-medium text-foreground mb-8">
+        Risks & Unknowns
       </h2>
-      <p className="text-xs text-muted-foreground mb-8">
-        Honest gaps increase trust
-      </p>
 
       <ul className="space-y-4">
         {risks.slice(0, 3).map((risk, index) => (
