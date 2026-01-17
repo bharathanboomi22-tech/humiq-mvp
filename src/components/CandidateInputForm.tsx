@@ -30,8 +30,8 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         <p className="text-sm text-muted-foreground mb-3">
           HumIQ
         </p>
-        <h1 className="font-display text-3xl md:text-4xl font-medium text-foreground mb-3">
-          Work Evidence Logic
+        <h1 className="font-display text-2xl md:text-3xl font-medium text-foreground mb-3 leading-tight">
+          See how Founding Engineer actually works, before you hire them.
         </h1>
         <p className="text-muted-foreground text-base">
           Founding Engineer judgment in under 5 minutes
