@@ -1,24 +1,40 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Linkedin, Github, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Github, Globe, Shield } from 'lucide-react';
 
 interface CandidateInputFormProps {
-  onSubmit: (data: { linkedinUrl: string; githubUrl: string; websiteUrl: string }) => void;
+  onSubmit: (data: { 
+    githubUrl: string; 
+    otherLinks: string; 
+    rawWorkEvidence: string;
+  }) => void;
   isLoading?: boolean;
 }
 
 export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormProps) {
-  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [context, setContext] = useState('');
+  const [otherLinks, setOtherLinks] = useState('');
+  const [rawWorkEvidence, setRawWorkEvidence] = useState('');
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
+  // Hidden admin mode toggle: Ctrl+Shift+A
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        setIsAdminMode(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ linkedinUrl, githubUrl, websiteUrl });
+    onSubmit({ githubUrl, otherLinks, rawWorkEvidence });
   };
 
-  const isValid = linkedinUrl.trim() !== '' || githubUrl.trim() !== '';
+  const isValid = githubUrl.trim() !== '';
 
   return (
     <motion.div
@@ -41,6 +57,22 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Admin Mode Indicator */}
+        <AnimatePresence>
+          {isAdminMode && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.12 }}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 border border-accent/20"
+            >
+              <Shield className="w-4 h-4 text-accent" />
+              <span className="text-xs text-accent font-medium">Admin Mode</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="space-y-4">
           {/* GitHub URL */}
           <div>
@@ -57,51 +89,48 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
             />
           </div>
 
-          {/* LinkedIn URL */}
-          <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
-              <Linkedin className="w-4 h-4 text-muted-foreground" />
-              LinkedIn URL
-            </label>
-            <input
-              type="url"
-              value={linkedinUrl}
-              onChange={(e) => setLinkedinUrl(e.target.value)}
-              placeholder="https://linkedin.com/in/..."
-              className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100"
-            />
-          </div>
-
-          {/* Portfolio URL (optional) */}
+          {/* Other Links (optional) */}
           <div>
             <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
               <Globe className="w-4 h-4 text-muted-foreground" />
-              Portfolio / Product URL
+              Other Links
               <span className="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
-              type="url"
-              value={websiteUrl}
-              onChange={(e) => setWebsiteUrl(e.target.value)}
-              placeholder="https://..."
+              type="text"
+              value={otherLinks}
+              onChange={(e) => setOtherLinks(e.target.value)}
+              placeholder="Portfolio, LinkedIn, product demos..."
               className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100"
             />
           </div>
 
-          {/* Context (optional) */}
-          <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
-              Context
-              <span className="text-muted-foreground text-xs">(optional)</span>
-            </label>
-            <textarea
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder="Any additional context about the candidate or role..."
-              rows={2}
-              className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100 resize-none"
-            />
-          </div>
+          {/* Raw Work Evidence - Admin Only */}
+          <AnimatePresence>
+            {isAdminMode && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.12 }}
+              >
+                <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
+                  Raw Work Evidence
+                  <span className="text-accent text-xs">(admin only)</span>
+                </label>
+                <textarea
+                  value={rawWorkEvidence}
+                  onChange={(e) => setRawWorkEvidence(e.target.value)}
+                  placeholder="Paste README content, repo descriptions, case studies, blog excerpts..."
+                  rows={8}
+                  className="w-full px-4 py-3 rounded-lg bg-input border border-accent/30 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100 resize-y font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  This field powers AI evaluation. Paste verified work evidence only.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Helper text - exact copy */}

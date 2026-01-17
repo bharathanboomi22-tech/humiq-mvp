@@ -11,14 +11,19 @@ const Index = () => {
   const [viewState, setViewState] = useState<ViewState>('input');
   const [brief, setBrief] = useState<CandidateBrief | null>(null);
 
-  const handleSubmit = async (data: { linkedinUrl: string; githubUrl: string; websiteUrl: string }) => {
+  const handleSubmit = async (data: { 
+    githubUrl: string; 
+    otherLinks: string; 
+    rawWorkEvidence: string;
+  }) => {
     setViewState('loading');
     
     try {
       const result = await analyzeCandidate({
-        linkedinUrl: data.linkedinUrl,
+        linkedinUrl: '', // Deprecated - now using otherLinks
         githubUrl: data.githubUrl,
-        websiteUrl: data.websiteUrl || undefined,
+        websiteUrl: data.otherLinks || undefined,
+        rawWorkEvidence: data.rawWorkEvidence,
       });
       
       setBrief(result);
