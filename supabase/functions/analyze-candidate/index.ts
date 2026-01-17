@@ -6,23 +6,19 @@ const corsHeaders = {
 };
 
 // CRITICAL SYSTEM PROMPT - Exact format from spec
-const SYSTEM_PROMPT = `You are HumIQ AI. You evaluate Founding Engineers for early-stage startups.
+const SYSTEM_PROMPT = `You are HumIQ AI.
+
+You evaluate Founding Engineers for early-stage startups.
+
+You must act like a founder who has been burned by bad hires.
 
 CRITICAL RULES:
-You may ONLY use the text inside RAW_WORK_EVIDENCE
-Candidate links are reference only
-You are NOT allowed to infer, assume, scrape, or invent information
-If something is not explicitly stated in RAW_WORK_EVIDENCE, mark it as Unknown
-If RAW_WORK_EVIDENCE is empty or insufficient, say so clearly
-No resumes, no buzzwords, no hype
-No numeric scores
-Your job is to help founders decide whether they can trust this person with ownership, execution, and judgment — before interviews.
-
-NEVER:
-- Browse or scrape links
-- Guess or infer from links
-- Invent names, companies, projects, or metrics
-- Use information not explicitly in RAW_WORK_EVIDENCE`;
+- You may ONLY use the text inside RAW_WORK_EVIDENCE below.
+- You must NOT infer, guess, scrape, or invent information.
+- Candidate links are reference only.
+- If RAW_WORK_EVIDENCE is empty or insufficient, you MUST say so clearly.
+- No resumes, no buzzwords, no hype.
+- No numeric scores.`;
 
 const analysisToolSchema = {
   type: "function",
@@ -145,38 +141,24 @@ serve(async (req) => {
     }
 
     // Construct the analysis prompt with exact format from spec
-    const userPrompt = `GitHub link: ${githubUrl || "Not provided"}
-Other links: ${websiteUrl || linkedinUrl || "Not provided"}
-Founder context: ${context || "Not provided"}
+    const userPrompt = `TASK:
+Based ONLY on RAW_WORK_EVIDENCE, generate a Work Evidence Brief that helps a founder decide whether to interview this candidate.
 
-RAW_WORK_EVIDENCE (source of truth):
+RAW_WORK_EVIDENCE:
 <<<
 ${rawWorkEvidence || ""}
 >>>
 
-TASK:
-Return a Work Evidence Brief using ONLY RAW_WORK_EVIDENCE.
+OUTPUT FORMAT (FOLLOW EXACTLY):
 
-OUTPUT FORMAT (follow exactly):
-
-If RAW_WORK_EVIDENCE is empty/insufficient:
-Verdict: Proceed with Caution
-Confidence: Low
-Rationale: There is not enough verified public work evidence to evaluate ownership or execution.
-Biggest unknown: <1 sentence>
-Fast validation question: <1 question for a 15–30 min call>
-Strong answer sounds like: <1 sentence>
-
-Otherwise:
 Verdict: <Interview Now | Proceed with Caution | Do Not Advance>
 Confidence: <High | Medium | Low>
-Rationale: <1 calm sentence tied to evidence or explicit gaps>
+Rationale: <1 calm sentence tied directly to evidence or explicit gaps>
 
 1) Real Work Evidence (max 3 artifacts)
 - Artifact: <Title>
-  Link: <Only if explicitly present in RAW_WORK_EVIDENCE, else "Unknown">
   What it is: <1 sentence>
-  Why it matters (founder lens): <1 sentence tied to ownership/shipping/judgment/product/communication>
+  Why it matters (founder lens): <1 sentence>
   Signals: <choose 1–2 only from Shipping, Ownership, Judgment, Product Sense, Communication>
 
 2) What this evidence suggests
@@ -186,10 +168,10 @@ Judgment: <High/Medium/Low> — <1 short justification>
 Communication: <High/Medium/Low> — <1 short justification>
 
 3) Key risks & unknowns (max 3 bullets)
-- <specific risk/unknown; if missing evidence, label "Unknown">
+- <specific risk or unknown; if missing evidence, say Unknown>
 
 4) Fastest way to validate the biggest risk
-To validate <biggest risk>, ask: <one precise question>
+To validate <biggest risk>, ask: <one precise interview question>
 Strong answer sounds like: <1 sentence>
 
 Generate the candidate brief now.`;
