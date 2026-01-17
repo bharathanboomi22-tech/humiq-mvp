@@ -21,100 +21,92 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="max-w-xl mx-auto"
+      transition={{ duration: 0.16, ease: 'easeOut' }}
+      className="max-w-md mx-auto"
     >
       <div className="text-center mb-12">
-        <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-4">
-          HumIQ AI
+        <p className="text-sm text-muted-foreground mb-3">
+          HumIQ
         </p>
-        <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4">
-          Work Evidence Brief
+        <h1 className="font-display text-3xl md:text-4xl font-medium text-foreground mb-3">
+          Work Evidence Logic
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Decide Hire / Pass / Needs Signal in under 5 minutes
+        <p className="text-muted-foreground text-base">
+          Founding Engineer judgment in under 5 minutes
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
           {/* LinkedIn URL */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <Linkedin className="w-4 h-4" />
-              LinkedIn URL
+            <label className="flex items-center gap-2 text-sm text-foreground mb-2">
+              <Linkedin className="w-4 h-4 text-muted-foreground" />
+              LinkedIn
             </label>
             <input
               type="url"
               value={linkedinUrl}
               onChange={(e) => setLinkedinUrl(e.target.value)}
               placeholder="https://linkedin.com/in/..."
-              className="w-full px-4 py-3 rounded-lg bg-card border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
               required
             />
           </div>
 
           {/* GitHub URL */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <Github className="w-4 h-4" />
-              GitHub URL
+            <label className="flex items-center gap-2 text-sm text-foreground mb-2">
+              <Github className="w-4 h-4 text-muted-foreground" />
+              GitHub
             </label>
             <input
               type="url"
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
               placeholder="https://github.com/..."
-              className="w-full px-4 py-3 rounded-lg bg-card border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
               required
             />
           </div>
 
           {/* Website URL (optional) */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <Globe className="w-4 h-4" />
-              Personal Website
-              <span className="text-muted-foreground font-normal">(optional)</span>
+            <label className="flex items-center gap-2 text-sm text-foreground mb-2">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              Personal site
+              <span className="text-muted-foreground">(optional)</span>
             </label>
             <input
               type="url"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full px-4 py-3 rounded-lg bg-card border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
             />
           </div>
-        </div>
-
-        {/* Role indicator */}
-        <div className="flex items-center justify-center gap-2 py-3">
-          <span className="text-sm text-muted-foreground">Role:</span>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
-            Founding Engineer
-          </span>
         </div>
 
         {/* Submit button */}
         <button
           type="submit"
           disabled={!isValid || isLoading}
-          className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-sm font-medium bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
         >
           {isLoading ? (
-            <span>Generating Brief...</span>
+            <span>Analyzing...</span>
           ) : (
             <>
-              Generate Brief
+              Analyze Evidence
               <ArrowRight className="w-4 h-4" />
             </>
           )}
         </button>
 
         <p className="text-center text-xs text-muted-foreground">
-          Analysis typically takes 30-60 seconds
+          Takes 30–60 seconds
         </p>
       </form>
     </motion.div>

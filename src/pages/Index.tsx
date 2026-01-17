@@ -28,14 +28,14 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <div className="container max-w-4xl mx-auto px-6 py-16 md:py-20">
         {viewState === 'input' && (
           <CandidateInputForm onSubmit={handleSubmit} />
         )}
         
         {viewState === 'loading' && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin mb-4" />
+            <div className="w-6 h-6 border-2 border-muted border-t-accent rounded-full animate-spin mb-4" />
             <p className="text-muted-foreground text-sm">Analyzing work evidence...</p>
           </div>
         )}
