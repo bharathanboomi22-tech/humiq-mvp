@@ -7,39 +7,42 @@ interface RealWorkEvidenceSectionProps {
 }
 
 export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionProps) {
+  // Don't render if no artifacts
+  if (!artifacts || artifacts.length === 0) return null;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.16, delay: 0.05, ease: 'easeOut' }}
-      className="py-10 border-t border-border"
+      transition={{ duration: 0.14, delay: 0.04, ease: 'easeOut' }}
+      className="py-12 border-t border-border"
     >
-      <h2 className="font-display text-xl font-medium text-foreground mb-1">
+      <h2 className="font-display text-lg font-medium text-foreground mb-1">
         Real Work Evidence
       </h2>
-      <p className="text-sm text-muted-foreground mb-8">
+      <p className="text-xs text-muted-foreground mb-8">
         Not resume claims
       </p>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {artifacts.slice(0, 3).map((artifact, index) => (
           <motion.div
             key={artifact.id}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.14, delay: 0.08 + index * 0.04, ease: 'easeOut' }}
-            className="group p-5 rounded-lg bg-card border border-border hover:border-muted-foreground/30 transition-all duration-150"
+            transition={{ duration: 0.12, delay: 0.06 + index * 0.03, ease: 'easeOut' }}
+            className="group p-5 rounded-lg bg-card border border-border"
           >
             {/* Title and Link */}
-            <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="mb-4">
               <a
                 href={artifact.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-foreground font-medium hover:text-accent transition-colors flex items-center gap-2"
+                className="text-foreground font-medium hover:text-accent transition-colors duration-100 inline-flex items-center gap-2"
               >
                 {artifact.title}
-                <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ExternalLink className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity duration-100" />
               </a>
             </div>
 
@@ -48,7 +51,7 @@ export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionPr
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                 What it is
               </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
+              <p className="text-sm text-foreground/75 leading-relaxed">
                 {artifact.whatItIs}
               </p>
             </div>
@@ -56,14 +59,14 @@ export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionPr
             {/* Why it matters */}
             <div className="mb-4">
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
-                Why it matters (Founder Lens)
+                Why it matters
               </p>
-              <p className="text-sm text-foreground/80 leading-relaxed">
+              <p className="text-sm text-foreground/75 leading-relaxed">
                 {artifact.whyItMatters}
               </p>
             </div>
 
-            {/* Signals */}
+            {/* Signals - max 2 */}
             <div className="flex flex-wrap gap-2">
               {artifact.signals.slice(0, 2).map((signal, idx) => (
                 <span
