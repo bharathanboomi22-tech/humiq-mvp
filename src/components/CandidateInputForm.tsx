@@ -76,9 +76,16 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
       transition={{ duration: 0.14, ease: 'easeOut' }}
       className="max-w-md mx-auto"
     >
-      {/* Header */}
+      {/* Header - Triple-click "HumIQ" to toggle admin mode */}
       <div className="text-center mb-14">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+        <p 
+          className="text-xs uppercase tracking-widest text-muted-foreground mb-4 cursor-default select-none"
+          onClick={(e) => {
+            if (e.detail === 3) {
+              setIsAdminMode(prev => !prev);
+            }
+          }}
+        >
           HumIQ
         </p>
         <h1 className="font-display text-2xl md:text-[28px] font-medium text-foreground leading-tight mb-4">
