@@ -11,6 +11,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
+  const [context, setContext] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,13 +40,13 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
           {/* GitHub URL */}
           <div>
             <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
               <Github className="w-4 h-4 text-muted-foreground" />
-              GitHub
+              GitHub URL
             </label>
             <input
               type="url"
@@ -60,7 +61,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           <div>
             <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
               <Linkedin className="w-4 h-4 text-muted-foreground" />
-              LinkedIn
+              LinkedIn URL
             </label>
             <input
               type="url"
@@ -71,11 +72,11 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
             />
           </div>
 
-          {/* Website URL (optional) */}
+          {/* Portfolio URL (optional) */}
           <div>
             <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
               <Globe className="w-4 h-4 text-muted-foreground" />
-              Portfolio / Product
+              Portfolio / Product URL
               <span className="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
@@ -84,6 +85,21 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               onChange={(e) => setWebsiteUrl(e.target.value)}
               placeholder="https://..."
               className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100"
+            />
+          </div>
+
+          {/* Context (optional) */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
+              Context
+              <span className="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <textarea
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder="Any additional context about the candidate or role..."
+              rows={2}
+              className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100 resize-none"
             />
           </div>
         </div>
@@ -104,7 +120,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
             <span>Evaluating...</span>
           ) : (
             <>
-              Evaluate
+              Evaluate Candidate
               <ArrowRight className="w-4 h-4" />
             </>
           )}

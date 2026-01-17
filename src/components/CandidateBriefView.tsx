@@ -5,7 +5,6 @@ import { SignalSynthesisSection } from './SignalSynthesisSection';
 import { RisksUnknownsSection } from './RisksUnknownsSection';
 import { ValidationPlanSection } from './ValidationPlanSection';
 import { FounderRecommendationSection } from './FounderRecommendationSection';
-import { ActionLayerSection } from './ActionLayerSection';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 
@@ -40,7 +39,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         New evaluation
       </motion.button>
 
-      {/* Brief content */}
+      {/* 1) Verdict Header */}
       <VerdictHeader
         candidateName={brief.candidateName}
         verdict={brief.verdict}
@@ -52,21 +51,23 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
       {/* Only show these sections if sufficient evidence */}
       {!isInsufficientEvidence && (
         <>
+          {/* 2) Real Work Evidence */}
           <RealWorkEvidenceSection artifacts={brief.workArtifacts} />
+          
+          {/* 3) What This Evidence Suggests */}
           <SignalSynthesisSection signals={brief.signalSynthesis} />
+          
+          {/* 4) Risks & Unknowns */}
           <RisksUnknownsSection risks={brief.risksUnknowns} />
         </>
       )}
       
-      {/* Validation plan always shows */}
+      {/* 5) Fast Validation Plan - always shows */}
       <ValidationPlanSection plan={brief.validationPlan} />
       
-      {/* Only show recommendation and action if sufficient evidence */}
+      {/* 6) Final Recommendation - only if sufficient evidence */}
       {!isInsufficientEvidence && (
-        <>
-          <FounderRecommendationSection recommendation={brief.recommendation} />
-          <ActionLayerSection action={brief.actionLayer} />
-        </>
+        <FounderRecommendationSection recommendation={brief.recommendation} />
       )}
 
       {/* Footer */}

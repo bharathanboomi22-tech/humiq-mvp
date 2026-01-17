@@ -17,12 +17,9 @@ export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionPr
       transition={{ duration: 0.14, delay: 0.04, ease: 'easeOut' }}
       className="py-12 border-t border-border"
     >
-      <h2 className="font-display text-lg font-medium text-foreground mb-1">
-        Real Work Evidence
+      <h2 className="font-display text-lg font-medium text-foreground mb-8">
+        Real Work Evidence (Not Resume Claims)
       </h2>
-      <p className="text-xs text-muted-foreground mb-8">
-        Not resume claims
-      </p>
 
       <div className="space-y-5">
         {artifacts.slice(0, 3).map((artifact, index) => (
