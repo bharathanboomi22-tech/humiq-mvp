@@ -1,0 +1,4 @@
+project_id = "fxsoinlbjxjtxcxmkdwd"
+
+[functions.analyze-candidate]
+verify_jwt = false
