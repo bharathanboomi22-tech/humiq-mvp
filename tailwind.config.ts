@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Times New Roman', 'Georgia', 'Cambria', 'serif'],
-        body: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['SF Pro Display', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['SF Pro Text', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,20 +51,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        decision: {
-          hire: "hsl(var(--decision-hire))",
-          "hire-bg": "hsl(var(--decision-hire-bg))",
-          signal: "hsl(var(--decision-signal))",
-          "signal-bg": "hsl(var(--decision-signal-bg))",
-          pass: "hsl(var(--decision-pass))",
-          "pass-bg": "hsl(var(--decision-pass-bg))",
+        verdict: {
+          interview: "hsl(var(--verdict-interview))",
+          caution: "hsl(var(--verdict-caution))",
+          pass: "hsl(var(--verdict-pass))",
         },
-        evidence: {
-          DEFAULT: "hsl(var(--evidence))",
-          bg: "hsl(var(--evidence-bg))",
+        signal: {
+          high: "hsl(var(--signal-high))",
+          medium: "hsl(var(--signal-medium))",
+          low: "hsl(var(--signal-low))",
         },
-        strength: "hsl(var(--strength))",
-        risk: "hsl(var(--risk))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -81,7 +77,7 @@ export default {
           to: { height: "0" },
         },
         "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "0%": { opacity: "0", transform: "translateY(5px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
@@ -90,10 +86,10 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-up": "fade-up 0.5s ease-out forwards",
-        "fade-in": "fade-in 0.4s ease-out forwards",
+        "accordion-down": "accordion-down 0.15s ease-out",
+        "accordion-up": "accordion-up 0.15s ease-out",
+        "fade-up": "fade-up 0.16s ease-out forwards",
+        "fade-in": "fade-in 0.12s ease-out forwards",
       },
     },
   },

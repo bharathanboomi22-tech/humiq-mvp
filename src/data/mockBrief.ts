@@ -2,75 +2,102 @@ import { CandidateBrief } from '@/types/brief';
 
 export const mockBrief: CandidateBrief = {
   candidateName: 'Sarah Chen',
-  role: 'Founding Engineer',
-  decision: 'hire',
-  workEvidence: [
+  verdict: 'interview',
+  confidence: 'high',
+  rationale: 'Strong shipping and ownership signals, but limited evidence of collaboration in team environments.',
+  
+  workArtifacts: [
     {
       id: '1',
-      title: 'Distributed Task Queue (open-source)',
-      explanation: 'Built and maintained a Redis-backed job queue handling 50k+ jobs/hour. Shows systems thinking and production-grade reliability patterns.',
+      title: 'Distributed Task Queue',
       url: 'https://github.com/example/taskqueue',
-      type: 'repo',
+      whatItIs: 'Open-source Redis-backed job queue handling production workloads.',
+      whyItMatters: 'Shows systems thinking and willingness to own infrastructure reliability — critical for a founding engineer who will build core systems.',
+      signals: ['Ownership', 'Execution'],
     },
     {
       id: '2',
-      title: 'Shipped: Invoice Automation SaaS',
-      explanation: 'Solo-built MVP to paying customers in 6 weeks. Demonstrates full-stack ownership and speed-to-value mindset.',
+      title: 'Invoice Automation SaaS',
       url: 'https://example.com/invoiceapp',
-      type: 'product',
+      whatItIs: 'Solo-built MVP that reached paying customers in 6 weeks.',
+      whyItMatters: 'Demonstrates full-stack ownership and speed-to-value mindset — evidence of shipping complete products, not just features.',
+      signals: ['Shipping', 'Product Sense'],
     },
     {
       id: '3',
-      title: 'Technical Blog: "Scaling PostgreSQL Writes"',
-      explanation: 'Clear explanation of partitioning strategies with real benchmarks. Indicates ability to communicate complex tradeoffs.',
+      title: 'Technical Blog: PostgreSQL Scaling',
       url: 'https://blog.example.com/postgres-scaling',
-      type: 'blog',
-    },
-    {
-      id: '4',
-      title: 'Live Demo: Real-time Collaboration Editor',
-      explanation: 'CRDT-based collaborative text editor with presence. Evidence of tackling hard distributed systems problems.',
-      url: 'https://demo.example.com/collab',
-      type: 'demo',
+      whatItIs: 'Deep-dive on database partitioning strategies with real benchmarks.',
+      whyItMatters: 'Clear communication of complex tradeoffs — suggests ability to explain technical decisions to non-technical stakeholders.',
+      signals: ['Communication'],
     },
   ],
-  strengths: [
-    { id: '1', text: 'Ships production code independently — multiple solo projects from zero to users' },
-    { id: '2', text: 'Strong systems intuition — evidence of understanding performance, reliability, and scaling' },
-    { id: '3', text: 'Clear technical communicator — blog posts and documentation are well-structured' },
-    { id: '4', text: 'Open-source contributions with maintenance follow-through' },
-  ],
-  risks: [
-    { id: '1', question: 'How does she handle ambiguity when product direction is unclear?' },
-    { id: '2', question: "What's her approach to making fast decisions with incomplete information?" },
-    { id: '3', question: 'How does she prioritize when everything feels urgent?' },
-  ],
-  interviewPlan: [
+
+  signalSynthesis: [
     {
-      timeRange: '0-10 min',
-      objective: 'Establish context and warmth. Understand her current situation and motivations.',
-      prompts: [
-        "What are you looking for in your next role that you haven't found yet?",
-        "Tell me about the project you're most proud of - what made it hard?",
-      ],
+      name: 'Ownership Signal',
+      level: 'high',
+      evidence: 'Multiple projects taken from zero to production with ongoing maintenance.',
     },
     {
-      timeRange: '10-20 min',
-      objective: 'Probe depth on systems thinking and ambiguity tolerance.',
-      prompts: [
-        'Walk me through a time you had to make a significant technical decision without complete information.',
-        'How do you decide when something is "good enough" to ship?',
-        'Describe a system you built that had to handle unexpected scale.',
-      ],
+      name: 'Judgment Signal',
+      level: 'medium',
+      evidence: 'Technical blog shows nuanced thinking, but limited evidence of product tradeoff decisions.',
     },
     {
-      timeRange: '20-30 min',
-      objective: 'Assess founder-engineer fit and working style.',
-      prompts: [
-        'What does a productive first 30 days look like for you at an early-stage startup?',
-        'How do you prefer to work with a non-technical founder?',
-      ],
+      name: 'Execution Signal',
+      level: 'high',
+      evidence: 'Shipped SaaS MVP in 6 weeks with paying customers — clear bias toward action.',
+    },
+    {
+      name: 'Communication Signal',
+      level: 'medium',
+      evidence: 'Strong written communication; unclear how she collaborates in real-time with founders.',
     },
   ],
-  outreachMessage: "Hi Sarah,\n\nI came across your work — particularly your distributed task queue and the invoice automation product you shipped. The combination of systems depth and product intuition is rare.\n\nWe're building [Company] and looking for a founding engineer. If you're open to exploring, I'd love to share more about what we're working on.\n\nNo pressure either way — I just wanted to reach out directly.\n\nBest,\n[Your name]",
+
+  risksUnknowns: [
+    {
+      id: '1',
+      description: 'No evidence of working in a team environment — all projects appear solo.',
+    },
+    {
+      id: '2',
+      description: 'Unclear how she handles ambiguity when product direction is undefined.',
+    },
+    {
+      id: '3',
+      description: 'Limited exposure to production-scale systems beyond her own projects.',
+    },
+  ],
+
+  validationPlan: {
+    riskToValidate: 'Handling ambiguity when product direction is unclear',
+    question: 'Tell me about a time you had to build something when you did not know what the right solution was. How did you decide what to do first?',
+    strongAnswer: 'Describes a structured approach to reducing uncertainty — talks to users, builds cheapest test, iterates based on signal.',
+    weakAnswer: 'Waited for clarity, asked for more requirements, or built something comprehensive without validation.',
+  },
+
+  recommendation: {
+    verdict: 'interview',
+    reasons: [
+      'Strong evidence of shipping complete products independently — rare founder-engineer trait.',
+      'Primary risk (team collaboration) is testable in a 30-minute conversation.',
+    ],
+  },
+
+  actionLayer: {
+    outreachMessage: `Hi Sarah,
+
+I came across your work — particularly your distributed task queue and the invoice automation product you shipped. The combination of systems depth and product intuition is rare.
+
+We're building [Company] and looking for a founding engineer. If you're open to exploring, I'd love to share more about what we're working on.
+
+No pressure either way — I just wanted to reach out directly.
+
+Best,
+[Your name]`,
+    roleFraming: 'Founding Engineer — Full ownership of technical decisions, directly shaping product direction with founders.',
+    first30Days: 'Ship one customer-facing feature end-to-end. Own the technical architecture decision for core infrastructure. Establish engineering culture and development workflow.',
+  },
 };

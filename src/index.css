@@ -2,62 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumIQ AI Design System - Premium, Calm, High-Trust */
+/* HumIQ — Work Evidence Logic: Dark, Premium, Founder-Grade */
 
 @layer base {
   :root {
-    /* Core palette - warm, calm, editorial with good contrast */
-    --background: 40 25% 97%;
-    --foreground: 220 25% 10%;
+    /* Dark theme - true dark / near-black */
+    --background: 240 6% 4%;
+    --foreground: 40 10% 92%;
 
-    --card: 40 20% 99%;
-    --card-foreground: 220 25% 10%;
+    /* Elevated surfaces */
+    --card: 240 5% 8%;
+    --card-foreground: 40 10% 92%;
 
-    --popover: 40 20% 99%;
-    --popover-foreground: 220 25% 10%;
+    --popover: 240 5% 8%;
+    --popover-foreground: 40 10% 92%;
 
-    /* Primary - deep charcoal */
-    --primary: 220 25% 12%;
-    --primary-foreground: 40 25% 97%;
+    /* Primary - accent color (calm blue-green) */
+    --primary: 180 40% 50%;
+    --primary-foreground: 240 6% 4%;
 
-    /* Secondary - soft warm gray */
-    --secondary: 40 12% 90%;
-    --secondary-foreground: 220 25% 15%;
+    /* Secondary - subtle surface */
+    --secondary: 240 4% 12%;
+    --secondary-foreground: 40 10% 85%;
 
-    /* Muted - calm neutrals with readable text */
-    --muted: 40 10% 88%;
-    --muted-foreground: 220 15% 35%;
+    /* Muted - calm neutrals */
+    --muted: 240 4% 16%;
+    --muted-foreground: 40 5% 55%;
 
-    /* Accent - subtle warm */
-    --accent: 40 15% 85%;
-    --accent-foreground: 220 25% 12%;
+    /* Accent - ONE accent color used sparingly */
+    --accent: 180 40% 50%;
+    --accent-foreground: 240 6% 4%;
 
-    /* Decision colors - calm, confident, readable */
-    --decision-hire: 152 40% 32%;
-    --decision-hire-bg: 152 40% 92%;
-    --decision-signal: 38 70% 42%;
-    --decision-signal-bg: 38 60% 92%;
-    --decision-pass: 220 15% 42%;
-    --decision-pass-bg: 220 15% 92%;
+    /* Verdict colors - calm, not aggressive */
+    --verdict-interview: 165 35% 45%;
+    --verdict-caution: 45 50% 50%;
+    --verdict-pass: 240 5% 50%;
 
-    /* Evidence/Strength accents */
-    --evidence: 205 40% 38%;
-    --evidence-bg: 205 40% 94%;
-    --strength: 152 35% 35%;
-    --risk: 38 60% 42%;
+    /* Signal levels */
+    --signal-high: 165 35% 45%;
+    --signal-medium: 45 40% 50%;
+    --signal-low: 240 5% 50%;
 
-    --destructive: 0 60% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 40 10% 95%;
 
-    --border: 40 15% 82%;
-    --input: 40 15% 82%;
-    --ring: 220 25% 20%;
+    --border: 240 5% 15%;
+    --input: 240 5% 12%;
+    --ring: 180 40% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     /* Typography */
-    --font-display: 'Times New Roman', Georgia, 'Cambria', serif;
-    --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'SF Pro Text', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   * {
@@ -78,19 +75,39 @@
   /* Display typography */
   .font-display {
     font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 
-  /* Decision pill styles */
-  .decision-pill-hire {
-    @apply bg-decision-hire-bg text-decision-hire;
+  /* Verdict pill styles */
+  .verdict-interview {
+    background: hsl(var(--verdict-interview) / 0.15);
+    color: hsl(var(--verdict-interview));
+    border: 1px solid hsl(var(--verdict-interview) / 0.3);
   }
 
-  .decision-pill-signal {
-    @apply bg-decision-signal-bg text-decision-signal;
+  .verdict-caution {
+    background: hsl(var(--verdict-caution) / 0.15);
+    color: hsl(var(--verdict-caution));
+    border: 1px solid hsl(var(--verdict-caution) / 0.3);
   }
 
-  .decision-pill-pass {
-    @apply bg-decision-pass-bg text-decision-pass;
+  .verdict-pass {
+    background: hsl(var(--verdict-pass) / 0.15);
+    color: hsl(var(--verdict-pass));
+    border: 1px solid hsl(var(--verdict-pass) / 0.3);
+  }
+
+  /* Signal level styles */
+  .signal-high {
+    color: hsl(var(--signal-high));
+  }
+
+  .signal-medium {
+    color: hsl(var(--signal-medium));
+  }
+
+  .signal-low {
+    color: hsl(var(--signal-low));
   }
 }
 
@@ -101,5 +118,11 @@ html {
 
 /* Selection styling */
 ::selection {
-  background: hsl(220 15% 18% / 0.1);
+  background: hsl(var(--accent) / 0.2);
+}
+
+/* Subtle focus states */
+:focus-visible {
+  outline: 2px solid hsl(var(--accent) / 0.5);
+  outline-offset: 2px;
 }

@@ -1,38 +1,56 @@
-export type DecisionType = 'hire' | 'needs-signal' | 'pass';
+export type VerdictType = 'interview' | 'caution' | 'pass';
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
+export type SignalLevel = 'high' | 'medium' | 'low';
 
-export interface WorkEvidence {
+export interface WorkArtifact {
   id: string;
   title: string;
-  explanation: string;
   url: string;
-  type: 'repo' | 'product' | 'blog' | 'demo';
+  whatItIs: string;
+  whyItMatters: string;
+  signals: string[]; // Max 2 signals
 }
 
-export interface StrengthItem {
-  id: string;
-  text: string;
+export interface SignalSynthesis {
+  name: string;
+  level: SignalLevel;
+  evidence: string;
 }
 
-export interface RiskItem {
+export interface RiskUnknown {
   id: string;
+  description: string;
+}
+
+export interface ValidationPlan {
+  riskToValidate: string;
   question: string;
+  strongAnswer?: string;
+  weakAnswer?: string;
 }
 
-export interface InterviewBlock {
-  timeRange: string;
-  objective: string;
-  prompts: string[];
+export interface FounderRecommendation {
+  verdict: VerdictType;
+  reasons: string[]; // Max 2 reasons
+}
+
+export interface ActionLayer {
+  outreachMessage: string;
+  roleFraming: string;
+  first30Days: string;
 }
 
 export interface CandidateBrief {
   candidateName: string;
-  role: 'Founding Engineer';
-  decision: DecisionType;
-  workEvidence: WorkEvidence[];
-  strengths: StrengthItem[];
-  risks: RiskItem[];
-  interviewPlan: InterviewBlock[];
-  outreachMessage: string;
+  verdict: VerdictType;
+  confidence: ConfidenceLevel;
+  rationale: string;
+  workArtifacts: WorkArtifact[];
+  signalSynthesis: SignalSynthesis[];
+  risksUnknowns: RiskUnknown[];
+  validationPlan: ValidationPlan;
+  recommendation: FounderRecommendation;
+  actionLayer: ActionLayer;
 }
 
 export interface CandidateInput {
