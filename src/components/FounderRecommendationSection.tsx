@@ -1,43 +1,46 @@
-import { FounderRecommendation } from '@/types/brief';
+import { FounderRecommendation, VerdictType } from '@/types/brief';
 import { motion } from 'framer-motion';
 
 interface FounderRecommendationSectionProps {
   recommendation: FounderRecommendation;
 }
 
+const verdictLabels: Record<VerdictType, string> = {
+  interview: 'Interview Now',
+  caution: 'Proceed with Caution',
+  pass: 'Do Not Advance',
+};
+
 export function FounderRecommendationSection({ recommendation }: FounderRecommendationSectionProps) {
-  // Don't render if no reasons
   if (!recommendation.reasons || recommendation.reasons.length === 0) return null;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, delay: 0.2, ease: 'easeOut' }}
-      className="py-12 border-t border-border"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, delay: 0.25 }}
+      className="mb-16"
     >
-      <h2 className="font-display text-lg font-medium text-foreground mb-6">
-        Final Recommendation
+      <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-8">
+        Founder Recommendation
       </h2>
 
-      {/* Plain-language recommendation */}
-      <div className="space-y-3 mb-8">
-        {recommendation.reasons.slice(0, 2).map((reason, index) => (
-          <p key={index} className="text-sm text-foreground/80 leading-relaxed">
-            {reason}
-          </p>
-        ))}
-      </div>
+      {/* Verdict */}
+      <p className="text-foreground font-medium mb-6">
+        {verdictLabels[recommendation.verdict]}
+      </p>
 
-      {/* Optional secondary CTAs */}
-      <div className="flex flex-wrap gap-3">
-        <button className="px-4 py-2 rounded-lg text-sm text-muted-foreground border border-border hover:border-accent/50 hover:text-foreground transition-all duration-100">
-          Draft outreach message
-        </button>
-        <button className="px-4 py-2 rounded-lg text-sm text-muted-foreground border border-border hover:border-accent/50 hover:text-foreground transition-all duration-100">
-          Save brief
-        </button>
-      </div>
+      {/* Reasons — max 2 */}
+      <ul className="space-y-3">
+        {recommendation.reasons.slice(0, 2).map((reason, index) => (
+          <li key={index} className="flex items-start gap-3">
+            <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
+            <p className="text-sm text-foreground/75 leading-relaxed">
+              {reason}
+            </p>
+          </li>
+        ))}
+      </ul>
     </motion.section>
   );
 }

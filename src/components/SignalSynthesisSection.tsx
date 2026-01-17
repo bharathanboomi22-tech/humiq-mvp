@@ -12,37 +12,38 @@ const levelLabels: Record<SignalLevel, string> = {
 };
 
 export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps) {
-  // Don't render if no signals
   if (!signals || signals.length === 0) return null;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, delay: 0.08, ease: 'easeOut' }}
-      className="py-12 border-t border-border"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, delay: 0.1 }}
+      className="mb-16"
     >
-      <h2 className="font-display text-lg font-medium text-foreground mb-8">
+      <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-8">
         What This Evidence Suggests
       </h2>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {signals.map((signal, index) => (
           <motion.div
             key={signal.name}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.12, delay: 0.1 + index * 0.025, ease: 'easeOut' }}
-            className="grid grid-cols-[140px_1fr] gap-4 items-start"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.12, delay: 0.12 + index * 0.03 }}
           >
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-foreground/80">
-                {signal.name.replace(' Signal', '')}
+            {/* Signal name and level */}
+            <div className="flex items-baseline gap-3 mb-2">
+              <span className="text-sm text-foreground">
+                {signal.name}
               </span>
-              <span className={`signal-${signal.level} text-xs font-medium`}>
+              <span className={`signal-${signal.level} text-xs`}>
                 {levelLabels[signal.level]}
               </span>
             </div>
+            
+            {/* Evidence */}
             <p className="text-sm text-muted-foreground leading-relaxed">
               {signal.evidence}
             </p>
