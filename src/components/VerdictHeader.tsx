@@ -30,30 +30,32 @@ export function VerdictHeader({
 }: VerdictHeaderProps) {
   return (
     <motion.header
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, ease: 'easeOut' }}
-      className="pb-12"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="mb-16"
     >
-      {/* Candidate name - only show if found in evidence */}
+      {/* Candidate name */}
       {candidateName && !isInsufficientEvidence && (
-        <h1 className="font-display text-2xl md:text-3xl font-medium text-foreground mb-6">
+        <p className="text-sm text-muted-foreground mb-8 tracking-wide">
           {candidateName}
-        </h1>
+        </p>
       )}
 
-      {/* Verdict badge + Confidence label */}
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <span className={`verdict-${verdict} px-4 py-2 rounded-md text-sm font-medium`}>
+      {/* Verdict — the first thing seen */}
+      <div className="mb-6">
+        <span className={`verdict-${verdict} inline-block px-4 py-2 rounded text-sm font-medium tracking-wide`}>
           {verdictLabels[verdict]}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          Confidence: <span className={`signal-${confidence} font-medium`}>{confidenceLabels[confidence]}</span>
         </span>
       </div>
 
-      {/* One-line rationale */}
-      <p className="text-foreground/80 text-base leading-relaxed max-w-xl">
+      {/* Confidence */}
+      <p className="text-xs text-muted-foreground mb-6 tracking-wider uppercase">
+        Confidence: <span className={`signal-${confidence}`}>{confidenceLabels[confidence]}</span>
+      </p>
+
+      {/* Rationale — the judgment line */}
+      <p className="text-foreground/85 text-lg leading-relaxed max-w-lg font-display">
         {rationale}
       </p>
     </motion.header>

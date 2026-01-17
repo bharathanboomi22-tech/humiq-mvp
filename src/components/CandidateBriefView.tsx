@@ -5,6 +5,7 @@ import { SignalSynthesisSection } from './SignalSynthesisSection';
 import { RisksUnknownsSection } from './RisksUnknownsSection';
 import { ValidationPlanSection } from './ValidationPlanSection';
 import { FounderRecommendationSection } from './FounderRecommendationSection';
+import { ActionSection } from './ActionSection';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 
@@ -14,7 +15,6 @@ interface CandidateBriefViewProps {
 }
 
 export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
-  // Check if this is an insufficient evidence case
   const isInsufficientEvidence = 
     brief.verdict === 'caution' && 
     brief.confidence === 'low' &&
@@ -24,22 +24,22 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.14 }}
-      className="max-w-xl mx-auto"
+      transition={{ duration: 0.2 }}
+      className="max-w-lg mx-auto"
     >
-      {/* Back button */}
+      {/* Back */}
       <motion.button
-        initial={{ opacity: 0, x: -4 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.12, delay: 0.04 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.15, delay: 0.05 }}
         onClick={onBack}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-100 mb-12"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-16"
       >
         <ArrowLeft className="w-4 h-4" />
         New evaluation
       </motion.button>
 
-      {/* 1) Verdict Header */}
+      {/* 0) Verdict Header */}
       <VerdictHeader
         candidateName={brief.candidateName}
         verdict={brief.verdict}
@@ -48,37 +48,41 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         isInsufficientEvidence={isInsufficientEvidence}
       />
       
-      {/* Only show these sections if sufficient evidence */}
       {!isInsufficientEvidence && (
         <>
-          {/* 2) Real Work Evidence */}
+          {/* 1) Real Work Evidence */}
           <RealWorkEvidenceSection artifacts={brief.workArtifacts} />
           
-          {/* 3) What This Evidence Suggests */}
+          {/* 2) Signal Synthesis */}
           <SignalSynthesisSection signals={brief.signalSynthesis} />
           
-          {/* 4) Risks & Unknowns */}
+          {/* 3) Risks & Unknowns */}
           <RisksUnknownsSection risks={brief.risksUnknowns} />
         </>
       )}
       
-      {/* 5) Fast Validation Plan - always shows */}
+      {/* 4) Validation Plan */}
       <ValidationPlanSection plan={brief.validationPlan} />
       
-      {/* 6) Final Recommendation - only if sufficient evidence */}
+      {/* 5) Founder Recommendation */}
       {!isInsufficientEvidence && (
         <FounderRecommendationSection recommendation={brief.recommendation} />
+      )}
+
+      {/* 6) Action Section — collapsible */}
+      {!isInsufficientEvidence && (
+        <ActionSection candidateName={brief.candidateName} />
       )}
 
       {/* Footer */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.14, delay: 0.28 }}
-        className="py-12 border-t border-border text-center"
+        transition={{ duration: 0.2, delay: 0.35 }}
+        className="pt-16 pb-8 border-t border-border"
       >
-        <p className="text-xs text-muted-foreground">
-          HumIQ — Work Evidence Brief
+        <p className="text-xs text-muted-foreground tracking-wider">
+          HumIQ
         </p>
       </motion.footer>
     </motion.div>
