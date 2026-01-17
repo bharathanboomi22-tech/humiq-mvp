@@ -57,9 +57,9 @@ const Index = () => {
         
         {viewState === 'loading' && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="w-6 h-6 border-2 border-muted border-t-accent rounded-full animate-spin mb-4" />
-            <p className="text-foreground text-sm mb-1">Analyzing work evidence...</p>
-            <p className="text-muted-foreground text-xs">This may take 30–60 seconds</p>
+            <div className="w-5 h-5 border-2 border-muted border-t-accent rounded-full animate-spin mb-5" />
+            <p className="text-foreground/80 text-sm mb-1">Evaluating work evidence...</p>
+            <p className="text-muted-foreground text-xs">30–60 seconds</p>
           </div>
         )}
         

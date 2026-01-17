@@ -5,7 +5,7 @@ interface AnalyzeCandidateInput {
   linkedinUrl: string;
   githubUrl: string;
   websiteUrl?: string;
-  founderContext?: string;
+  rawWorkEvidence?: string; // Internal field - operator-provided evidence
 }
 
 interface AnalyzeCandidateResponse {
@@ -14,7 +14,12 @@ interface AnalyzeCandidateResponse {
 
 export async function analyzeCandidate(input: AnalyzeCandidateInput): Promise<CandidateBrief> {
   const { data, error } = await supabase.functions.invoke<AnalyzeCandidateResponse>('analyze-candidate', {
-    body: input
+    body: {
+      linkedinUrl: input.linkedinUrl,
+      githubUrl: input.githubUrl,
+      websiteUrl: input.websiteUrl,
+      rawWorkEvidence: input.rawWorkEvidence || '', // Empty triggers insufficient evidence path
+    }
   });
 
   if (error) {

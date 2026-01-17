@@ -12,17 +12,20 @@ const levelLabels: Record<SignalLevel, string> = {
 };
 
 export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps) {
+  // Don't render if no signals
+  if (!signals || signals.length === 0) return null;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.16, delay: 0.1, ease: 'easeOut' }}
-      className="py-10 border-t border-border"
+      transition={{ duration: 0.14, delay: 0.08, ease: 'easeOut' }}
+      className="py-12 border-t border-border"
     >
-      <h2 className="font-display text-xl font-medium text-foreground mb-1">
+      <h2 className="font-display text-lg font-medium text-foreground mb-1">
         What This Evidence Suggests
       </h2>
-      <p className="text-sm text-muted-foreground mb-8">
+      <p className="text-xs text-muted-foreground mb-8">
         Interpretation, not raw data
       </p>
 
@@ -32,18 +35,18 @@ export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps)
             key={signal.name}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.14, delay: 0.12 + index * 0.03, ease: 'easeOut' }}
-            className="flex flex-col sm:flex-row sm:items-start gap-3"
+            transition={{ duration: 0.12, delay: 0.1 + index * 0.025, ease: 'easeOut' }}
+            className="grid grid-cols-[140px_1fr] gap-4 items-start"
           >
-            <div className="flex items-center gap-3 min-w-[180px]">
-              <span className="text-sm font-medium text-foreground">
-                {signal.name}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-foreground/80">
+                {signal.name.replace(' Signal', '')}
               </span>
               <span className={`signal-${signal.level} text-xs font-medium`}>
                 {levelLabels[signal.level]}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {signal.evidence}
             </p>
           </motion.div>
