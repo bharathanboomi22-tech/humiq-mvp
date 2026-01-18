@@ -15,16 +15,13 @@ const Index = () => {
   const handleSubmit = async (data: { 
     githubUrl: string; 
     otherLinks: string; 
-    rawWorkEvidence: string;
   }) => {
     setViewState('loading');
     
     try {
       const result = await analyzeCandidate({
-        linkedinUrl: '', // Deprecated - now using otherLinks
         githubUrl: data.githubUrl,
-        websiteUrl: data.otherLinks || undefined,
-        rawWorkEvidence: data.rawWorkEvidence,
+        otherLinks: data.otherLinks || undefined,
       });
       
       setBrief(result);
