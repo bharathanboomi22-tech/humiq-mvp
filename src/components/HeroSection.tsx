@@ -163,14 +163,19 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             </motion.p>
           </div>
 
-          {/* RIGHT COLUMN - Product module */}
-          <div className="flex items-center justify-center lg:justify-end">
+          {/* RIGHT COLUMN - Product module with title */}
+          <div className="flex flex-col items-center justify-center lg:items-end">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.8, ease: 'easeOut' }}
+              transition={{ duration: 0.35, delay: 0.8, ease: 'easeOut' }}
               className="w-full max-w-md"
             >
+              {/* Editorial title above card */}
+              <h2 className="font-display text-xl md:text-2xl font-medium leading-relaxed tracking-[-0.01em] text-foreground/85 mb-8">
+                See how candidates actually work, before you hire them.
+              </h2>
+              
               <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
             </motion.div>
           </div>
