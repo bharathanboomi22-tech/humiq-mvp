@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CandidateInputForm } from '@/components/CandidateInputForm';
+import { HeroSection } from '@/components/HeroSection';
 import { CandidateBriefView } from '@/components/CandidateBriefView';
 import { LoadingExperience } from '@/components/LoadingExperience';
 import { CandidateBrief } from '@/types/brief';
@@ -52,20 +52,22 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-screen bg-ambient">
-      <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
-        {viewState === 'input' && (
-          <CandidateInputForm onSubmit={handleSubmit} />
-        )}
-        
-        {viewState === 'loading' && (
+    <main className="min-h-screen" style={{ background: '#0B0E12' }}>
+      {viewState === 'input' && (
+        <HeroSection onSubmit={handleSubmit} />
+      )}
+      
+      {viewState === 'loading' && (
+        <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
           <LoadingExperience />
-        )}
-        
-        {viewState === 'brief' && brief && (
+        </div>
+      )}
+      
+      {viewState === 'brief' && brief && (
+        <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
           <CandidateBriefView brief={brief} onBack={handleBack} />
-        )}
-      </div>
+        </div>
+      )}
     </main>
   );
 };
