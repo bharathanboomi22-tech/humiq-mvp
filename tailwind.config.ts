@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['SF Pro Display', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        body: ['SF Pro Text', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['Inter', 'SF Pro Display', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['Inter', 'SF Pro Text', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -64,8 +64,8 @@ export default {
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 8px)",
       },
       keyframes: {
         "accordion-down": {
@@ -77,7 +77,7 @@ export default {
           to: { height: "0" },
         },
         "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(5px)" },
+          "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
@@ -86,10 +86,10 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.15s ease-out",
-        "accordion-up": "accordion-up 0.15s ease-out",
-        "fade-up": "fade-up 0.16s ease-out forwards",
-        "fade-in": "fade-in 0.12s ease-out forwards",
+        "accordion-down": "accordion-down 220ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "accordion-up": "accordion-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "fade-up": "fade-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
+        "fade-in": "fade-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
       },
     },
   },

@@ -21,6 +21,8 @@ const confidenceLabels: Record<ConfidenceLevel, string> = {
   low: 'Low',
 };
 
+
+
 export function VerdictHeader({ 
   candidateName, 
   verdict, 
@@ -30,34 +32,56 @@ export function VerdictHeader({
 }: VerdictHeaderProps) {
   return (
     <motion.header
-      initial={{ opacity: 0, y: 5 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, ease: [0.25, 0.1, 0.25, 1] }}
-      className="mb-20"
+      transition={{ duration: 0.22, ease: easing }}
+      className="mb-16"
     >
       {/* Candidate name — understated */}
       {candidateName && !isInsufficientEvidence && (
-        <p className="text-sm text-muted-foreground mb-10 tracking-wide">
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+          className="text-sm text-muted-foreground mb-8 tracking-wide"
+        >
           {candidateName}
-        </p>
+        </motion.p>
       )}
 
-      {/* Verdict — calm conclusion, stands alone */}
-      <div className="mb-5">
-        <span className={`verdict-${verdict} inline-block px-4 py-2.5 rounded-md text-sm font-medium tracking-wide`}>
+      {/* Verdict — H1 size, with subtle glow */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+        className="mb-6"
+      >
+        <span 
+          className={`verdict-${verdict} inline-block px-5 py-3 rounded-lg text-[34px] md:text-[40px] font-semibold tracking-tight font-display`}
+        >
           {verdictLabels[verdict]}
         </span>
-      </div>
+      </motion.div>
 
       {/* Confidence — de-emphasized */}
-      <p className="text-xs text-muted-foreground/80 mb-8 tracking-wider uppercase">
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.22, delay: 0.16, ease: easing }}
+        className="section-header mb-6"
+      >
         Confidence: <span className={`signal-${confidence}`}>{confidenceLabels[confidence]}</span>
-      </p>
+      </motion.p>
 
-      {/* Rationale — the judgment line, readable */}
-      <p className="text-foreground/90 text-lg leading-relaxed max-w-xl font-display">
+      {/* Rationale — readable, max ~70 chars per line */}
+      <motion.p 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: 0.24, ease: easing }}
+        className="text-foreground text-base md:text-lg leading-relaxed max-w-[65ch] font-display"
+      >
         {rationale}
-      </p>
+      </motion.p>
     </motion.header>
   );
 }

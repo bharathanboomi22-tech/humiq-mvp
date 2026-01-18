@@ -2,59 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumIQ — Thinking Interface
-   Intelligent, calm, analytical.
-   "Thinking in a quiet room — not staring into darkness." */
+/* HumIQ — Quiet Intelligence Theme
+   Apple x Linear dark aesthetic.
+   Intelligent, calm, analytical. */
 
 @layer base {
   :root {
-    /* Deep graphite base — soft, not harsh */
-    --background: 225 8% 7%;
-    --foreground: 220 10% 91%;
+    /* Deep midnight base — #070A10 */
+    --background: 220 33% 3%;
+    --foreground: 0 0% 100% / 0.92;
 
-    /* Surface layers — clear elevation through contrast */
-    --card: 225 7% 11%;
-    --card-foreground: 220 10% 91%;
+    /* Surface layers — glass effect base */
+    --card: 0 0% 100% / 0.04;
+    --card-foreground: 0 0% 100% / 0.92;
 
-    --popover: 225 7% 12%;
-    --popover-foreground: 220 10% 91%;
+    --popover: 220 25% 8%;
+    --popover-foreground: 0 0% 100% / 0.92;
 
-    /* Primary — soft off-white, readable */
-    --primary: 220 10% 91%;
-    --primary-foreground: 225 8% 7%;
+    /* Primary — off-white, readable */
+    --primary: 0 0% 100% / 0.92;
+    --primary-foreground: 220 33% 3%;
 
     /* Secondary — subtle elevation */
-    --secondary: 225 6% 15%;
-    --secondary-foreground: 220 8% 72%;
+    --secondary: 0 0% 100% / 0.06;
+    --secondary-foreground: 0 0% 100% / 0.68;
 
-    /* Muted — cool neutrals, never low contrast */
-    --muted: 225 5% 18%;
-    --muted-foreground: 220 6% 55%;
+    /* Muted — secondary text */
+    --muted: 0 0% 100% / 0.08;
+    --muted-foreground: 0 0% 100% / 0.68;
 
-    /* Accent — single intelligent tone, whispers not shouts */
-    --accent: 215 25% 65%;
-    --accent-foreground: 225 8% 7%;
+    /* Accent — Quiet violet #7C5CFF */
+    --accent: 252 100% 68%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Verdict colors — calm, not alarming */
-    --verdict-interview: 158 28% 52%;
-    --verdict-caution: 42 35% 58%;
-    --verdict-pass: 220 5% 50%;
+    /* Verdict colors — calm, distinctive */
+    --verdict-interview: 162 63% 52%; /* #33D6A6 success */
+    --verdict-caution: 32 89% 72%;    /* #F6C177 caution */
+    --verdict-pass: 351 100% 68%;     /* #FF5C7A risk */
 
-    /* Signal levels — directional, muted */
-    --signal-high: 158 25% 55%;
-    --signal-medium: 42 30% 60%;
-    --signal-low: 220 5% 52%;
+    /* Signal levels — matches verdicts */
+    --signal-high: 162 63% 52%;
+    --signal-medium: 32 89% 72%;
+    --signal-low: 0 0% 100% / 0.5;
 
-    --destructive: 0 35% 52%;
-    --destructive-foreground: 220 10% 95%;
+    --destructive: 351 100% 68%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 225 6% 16%;
-    --input: 225 7% 12%;
-    --ring: 215 20% 55%;
+    /* Borders — rgba(255,255,255,0.08) */
+    --border: 0 0% 100% / 0.08;
+    --input: 0 0% 100% / 0.06;
+    --ring: 252 100% 68% / 0.5;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    /* Typography — humanist, readable */
+    /* Typography — Inter, system fallbacks */
     --font-display: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --font-body: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
   }
@@ -71,36 +72,75 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    line-height: 1.75;
+    @apply text-foreground;
+    background: #070A10;
+    line-height: 1.65;
     letter-spacing: 0.01em;
   }
 
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
   }
 
-  /* Verdict pills — calm, understated */
+  /* Ambient background with layered gradients */
+  .bg-ambient {
+    background: 
+      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(124, 92, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 85% 5%, rgba(51, 214, 166, 0.05) 0%, transparent 45%),
+      linear-gradient(180deg, #070A10 0%, #0A0D14 50%, #070A10 100%);
+  }
+
+  /* Glass card styling */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    box-shadow: 
+      0 4px 24px -4px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    backdrop-filter: blur(12px);
+  }
+
+  .glass-card-hover {
+    @apply glass-card;
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .glass-card-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 8px 32px -4px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 0 40px -10px rgba(124, 92, 255, 0.15);
+  }
+
+  /* Verdict pills — calm, with subtle glow */
   .verdict-interview {
-    background: hsl(var(--verdict-interview) / 0.12);
+    background: rgba(51, 214, 166, 0.12);
     color: hsl(var(--verdict-interview));
-    border: 1px solid hsl(var(--verdict-interview) / 0.18);
+    border: 1px solid rgba(51, 214, 166, 0.2);
+    box-shadow: 0 0 20px -5px rgba(51, 214, 166, 0.25);
   }
 
   .verdict-caution {
-    background: hsl(var(--verdict-caution) / 0.12);
+    background: rgba(246, 193, 119, 0.12);
     color: hsl(var(--verdict-caution));
-    border: 1px solid hsl(var(--verdict-caution) / 0.18);
+    border: 1px solid rgba(246, 193, 119, 0.2);
+    box-shadow: 0 0 20px -5px rgba(246, 193, 119, 0.25);
   }
 
   .verdict-pass {
-    background: hsl(var(--verdict-pass) / 0.12);
+    background: rgba(255, 92, 122, 0.12);
     color: hsl(var(--verdict-pass));
-    border: 1px solid hsl(var(--verdict-pass) / 0.18);
+    border: 1px solid rgba(255, 92, 122, 0.2);
+    box-shadow: 0 0 20px -5px rgba(255, 92, 122, 0.25);
   }
 
-  /* Signal levels — muted, directional */
+  /* Signal levels */
   .signal-high {
     color: hsl(var(--signal-high));
   }
@@ -112,6 +152,17 @@
   .signal-low {
     color: hsl(var(--signal-low));
   }
+
+  /* Accent glow — subtle, for key elements */
+  .accent-glow {
+    box-shadow: 0 0 24px -6px rgba(124, 92, 255, 0.35);
+  }
+
+  /* Section header style */
+  .section-header {
+    @apply text-sm uppercase tracking-[0.12em] text-muted-foreground mb-8;
+    font-weight: 500;
+  }
 }
 
 html {
@@ -119,19 +170,19 @@ html {
 }
 
 ::selection {
-  background: hsl(var(--accent) / 0.2);
+  background: rgba(124, 92, 255, 0.3);
 }
 
 :focus-visible {
-  outline: 1px solid hsl(var(--accent) / 0.4);
+  outline: 1px solid rgba(124, 92, 255, 0.5);
   outline-offset: 2px;
 }
 
-/* Refined animation — fast, natural easing */
+/* Refined animation — slow, deliberate, 220ms default */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -139,6 +190,32 @@ html {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-fade-up {
-  animation: fade-up 0.14s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: fade-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Staggered animation delays */
+.stagger-1 { animation-delay: 80ms; }
+.stagger-2 { animation-delay: 160ms; }
+.stagger-3 { animation-delay: 240ms; }
+.stagger-4 { animation-delay: 320ms; }
+.stagger-5 { animation-delay: 400ms; }
+
+/* Smooth height transitions for expand/collapse */
+.expand-collapse {
+  transition: height 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }

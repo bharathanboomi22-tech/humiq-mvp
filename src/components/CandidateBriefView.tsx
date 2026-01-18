@@ -14,6 +14,8 @@ interface CandidateBriefViewProps {
   onBack: () => void;
 }
 
+const staggerDelay = 0.08; // 80ms stagger
+
 export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
   const isInsufficientEvidence = 
     brief.verdict === 'caution' && 
@@ -24,18 +26,18 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.14, ease: [0.25, 0.1, 0.25, 1] }}
-      className="max-w-xl mx-auto"
+      transition={{ duration: 0.22, ease: easing }}
+      className="max-w-2xl mx-auto"
     >
-      {/* Back — subtle hover lift */}
+      {/* Back button */}
       <motion.button
-        initial={{ opacity: 0, y: 4 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.12, delay: 0.02, ease: [0.25, 0.1, 0.25, 1] }}
+        transition={{ duration: 0.22, ease: easing }}
         onClick={onBack}
-        className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 mb-20"
+        className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 mb-16 group"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
         New evaluation
       </motion.button>
 
@@ -51,37 +53,73 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
       {!isInsufficientEvidence && (
         <>
           {/* 1) Real Work Evidence */}
-          <RealWorkEvidenceSection artifacts={brief.workArtifacts} />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, delay: staggerDelay * 1, ease: easing }}
+          >
+            <RealWorkEvidenceSection artifacts={brief.workArtifacts} />
+          </motion.div>
           
           {/* 2) Signal Synthesis */}
-          <SignalSynthesisSection signals={brief.signalSynthesis} />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, delay: staggerDelay * 2, ease: easing }}
+          >
+            <SignalSynthesisSection signals={brief.signalSynthesis} />
+          </motion.div>
           
           {/* 3) Risks & Unknowns */}
-          <RisksUnknownsSection risks={brief.risksUnknowns} />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, delay: staggerDelay * 3, ease: easing }}
+          >
+            <RisksUnknownsSection risks={brief.risksUnknowns} />
+          </motion.div>
         </>
       )}
       
       {/* 4) Validation Plan */}
-      <ValidationPlanSection plan={brief.validationPlan} />
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: staggerDelay * 4, ease: easing }}
+      >
+        <ValidationPlanSection plan={brief.validationPlan} />
+      </motion.div>
       
       {/* 5) Founder Recommendation */}
       {!isInsufficientEvidence && (
-        <FounderRecommendationSection recommendation={brief.recommendation} />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, delay: staggerDelay * 5, ease: easing }}
+        >
+          <FounderRecommendationSection recommendation={brief.recommendation} />
+        </motion.div>
       )}
 
       {/* 6) Action Section — collapsible */}
       {!isInsufficientEvidence && (
-        <ActionSection candidateName={brief.candidateName} />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, delay: staggerDelay * 6, ease: easing }}
+        >
+          <ActionSection candidateName={brief.candidateName} />
+        </motion.div>
       )}
 
-      {/* Footer — understated */}
+      {/* Footer */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.14, delay: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-        className="pt-20 pb-10 border-t border-border/60"
+        transition={{ duration: 0.22, delay: staggerDelay * 7, ease: easing }}
+        className="pt-16 pb-8 border-t border-border"
       >
-        <p className="text-xs text-muted-foreground/70 tracking-wider">
+        <p className="text-xs text-muted-foreground tracking-widest uppercase">
           HumIQ
         </p>
       </motion.footer>

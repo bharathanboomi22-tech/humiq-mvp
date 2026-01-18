@@ -5,36 +5,37 @@ interface ValidationPlanSectionProps {
   plan: ValidationPlan;
 }
 
+
+
 export function ValidationPlanSection({ plan }: ValidationPlanSectionProps) {
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, delay: 0.16, ease: [0.25, 0.1, 0.25, 1] }}
-      className="mb-20"
-    >
-      <h2 className="text-xs uppercase tracking-widest text-muted-foreground/90 mb-10">
+    <section className="mb-16">
+      <h2 className="section-header">
         Fastest Way to Validate the Biggest Risk
       </h2>
 
-      {/* Slight emphasis — next action, relief */}
-      <div className="space-y-10 p-6 bg-card/50 rounded-lg border border-border/50">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, ease: easing }}
+        className="glass-card p-6 space-y-6"
+      >
         {/* Risk to validate */}
         <div>
-          <p className="text-sm text-muted-foreground mb-3">
+          <p className="text-sm text-muted-foreground mb-2">
             To validate:
           </p>
-          <p className="text-[15px] text-foreground/90 leading-relaxed">
+          <p className="text-[15px] text-foreground/90 leading-relaxed max-w-[65ch]">
             {plan.riskToValidate}
           </p>
         </div>
 
-        {/* The question — clear separation */}
+        {/* The question */}
         <div>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-muted-foreground mb-3">
             Ask this in a 15–30 min conversation:
           </p>
-          <blockquote className="text-foreground leading-relaxed pl-5 border-l-2 border-accent/40 py-1">
+          <blockquote className="text-foreground leading-relaxed pl-5 border-l-2 border-accent/50 py-1 max-w-[65ch]">
             "{plan.question}"
           </blockquote>
         </div>
@@ -42,15 +43,15 @@ export function ValidationPlanSection({ plan }: ValidationPlanSectionProps) {
         {/* Strong answer */}
         {plan.strongAnswer && (
           <div>
-            <p className="text-sm text-muted-foreground mb-3">
+            <p className="text-sm text-muted-foreground mb-2">
               What a strong answer sounds like:
             </p>
-            <p className="text-[15px] text-foreground/75 leading-relaxed">
+            <p className="text-[15px] text-foreground/75 leading-relaxed max-w-[65ch]">
               {plan.strongAnswer}
             </p>
           </div>
         )}
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 }

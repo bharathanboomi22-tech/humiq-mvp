@@ -1,10 +1,12 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface ActionSectionProps {
   candidateName?: string;
 }
+
+
 
 export function ActionSection({ candidateName }: ActionSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,60 +16,63 @@ export function ActionSection({ candidateName }: ActionSectionProps) {
     : `Hi,\n\nI came across your work and was impressed by what I saw. We're building something early-stage and looking for a founding engineer who can own outcomes.\n\nWould you be open to a brief conversation?\n\nBest`;
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, delay: 0.24, ease: [0.25, 0.1, 0.25, 1] }}
-      className="mb-20"
-    >
+    <section className="mb-16">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-150"
+        className="flex items-center gap-2.5 section-header hover:text-foreground transition-colors duration-200"
       >
         Take Action
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown 
+          className={`w-4 h-4 transition-transform duration-220 ease-out ${isOpen ? 'rotate-180' : ''}`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+        />
       </button>
 
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mt-10 space-y-10"
-        >
-          {/* Draft outreach */}
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Draft outreach message:
-            </p>
-            <pre className="text-[15px] text-foreground/80 leading-relaxed whitespace-pre-wrap p-5 bg-card rounded-lg border border-border/60">
-              {draftMessage}
-            </pre>
-          </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: easing }}
+            className="overflow-hidden"
+          >
+            <div className="mt-6 space-y-6">
+              {/* Draft outreach */}
+              <div className="glass-card p-5">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Draft outreach message:
+                </p>
+                <pre className="text-[15px] text-foreground/85 leading-relaxed whitespace-pre-wrap max-w-[65ch]">
+                  {draftMessage}
+                </pre>
+              </div>
 
-          {/* Role framing */}
-          <div>
-            <p className="text-sm text-muted-foreground mb-3">
-              Suggested role framing:
-            </p>
-            <p className="text-[15px] text-foreground/80 leading-relaxed">
-              Founding Engineer — full ownership of [core system]. 
-              Report directly to founders. Equity stake.
-            </p>
-          </div>
+              {/* Role framing */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Suggested role framing:
+                </p>
+                <p className="text-[15px] text-foreground/85 leading-relaxed max-w-[65ch]">
+                  Founding Engineer — full ownership of [core system]. 
+                  Report directly to founders. Equity stake.
+                </p>
+              </div>
 
-          {/* First 30 days */}
-          <div>
-            <p className="text-sm text-muted-foreground mb-3">
-              Suggested first 30 days:
-            </p>
-            <p className="text-[15px] text-foreground/80 leading-relaxed">
-              Ship one complete feature end-to-end. 
-              Make one architectural decision that will last.
-            </p>
-          </div>
-        </motion.div>
-      )}
-    </motion.section>
+              {/* First 30 days */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Suggested first 30 days:
+                </p>
+                <p className="text-[15px] text-foreground/85 leading-relaxed max-w-[65ch]">
+                  Ship one complete feature end-to-end. 
+                  Make one architectural decision that will last.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   );
 }
