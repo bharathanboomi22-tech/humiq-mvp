@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { CandidateInputForm } from './CandidateInputForm';
 
 interface HeroSectionProps {
@@ -7,48 +7,132 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section className="min-h-screen relative overflow-hidden">
-      {/* Background - warm matte black #0B0E12 */}
+      {/* Background - warm matte black #0B0E12 with subtle radial depth */}
       <div 
         className="absolute inset-0"
-        style={{ background: '#0B0E12' }}
+        style={{ 
+          background: 'radial-gradient(ellipse 120% 80% at 30% 50%, #0D1117 0%, #0B0E12 50%, #090B0E 100%)'
+        }}
       />
       
-      {/* Subtle ambient animation - LEFT SIDE ONLY */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Layer C — Grain / Noise overlay (full width, static) */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.018]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+        }}
+      />
+
+      {/* Intelligence Blur — LEFT SIDE ONLY (clipped to ~55%) */}
+      <div 
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+        style={{ clipPath: 'inset(0 45% 0 0)' }}
+      >
+        {/* Layer A — Drift Blobs (3-4 large radial gradient blobs) */}
+        {/* Blob 1 - Top left, cool teal */}
         <motion.div
-          className="absolute -left-[20%] top-[10%] w-[60%] h-[70%] opacity-[0.04]"
+          className="absolute -left-[15%] top-[5%] w-[50%] h-[45%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(124, 92, 255, 0.6), transparent 70%)',
-            filter: 'blur(80px)',
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(45, 120, 130, 0.5), transparent 65%)',
+            filter: 'blur(100px)',
+            opacity: shouldReduceMotion ? 0.04 : 0.05,
           }}
-          animate={{
-            x: [0, 30, 0],
-            y: [0, 20, 0],
-            scale: [1, 1.05, 1],
+          animate={shouldReduceMotion ? {} : {
+            x: [0, 40, 15, 0],
+            y: [0, 25, -10, 0],
+            scale: [1, 1.08, 0.95, 1],
           }}
           transition={{
-            duration: 25,
+            duration: 32,
             repeat: Infinity,
-            ease: 'linear',
+            ease: 'easeInOut',
           }}
         />
+        
+        {/* Blob 2 - Center left, soft cyan */}
         <motion.div
-          className="absolute left-[5%] top-[40%] w-[40%] h-[50%] opacity-[0.03]"
+          className="absolute left-[0%] top-[30%] w-[45%] h-[40%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(51, 214, 166, 0.5), transparent 70%)',
-            filter: 'blur(100px)',
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(70, 140, 150, 0.4), transparent 60%)',
+            filter: 'blur(90px)',
+            opacity: shouldReduceMotion ? 0.03 : 0.04,
           }}
-          animate={{
-            x: [0, -20, 0],
-            y: [0, -30, 0],
-            scale: [1, 0.95, 1],
+          animate={shouldReduceMotion ? {} : {
+            x: [0, -30, 20, 0],
+            y: [0, 35, -15, 0],
+            scale: [1, 0.92, 1.06, 1],
+          }}
+          transition={{
+            duration: 38,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 5,
+          }}
+        />
+        
+        {/* Blob 3 - Bottom left, muted teal */}
+        <motion.div
+          className="absolute -left-[10%] top-[55%] w-[40%] h-[50%]"
+          style={{
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(55, 110, 120, 0.45), transparent 65%)',
+            filter: 'blur(110px)',
+            opacity: shouldReduceMotion ? 0.025 : 0.035,
+          }}
+          animate={shouldReduceMotion ? {} : {
+            x: [0, 35, -20, 0],
+            y: [0, -20, 30, 0],
+            scale: [1, 1.1, 0.94, 1],
+          }}
+          transition={{
+            duration: 28,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 12,
+          }}
+        />
+        
+        {/* Blob 4 - Upper margin, very subtle accent */}
+        <motion.div
+          className="absolute left-[10%] top-[15%] w-[35%] h-[35%]"
+          style={{
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(80, 150, 160, 0.35), transparent 55%)',
+            filter: 'blur(120px)',
+            opacity: shouldReduceMotion ? 0.02 : 0.03,
+          }}
+          animate={shouldReduceMotion ? {} : {
+            x: [0, -25, 30, 0],
+            y: [0, 40, -5, 0],
+            scale: [1, 0.96, 1.04, 1],
+          }}
+          transition={{
+            duration: 42,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 8,
+          }}
+        />
+
+        {/* Layer B — Soft Sweep (thinking pulse) */}
+        <motion.div
+          className="absolute left-[-30%] top-[20%] w-[80%] h-[60%]"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(65, 130, 140, 0.15) 40%, rgba(75, 145, 155, 0.1) 60%, transparent 100%)',
+            filter: 'blur(80px)',
+            opacity: shouldReduceMotion ? 0.02 : undefined,
+          }}
+          animate={shouldReduceMotion ? {} : {
+            x: ['-10%', '60%', '-10%'],
+            opacity: [0, 0.025, 0.03, 0.02, 0],
           }}
           transition={{
             duration: 30,
             repeat: Infinity,
-            ease: 'linear',
+            ease: 'easeInOut',
           }}
         />
       </div>
