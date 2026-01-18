@@ -110,7 +110,20 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       </div>
 
       {/* Content grid - two columns */}
-      <div className="relative z-10 container mx-auto px-6 lg:px-12 min-h-screen flex items-center">
+      <div className="relative z-10 container mx-auto px-6 lg:px-12 min-h-screen flex flex-col">
+        {/* Top logo */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="pt-8 lg:pt-12"
+        >
+          <span className="font-display text-lg font-medium tracking-tight text-foreground/90">
+            HumIQ <span className="text-foreground/50">AI</span>
+          </span>
+        </motion.div>
+
+        <div className="flex-1 flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 w-full py-16 lg:py-0">
           
           {/* LEFT COLUMN - Editorial text */}
@@ -172,6 +185,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
             </motion.div>
           </div>
+        </div>
         </div>
       </div>
     </section>
