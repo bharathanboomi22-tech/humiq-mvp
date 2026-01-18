@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CandidateInputForm } from '@/components/CandidateInputForm';
 import { CandidateBriefView } from '@/components/CandidateBriefView';
+import { LoadingExperience } from '@/components/LoadingExperience';
 import { CandidateBrief } from '@/types/brief';
 import { analyzeCandidate } from '@/lib/analyzeCandidate';
 import { toast } from 'sonner';
@@ -61,11 +62,7 @@ const Index = () => {
         )}
         
         {viewState === 'loading' && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="w-5 h-5 border-2 border-muted border-t-accent rounded-full animate-spin mb-5" />
-            <p className="text-foreground/80 text-sm mb-1">Evaluating work evidence...</p>
-            <p className="text-muted-foreground text-xs">30–60 seconds</p>
-          </div>
+          <LoadingExperience />
         )}
         
         {viewState === 'brief' && brief && (
