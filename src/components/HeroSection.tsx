@@ -11,7 +11,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
 
   return (
     <section className="min-h-screen relative overflow-hidden">
-      {/* Background - warm matte black #0B0E12 with subtle radial depth */}
+      {/* Background - warm matte black with subtle radial depth */}
       <div 
         className="absolute inset-0"
         style={{ 
@@ -21,118 +21,97 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       
       {/* Layer C — Grain / Noise overlay (full width, static) */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.018]"
+        className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat',
         }}
       />
+
+      {/* Layer B — Static Intelligence Glow behind headline (always visible) */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ clipPath: 'inset(0 45% 0 0)' }}
+      >
+        <div
+          className="absolute left-[5%] top-[25%] w-[45%] h-[50%]"
+          style={{
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(70, 130, 140, 0.35), transparent 60%)',
+            filter: 'blur(140px)',
+            opacity: 0.06,
+          }}
+        />
+      </div>
 
       {/* Intelligence Blur — LEFT SIDE ONLY (clipped to ~55%) */}
       <div 
         className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ clipPath: 'inset(0 45% 0 0)' }}
       >
-        {/* Layer A — Drift Blobs (3-4 large radial gradient blobs) */}
-        {/* Blob 1 - Top left, cool teal */}
+        {/* Layer A — Drift Blobs (3 large radial gradient blobs) */}
+        
+        {/* Blob 1 - Upper left, muted teal */}
         <motion.div
-          className="absolute -left-[15%] top-[5%] w-[50%] h-[45%]"
+          className="absolute left-[2%] top-[10%] w-[40%] h-[40%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(45, 120, 130, 0.5), transparent 65%)',
-            filter: 'blur(100px)',
-            opacity: shouldReduceMotion ? 0.04 : 0.05,
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(55, 120, 130, 0.7), transparent 55%)',
+            filter: 'blur(60px)',
           }}
-          animate={shouldReduceMotion ? {} : {
-            x: [0, 40, 15, 0],
-            y: [0, 25, -10, 0],
-            scale: [1, 1.08, 0.95, 1],
+          initial={{ opacity: 0.1 }}
+          animate={shouldReduceMotion ? { opacity: 0.08 } : {
+            x: [0, 35, 10, 0],
+            y: [0, 20, -15, 0],
+            scale: [1, 1.06, 0.97, 1],
+            opacity: [0.1, 0.09, 0.07, 0.06, 0.08, 0.1],
           }}
           transition={{
-            duration: 32,
+            duration: 25,
             repeat: Infinity,
             ease: 'easeInOut',
           }}
         />
         
-        {/* Blob 2 - Center left, soft cyan */}
+        {/* Blob 2 - Center, cyan-gray */}
         <motion.div
-          className="absolute left-[0%] top-[30%] w-[45%] h-[40%]"
+          className="absolute left-[15%] top-[35%] w-[35%] h-[35%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(70, 140, 150, 0.4), transparent 60%)',
-            filter: 'blur(90px)',
-            opacity: shouldReduceMotion ? 0.03 : 0.04,
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(75, 135, 145, 0.65), transparent 50%)',
+            filter: 'blur(55px)',
           }}
-          animate={shouldReduceMotion ? {} : {
-            x: [0, -30, 20, 0],
-            y: [0, 35, -15, 0],
-            scale: [1, 0.92, 1.06, 1],
-          }}
-          transition={{
-            duration: 38,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 5,
-          }}
-        />
-        
-        {/* Blob 3 - Bottom left, muted teal */}
-        <motion.div
-          className="absolute -left-[10%] top-[55%] w-[40%] h-[50%]"
-          style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(55, 110, 120, 0.45), transparent 65%)',
-            filter: 'blur(110px)',
-            opacity: shouldReduceMotion ? 0.025 : 0.035,
-          }}
-          animate={shouldReduceMotion ? {} : {
-            x: [0, 35, -20, 0],
-            y: [0, -20, 30, 0],
-            scale: [1, 1.1, 0.94, 1],
+          initial={{ opacity: 0.11 }}
+          animate={shouldReduceMotion ? { opacity: 0.07 } : {
+            x: [0, -25, 20, 0],
+            y: [0, 30, -10, 0],
+            scale: [1, 0.94, 1.05, 1],
+            opacity: [0.11, 0.08, 0.06, 0.07, 0.09, 0.11],
           }}
           transition={{
             duration: 28,
             repeat: Infinity,
             ease: 'easeInOut',
-            delay: 12,
+            delay: 3,
           }}
         />
         
-        {/* Blob 4 - Upper margin, very subtle accent */}
+        {/* Blob 3 - Lower left, soft teal */}
         <motion.div
-          className="absolute left-[10%] top-[15%] w-[35%] h-[35%]"
+          className="absolute left-[5%] top-[55%] w-[38%] h-[38%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(80, 150, 160, 0.35), transparent 55%)',
-            filter: 'blur(120px)',
-            opacity: shouldReduceMotion ? 0.02 : 0.03,
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(60, 125, 135, 0.6), transparent 55%)',
+            filter: 'blur(65px)',
           }}
-          animate={shouldReduceMotion ? {} : {
-            x: [0, -25, 30, 0],
-            y: [0, 40, -5, 0],
-            scale: [1, 0.96, 1.04, 1],
+          initial={{ opacity: 0.09 }}
+          animate={shouldReduceMotion ? { opacity: 0.06 } : {
+            x: [0, 30, -15, 0],
+            y: [0, -18, 25, 0],
+            scale: [1, 1.08, 0.95, 1],
+            opacity: [0.09, 0.07, 0.06, 0.065, 0.08, 0.09],
           }}
           transition={{
-            duration: 42,
+            duration: 22,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 8,
-          }}
-        />
-
-        {/* Layer B — Soft Sweep (thinking pulse) */}
-        <motion.div
-          className="absolute left-[-30%] top-[20%] w-[80%] h-[60%]"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(65, 130, 140, 0.15) 40%, rgba(75, 145, 155, 0.1) 60%, transparent 100%)',
-            filter: 'blur(80px)',
-            opacity: shouldReduceMotion ? 0.02 : undefined,
-          }}
-          animate={shouldReduceMotion ? {} : {
-            x: ['-10%', '60%', '-10%'],
-            opacity: [0, 0.025, 0.03, 0.02, 0],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'easeInOut',
           }}
         />
       </div>
