@@ -14,7 +14,7 @@ interface CandidateBriefViewProps {
   onBack: () => void;
 }
 
-const staggerDelay = 0.08; // 80ms stagger
+const staggerDelay = 0.08;
 
 export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
   const isInsufficientEvidence = 
@@ -26,14 +26,14 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.22, ease: easing }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
       className="max-w-2xl mx-auto"
     >
       {/* Back button */}
       <motion.button
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, ease: easing }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
         onClick={onBack}
         className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 mb-16 group"
       >
@@ -56,7 +56,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: staggerDelay * 1, ease: easing }}
+            transition={{ duration: 0.22, delay: staggerDelay * 1, ease: 'easeOut' }}
           >
             <RealWorkEvidenceSection artifacts={brief.workArtifacts} />
           </motion.div>
@@ -65,7 +65,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: staggerDelay * 2, ease: easing }}
+            transition={{ duration: 0.22, delay: staggerDelay * 2, ease: 'easeOut' }}
           >
             <SignalSynthesisSection signals={brief.signalSynthesis} />
           </motion.div>
@@ -74,7 +74,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: staggerDelay * 3, ease: easing }}
+            transition={{ duration: 0.22, delay: staggerDelay * 3, ease: 'easeOut' }}
           >
             <RisksUnknownsSection risks={brief.risksUnknowns} />
           </motion.div>
@@ -85,7 +85,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, delay: staggerDelay * 4, ease: easing }}
+        transition={{ duration: 0.22, delay: staggerDelay * 4, ease: 'easeOut' }}
       >
         <ValidationPlanSection plan={brief.validationPlan} />
       </motion.div>
@@ -95,7 +95,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.22, delay: staggerDelay * 5, ease: easing }}
+          transition={{ duration: 0.22, delay: staggerDelay * 5, ease: 'easeOut' }}
         >
           <FounderRecommendationSection recommendation={brief.recommendation} />
         </motion.div>
@@ -106,7 +106,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.22, delay: staggerDelay * 6, ease: easing }}
+          transition={{ duration: 0.22, delay: staggerDelay * 6, ease: 'easeOut' }}
         >
           <ActionSection candidateName={brief.candidateName} />
         </motion.div>
@@ -116,7 +116,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.22, delay: staggerDelay * 7, ease: easing }}
+        transition={{ duration: 0.22, delay: staggerDelay * 7, ease: 'easeOut' }}
         className="pt-16 pb-8 border-t border-border"
       >
         <p className="text-xs text-muted-foreground tracking-widest uppercase">

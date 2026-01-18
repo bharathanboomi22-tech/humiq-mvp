@@ -6,8 +6,6 @@ interface RealWorkEvidenceSectionProps {
   artifacts: WorkArtifact[];
 }
 
-
-
 export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionProps) {
   if (!artifacts || artifacts.length === 0) return null;
 
@@ -23,7 +21,7 @@ export function RealWorkEvidenceSection({ artifacts }: RealWorkEvidenceSectionPr
             key={artifact.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: index * 0.08, ease: easing }}
+            transition={{ duration: 0.22, delay: index * 0.08, ease: 'easeOut' }}
             className="glass-card-hover p-6"
           >
             {/* Title with link */}

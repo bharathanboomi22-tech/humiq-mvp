@@ -41,8 +41,6 @@ const EVIDENCE_CARDS: EvidenceCard[] = [
   { id: '3', label: 'Case Study / Blog', type: 'case-study', reviewed: false },
 ];
 
-
-
 export function LoadingExperience() {
   const [currentAct, setCurrentAct] = useState<Act>(1);
   const [copyIndex, setCopyIndex] = useState(0);
@@ -164,7 +162,7 @@ export function LoadingExperience() {
                 opacity: currentAct >= act ? 1 : 0.3,
                 backgroundColor: currentAct >= act ? 'hsl(252 100% 68%)' : 'rgba(255,255,255,0.08)'
               }}
-              transition={{ duration: 0.22, ease: easing }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
               className="w-2 h-2 rounded-full"
             />
           ))}
@@ -180,15 +178,15 @@ export function LoadingExperience() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: easing }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3"
               >
-                {cards.map((card, index) => (
+                {cards.map((card) => (
                   <motion.div
                     key={card.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, ease: easing }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
                     className="w-full max-w-xs"
                   >
                     <div className="flex items-center justify-between px-5 py-4 rounded-lg glass-card">
@@ -198,7 +196,7 @@ export function LoadingExperience() {
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.3, ease: easing }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
                             className="flex items-center gap-1.5"
                           >
                             <Check className="w-4 h-4 text-accent" />
@@ -219,7 +217,7 @@ export function LoadingExperience() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: easing }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <div className="relative w-full max-w-xs">
@@ -227,7 +225,7 @@ export function LoadingExperience() {
                   <motion.div
                     initial={{ rotate: 0 }}
                     animate={{ rotate: cards[0]?.weight === 'heavy' ? 4 : 0 }}
-                    transition={{ duration: 1.5, ease: easing }}
+                    transition={{ duration: 1.5, ease: 'easeOut' }}
                     className="relative h-0.5 bg-border rounded-full mb-8"
                   >
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-accent accent-glow" />
@@ -243,7 +241,7 @@ export function LoadingExperience() {
                           scale: card.weight === 'heavy' ? 1.02 : card.weight === 'faded' ? 0.98 : 1,
                           x: card.weight === 'heavy' ? 6 : card.weight === 'light' ? -6 : 0,
                         }}
-                        transition={{ duration: 0.8, ease: easing }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
                         className={`flex items-center justify-between px-5 py-4 rounded-lg glass-card ${
                           card.weight === 'heavy' ? 'border-accent/30' : ''
                         }`}
@@ -262,7 +260,7 @@ export function LoadingExperience() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.4, ease: easing }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
                         className="mt-6 flex items-center justify-center gap-2 text-muted-foreground"
                       >
                         <HelpCircle className="w-4 h-4" />
@@ -281,13 +279,13 @@ export function LoadingExperience() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: easing }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: easing }}
+                  transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
                   className="text-center"
                 >
                   <div className="inline-block px-8 py-5 rounded-xl glass-card border-accent/30 accent-glow">
@@ -300,7 +298,7 @@ export function LoadingExperience() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 0.6 }}
-                  transition={{ duration: 0.6, delay: 1.2, ease: easing }}
+                  transition={{ duration: 0.6, delay: 1.2, ease: 'easeOut' }}
                   className="mt-8 flex items-center gap-3"
                 >
                   {[1, 2, 3].map((i) => (
@@ -308,7 +306,7 @@ export function LoadingExperience() {
                       key={i}
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 0.5, y: 0 }}
-                      transition={{ duration: 0.4, delay: 1.2 + i * 0.15, ease: easing }}
+                      transition={{ duration: 0.4, delay: 1.2 + i * 0.15, ease: 'easeOut' }}
                       className="w-20 h-2 rounded-full bg-border"
                     />
                   ))}
@@ -326,7 +324,7 @@ export function LoadingExperience() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: easing }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
               className="text-sm text-muted-foreground"
             >
               {getCurrentCopy()}

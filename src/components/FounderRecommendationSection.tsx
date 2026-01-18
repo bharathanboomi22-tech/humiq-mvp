@@ -11,8 +11,6 @@ const verdictLabels: Record<VerdictType, string> = {
   pass: 'Do Not Advance',
 };
 
-
-
 export function FounderRecommendationSection({ recommendation }: FounderRecommendationSectionProps) {
   if (!recommendation.reasons || recommendation.reasons.length === 0) return null;
 
@@ -25,7 +23,7 @@ export function FounderRecommendationSection({ recommendation }: FounderRecommen
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, ease: easing }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
       >
         {/* Verdict with subtle glow */}
         <p className={`verdict-${recommendation.verdict} inline-block px-4 py-2 rounded-lg text-foreground font-medium text-lg mb-6`}>

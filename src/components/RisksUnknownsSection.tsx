@@ -5,8 +5,6 @@ interface RisksUnknownsSectionProps {
   risks: RiskUnknown[];
 }
 
-
-
 export function RisksUnknownsSection({ risks }: RisksUnknownsSectionProps) {
   if (!risks || risks.length === 0) return null;
 
@@ -22,7 +20,7 @@ export function RisksUnknownsSection({ risks }: RisksUnknownsSectionProps) {
             key={risk.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: index * 0.08, ease: easing }}
+            transition={{ duration: 0.22, delay: index * 0.08, ease: 'easeOut' }}
             className="flex items-start gap-4"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-2.5 flex-shrink-0" />
