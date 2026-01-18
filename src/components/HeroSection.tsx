@@ -172,7 +172,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               className="w-full max-w-md"
             >
               {/* Editorial title above card */}
-              <h2 className="font-display text-xl md:text-2xl font-medium leading-relaxed tracking-[-0.01em] text-foreground/85 mb-8">
+              <h2 className="font-display text-xl md:text-2xl font-medium leading-relaxed tracking-[-0.01em] text-foreground/85 mb-8 text-center">
                 See how candidates actually work, before you hire them.
               </h2>
               
