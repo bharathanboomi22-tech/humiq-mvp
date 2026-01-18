@@ -55,8 +55,8 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto px-6 py-16 md:py-20">
+    <main className="min-h-screen bg-ambient">
+      <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
         {viewState === 'input' && (
           <CandidateInputForm onSubmit={handleSubmit} />
         )}

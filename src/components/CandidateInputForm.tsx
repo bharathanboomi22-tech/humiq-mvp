@@ -13,6 +13,8 @@ interface CandidateInputFormProps {
   isLoading?: boolean;
 }
 
+
+
 export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormProps) {
   const [githubUrl, setGithubUrl] = useState('');
   const [otherLinks, setOtherLinks] = useState('');
@@ -71,15 +73,18 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 5 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.14, ease: 'easeOut' }}
+      transition={{ duration: 0.22, ease: easing }}
       className="max-w-md mx-auto"
     >
-      {/* Header - Triple-click "HumIQ" to toggle admin mode */}
-      <div className="text-center mb-14">
-        <p 
-          className="text-xs uppercase tracking-widest text-muted-foreground mb-4 cursor-default select-none"
+      {/* Header */}
+      <div className="text-center mb-12">
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+          className="section-header cursor-default select-none"
           onClick={(e) => {
             if (e.detail === 3) {
               setIsAdminMode(prev => !prev);
@@ -87,16 +92,32 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           }}
         >
           HumIQ
-        </p>
-        <h1 className="font-display text-2xl md:text-[28px] font-medium text-foreground leading-tight mb-4">
+        </motion.p>
+        <motion.h1 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, delay: 0.16, ease: easing }}
+          className="font-display text-2xl md:text-[28px] font-medium text-foreground leading-tight mb-4"
+        >
           See how a Founding Engineer actually works, before you hire them.
-        </h1>
-        <p className="text-muted-foreground text-sm">
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.22, delay: 0.24, ease: easing }}
+          className="text-muted-foreground text-sm"
+        >
           Work Evidence Brief • Under 60 seconds
-        </p>
+        </motion.p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <motion.form 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: 0.32, ease: easing }}
+        onSubmit={handleSubmit} 
+        className="space-y-5"
+      >
         {/* Admin Mode Indicator */}
         <AnimatePresence>
           {isAdminMode && (
@@ -104,8 +125,8 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.12 }}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 border border-accent/20"
+              transition={{ duration: 0.22, ease: easing }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg glass-card border-accent/30"
             >
               <Shield className="w-4 h-4 text-accent" />
               <span className="text-xs text-accent font-medium">Admin Mode</span>
@@ -116,7 +137,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         <div className="space-y-4">
           {/* GitHub URL */}
           <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
+            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2.5">
               <Github className="w-4 h-4 text-muted-foreground" />
               GitHub URL
             </label>
@@ -125,13 +146,13 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
               placeholder="https://github.com/..."
-              className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100"
+              className="w-full px-4 py-3.5 rounded-lg glass-card text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30 transition-all duration-200"
             />
           </div>
 
           {/* Other Links (optional) */}
           <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2">
+            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2.5">
               <Globe className="w-4 h-4 text-muted-foreground" />
               Other Links
               <span className="text-muted-foreground text-xs">(optional)</span>
@@ -141,7 +162,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               value={otherLinks}
               onChange={(e) => setOtherLinks(e.target.value)}
               placeholder="Portfolio, LinkedIn, product demos..."
-              className="w-full px-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100"
+              className="w-full px-4 py-3.5 rounded-lg glass-card text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30 transition-all duration-200"
             />
           </div>
 
@@ -152,7 +173,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.12 }}
+                transition={{ duration: 0.22, ease: easing }}
                 className="space-y-3"
               >
                 <div className="flex items-center justify-between">
@@ -164,7 +185,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
                     type="button"
                     onClick={handleFetchEvidence}
                     disabled={isFetchingEvidence || !githubUrl.trim()}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-100"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md glass-card text-accent border-accent/20 hover:border-accent/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     {isFetchingEvidence ? (
                       <>
@@ -184,7 +205,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
                   onChange={(e) => setRawWorkEvidence(e.target.value)}
                   placeholder="Paste README content, repo descriptions, case studies, blog excerpts..."
                   rows={8}
-                  className="w-full px-4 py-3 rounded-lg bg-input border border-accent/30 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 transition-all duration-100 resize-y font-mono text-sm"
+                  className="w-full px-4 py-3.5 rounded-lg glass-card border-accent/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30 transition-all duration-200 resize-y font-mono text-sm"
                 />
                 <p className="text-xs text-muted-foreground">
                   This field powers AI evaluation. Paste verified work evidence only.
@@ -194,17 +215,17 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           </AnimatePresence>
         </div>
 
-        {/* Helper text - exact copy */}
+        {/* Helper text */}
         <p className="text-xs text-muted-foreground text-center leading-relaxed">
           HumIQ evaluates verified work evidence.<br />
           If evidence is limited, it will clearly say so.
         </p>
 
-        {/* Submit button */}
+        {/* Submit button with accent glow */}
         <button
           type="submit"
           disabled={!isValid || isLoading}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg text-sm font-medium bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-100"
+          className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg text-sm font-medium bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200 accent-glow"
         >
           {isLoading ? (
             <span>Evaluating...</span>
@@ -215,7 +236,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
             </>
           )}
         </button>
-      </form>
+      </motion.form>
     </motion.div>
   );
 }
