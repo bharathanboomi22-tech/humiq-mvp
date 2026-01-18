@@ -13,8 +13,6 @@ interface CandidateInputFormProps {
   isLoading?: boolean;
 }
 
-
-
 export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormProps) {
   const [githubUrl, setGithubUrl] = useState('');
   const [otherLinks, setOtherLinks] = useState('');
@@ -22,7 +20,6 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isFetchingEvidence, setIsFetchingEvidence] = useState(false);
 
-  // Hidden admin mode toggle: Ctrl+Shift+A (Windows/Linux) or Cmd+Shift+A (Mac)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
@@ -75,7 +72,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, ease: easing }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
       className="max-w-md mx-auto"
     >
       {/* Header */}
@@ -83,7 +80,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+          transition={{ duration: 0.22, delay: 0.08, ease: 'easeOut' }}
           className="section-header cursor-default select-none"
           onClick={(e) => {
             if (e.detail === 3) {
@@ -96,7 +93,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         <motion.h1 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.22, delay: 0.16, ease: easing }}
+          transition={{ duration: 0.22, delay: 0.16, ease: 'easeOut' }}
           className="font-display text-2xl md:text-[28px] font-medium text-foreground leading-tight mb-4"
         >
           See how a Founding Engineer actually works, before you hire them.
@@ -104,7 +101,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.22, delay: 0.24, ease: easing }}
+          transition={{ duration: 0.22, delay: 0.24, ease: 'easeOut' }}
           className="text-muted-foreground text-sm"
         >
           Work Evidence Brief • Under 60 seconds
@@ -114,7 +111,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
       <motion.form 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, delay: 0.32, ease: easing }}
+        transition={{ duration: 0.22, delay: 0.32, ease: 'easeOut' }}
         onSubmit={handleSubmit} 
         className="space-y-5"
       >
@@ -125,7 +122,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22, ease: easing }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg glass-card border-accent/30"
             >
               <Shield className="w-4 h-4 text-accent" />
@@ -173,7 +170,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.22, ease: easing }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
                 className="space-y-3"
               >
                 <div className="flex items-center justify-between">

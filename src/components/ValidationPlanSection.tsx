@@ -5,8 +5,6 @@ interface ValidationPlanSectionProps {
   plan: ValidationPlan;
 }
 
-
-
 export function ValidationPlanSection({ plan }: ValidationPlanSectionProps) {
   return (
     <section className="mb-16">
@@ -17,7 +15,7 @@ export function ValidationPlanSection({ plan }: ValidationPlanSectionProps) {
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, ease: easing }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
         className="glass-card p-6 space-y-6"
       >
         {/* Risk to validate */}

@@ -6,8 +6,6 @@ interface ActionSectionProps {
   candidateName?: string;
 }
 
-
-
 export function ActionSection({ candidateName }: ActionSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,8 +21,7 @@ export function ActionSection({ candidateName }: ActionSectionProps) {
       >
         Take Action
         <ChevronDown 
-          className={`w-4 h-4 transition-transform duration-220 ease-out ${isOpen ? 'rotate-180' : ''}`}
-          style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -34,7 +31,7 @@ export function ActionSection({ candidateName }: ActionSectionProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.22, ease: easing }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
             className="overflow-hidden"
           >
             <div className="mt-6 space-y-6">

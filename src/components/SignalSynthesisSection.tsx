@@ -11,8 +11,6 @@ const levelLabels: Record<SignalLevel, string> = {
   low: 'Low',
 };
 
-
-
 export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps) {
   if (!signals || signals.length === 0) return null;
 
@@ -28,7 +26,7 @@ export function SignalSynthesisSection({ signals }: SignalSynthesisSectionProps)
             key={signal.name}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, delay: index * 0.08, ease: easing }}
+            transition={{ duration: 0.22, delay: index * 0.08, ease: 'easeOut' }}
             className={index < signals.length - 1 ? "pb-6 border-b border-border" : ""}
           >
             {/* Signal name and level */}

@@ -21,8 +21,6 @@ const confidenceLabels: Record<ConfidenceLevel, string> = {
   low: 'Low',
 };
 
-
-
 export function VerdictHeader({ 
   candidateName, 
   verdict, 
@@ -34,7 +32,7 @@ export function VerdictHeader({
     <motion.header
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, ease: easing }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
       className="mb-16"
     >
       {/* Candidate name — understated */}
@@ -42,7 +40,7 @@ export function VerdictHeader({
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+          transition={{ duration: 0.22, delay: 0.08, ease: 'easeOut' }}
           className="text-sm text-muted-foreground mb-8 tracking-wide"
         >
           {candidateName}
@@ -53,7 +51,7 @@ export function VerdictHeader({
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, delay: 0.08, ease: easing }}
+        transition={{ duration: 0.22, delay: 0.08, ease: 'easeOut' }}
         className="mb-6"
       >
         <span 
@@ -67,7 +65,7 @@ export function VerdictHeader({
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.22, delay: 0.16, ease: easing }}
+        transition={{ duration: 0.22, delay: 0.16, ease: 'easeOut' }}
         className="section-header mb-6"
       >
         Confidence: <span className={`signal-${confidence}`}>{confidenceLabels[confidence]}</span>
@@ -77,7 +75,7 @@ export function VerdictHeader({
       <motion.p 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, delay: 0.24, ease: easing }}
+        transition={{ duration: 0.22, delay: 0.24, ease: 'easeOut' }}
         className="text-foreground text-base md:text-lg leading-relaxed max-w-[65ch] font-display"
       >
         {rationale}
