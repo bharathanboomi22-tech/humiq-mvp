@@ -34,11 +34,10 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         style={{ clipPath: 'inset(0 45% 0 0)' }}
       >
         <div
-          className="absolute left-[5%] top-[25%] w-[45%] h-[50%]"
+          className="absolute left-[8%] top-[20%] w-[40%] h-[55%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(70, 130, 140, 0.35), transparent 60%)',
-            filter: 'blur(140px)',
-            opacity: 0.06,
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(56, 189, 248, 0.25), transparent 65%)',
+            filter: 'blur(80px)',
           }}
         />
       </div>
@@ -50,68 +49,62 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       >
         {/* Layer A — Drift Blobs (3 large radial gradient blobs) */}
         
-        {/* Blob 1 - Upper left, muted teal */}
+        {/* Blob 1 - Upper left, cyan-teal */}
         <motion.div
-          className="absolute left-[2%] top-[10%] w-[40%] h-[40%]"
+          className="absolute left-[5%] top-[8%] w-[35%] h-[35%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(55, 120, 130, 0.7), transparent 55%)',
-            filter: 'blur(60px)',
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(34, 211, 238, 0.4), transparent 60%)',
+            filter: 'blur(40px)',
           }}
-          initial={{ opacity: 0.1 }}
-          animate={shouldReduceMotion ? { opacity: 0.08 } : {
-            x: [0, 35, 10, 0],
-            y: [0, 20, -15, 0],
-            scale: [1, 1.06, 0.97, 1],
-            opacity: [0.1, 0.09, 0.07, 0.06, 0.08, 0.1],
+          animate={shouldReduceMotion ? {} : {
+            x: [0, 50, 20, 0],
+            y: [0, 30, -20, 0],
+            scale: [1, 1.1, 0.95, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        
+        {/* Blob 2 - Center, soft blue */}
+        <motion.div
+          className="absolute left-[18%] top-[30%] w-[32%] h-[32%]"
+          style={{
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(99, 179, 237, 0.35), transparent 55%)',
+            filter: 'blur(35px)',
+          }}
+          animate={shouldReduceMotion ? {} : {
+            x: [0, -35, 30, 0],
+            y: [0, 40, -15, 0],
+            scale: [1, 0.9, 1.08, 1],
           }}
           transition={{
             duration: 25,
             repeat: Infinity,
             ease: 'easeInOut',
+            delay: 2,
           }}
         />
         
-        {/* Blob 2 - Center, cyan-gray */}
+        {/* Blob 3 - Lower, teal accent */}
         <motion.div
-          className="absolute left-[15%] top-[35%] w-[35%] h-[35%]"
+          className="absolute left-[8%] top-[50%] w-[30%] h-[35%]"
           style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(75, 135, 145, 0.65), transparent 50%)',
-            filter: 'blur(55px)',
+            background: 'radial-gradient(ellipse 100% 100% at center, rgba(45, 212, 191, 0.35), transparent 55%)',
+            filter: 'blur(45px)',
           }}
-          initial={{ opacity: 0.11 }}
-          animate={shouldReduceMotion ? { opacity: 0.07 } : {
-            x: [0, -25, 20, 0],
-            y: [0, 30, -10, 0],
-            scale: [1, 0.94, 1.05, 1],
-            opacity: [0.11, 0.08, 0.06, 0.07, 0.09, 0.11],
-          }}
-          transition={{
-            duration: 28,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 3,
-          }}
-        />
-        
-        {/* Blob 3 - Lower left, soft teal */}
-        <motion.div
-          className="absolute left-[5%] top-[55%] w-[38%] h-[38%]"
-          style={{
-            background: 'radial-gradient(ellipse 100% 100% at center, rgba(60, 125, 135, 0.6), transparent 55%)',
-            filter: 'blur(65px)',
-          }}
-          initial={{ opacity: 0.09 }}
-          animate={shouldReduceMotion ? { opacity: 0.06 } : {
-            x: [0, 30, -15, 0],
-            y: [0, -18, 25, 0],
-            scale: [1, 1.08, 0.95, 1],
-            opacity: [0.09, 0.07, 0.06, 0.065, 0.08, 0.09],
+          animate={shouldReduceMotion ? {} : {
+            x: [0, 40, -25, 0],
+            y: [0, -25, 35, 0],
+            scale: [1, 1.12, 0.92, 1],
           }}
           transition={{
             duration: 22,
             repeat: Infinity,
             ease: 'easeInOut',
-            delay: 8,
+            delay: 5,
           }}
         />
       </div>
