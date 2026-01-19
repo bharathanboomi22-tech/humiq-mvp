@@ -8,7 +8,7 @@ interface FounderRecommendationSectionProps {
 const verdictLabels: Record<VerdictType, string> = {
   interview: 'Interview Now',
   caution: 'Proceed with Caution',
-  pass: 'Do Not Advance',
+  pass: 'Not a Fit',
 };
 
 export function FounderRecommendationSection({ recommendation }: FounderRecommendationSectionProps) {
