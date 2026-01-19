@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Figma, FileText, FolderOpen, Wrench } from 'lucide-react';
+import { ArrowRight, Github, Figma, FileText, FolderOpen, Wrench, MousePointer2, MessageCircle } from 'lucide-react';
 
 interface CandidateInputFormProps {
   onSubmit: (data: { 
@@ -33,33 +33,37 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
         </p>
       </div>
 
-      {/* Evidence Types Row */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-center gap-5">
-          <div className="p-2 rounded-lg bg-white/[0.03]">
-            <Github className="w-4 h-4 text-foreground/40" />
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.03]">
-            <Figma className="w-4 h-4 text-foreground/40" />
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.03]">
-            <FileText className="w-4 h-4 text-foreground/40" />
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.03]">
-            <FolderOpen className="w-4 h-4 text-foreground/40" />
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.03]">
-            <Wrench className="w-4 h-4 text-foreground/40" />
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground/70 text-center">
-          Different roles demonstrate work in different ways.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Active Demo Input */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* PATH A — Existing Work */}
         <div className="space-y-4">
+          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/50">
+            Existing work (optional)
+          </p>
+          
+          {/* Evidence Types Row */}
+          <div className="flex items-center justify-center gap-5">
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <Github className="w-4 h-4 text-foreground/40" />
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <Figma className="w-4 h-4 text-foreground/40" />
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <FileText className="w-4 h-4 text-foreground/40" />
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <FolderOpen className="w-4 h-4 text-foreground/40" />
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <Wrench className="w-4 h-4 text-foreground/40" />
+            </div>
+          </div>
+          
+          <p className="text-xs text-muted-foreground/60 text-center">
+            If candidates have real work they can share, HumIQ reads it directly.
+          </p>
+
+          {/* GitHub Input */}
           <div>
             <label className="flex items-center gap-2 text-sm text-foreground/70 mb-2.5">
               <Github className="w-4 h-4 text-muted-foreground" />
@@ -72,10 +76,32 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
               placeholder="Paste a GitHub PR or repository"
               className="w-full px-4 py-3.5 rounded-lg bg-white/[0.03] border-0 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/40 transition-all duration-200"
             />
-            <p className="text-xs text-muted-foreground/60 mt-2 text-center">
-              This is one example. HumIQ works with many forms of real work.
-            </p>
           </div>
+        </div>
+
+        {/* PATH B — Live Work Session */}
+        <div className="space-y-3 pt-2">
+          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/50">
+            Live work session
+          </p>
+          
+          <div className="flex items-center justify-center gap-4">
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <MousePointer2 className="w-4 h-4 text-foreground/40" />
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.03]">
+              <MessageCircle className="w-4 h-4 text-foreground/40" />
+            </div>
+          </div>
+          
+          <p className="text-xs text-muted-foreground/60 text-center leading-relaxed">
+            When work can't be shared, HumIQ runs a guided work session<br />
+            to observe problem framing, decisions, and execution.
+          </p>
+          
+          <p className="text-[10px] text-muted-foreground/40 text-center italic">
+            This is not a test. It's a real work conversation.
+          </p>
         </div>
 
         {/* HumIQ Intelligence Signal */}
@@ -117,7 +143,8 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
 
       {/* Footnote Trust Signal */}
       <p className="text-[10px] text-muted-foreground/40 text-center leading-relaxed pt-1">
-        HumIQ evaluates real work evidence. If evidence is limited, it will clearly say so.
+        HumIQ evaluates real work signals. If evidence is limited or unavailable,<br />
+        it will clearly say so and rely on live demonstration instead.
       </p>
     </div>
   );
