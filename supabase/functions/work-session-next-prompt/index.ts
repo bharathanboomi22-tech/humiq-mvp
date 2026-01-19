@@ -12,30 +12,18 @@ CRITICAL RULES:
 - Ask exactly 1 question at a time
 - Be conversational, not interrogative
 - Base prompts on GitHub insights when available
-- Focus on real work: requirements, tradeoffs, execution, testing, observability
+- Focus on real work: requirements, tradeoffs, execution
 - No trivia, no gotchas, no leetcode-style puzzles
-- If evidence is missing, ask questions that can reveal it
-- Keep questions SHORT and concise (1-2 sentences max)
-- This is a DEMO session - be brief and move quickly
-- After 1 question per stage, mark stageComplete as true
+- Keep questions SHORT (1 sentence max)
+- This is a QUICK DEMO - only 2 questions total
 
-DEMO MODE (5 min session):
-- Ask only ONE focused question per stage
-- Keep your responses very short
-- Move to next stage after the candidate answers
-
-STAGE GUIDELINES (1 question each):
-- Framing: Ask about understanding the problem and key requirements
-- Approach: Ask about their solution design or architecture choice
-- Build: Ask about implementation approach or key code decisions
-- Review: Ask about testing, edge cases, or deployment
+DEMO MODE (2 questions only):
+- Stage 1 (framing): Ask ONE question about how they'd understand/approach a problem
+- Stage 2 (build): Ask ONE question about implementation or technical decisions
+- After candidate answers, ALWAYS mark stageComplete as true
 
 SIGNAL TAGS (use 1-2 per response):
-- Ownership: Takes responsibility, drives to completion
-- Judgment: Makes good tradeoffs, prioritizes well
-- Execution: Ships working code, unblocks self
-- Communication: Explains clearly, asks good questions
-- ProductSense: Understands user impact, business context`;
+- Ownership, Judgment, Execution, Communication, ProductSense`;
 
 const promptToolSchema = {
   type: "function",
@@ -142,18 +130,16 @@ serve(async (req) => {
     const userPrompt = `SESSION CONTEXT:
 Role Track: ${session.role_track}
 Level: ${session.level}
-Duration: ${session.duration} minutes (${isDemoMode ? "DEMO MODE - 1 question per stage" : "standard"})
+DEMO MODE: Only 2 questions total (framing + build)
 Current Stage: ${currentStage}
 ${githubSummary}
 
 CONVERSATION SO FAR:
 ${conversationHistory || "(Starting conversation)"}
 
-${candidateResponse ? `CANDIDATE'S LATEST RESPONSE:\n${candidateResponse}` : "Generate the opening question for this stage."}
+${candidateResponse ? `CANDIDATE'S RESPONSE:\n${candidateResponse}\n\nIMPORTANT: Candidate has answered. Set stageComplete to TRUE.` : "Generate ONE short opening question for this stage."}
 
-${isDemoMode && candidateResponse ? "IMPORTANT: This is DEMO MODE. The candidate has answered. Set stageComplete to TRUE and provide brief acknowledgment before moving on." : ""}
-
-Generate the next prompt for the ${currentStage} stage.${shouldCompleteStage ? " Mark stageComplete as true since this is demo mode and the candidate has responded." : ""}`;
+Generate a brief response for the ${currentStage} stage.${candidateResponse ? " MUST set stageComplete: true" : ""}`;
 
     // Call LLM
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

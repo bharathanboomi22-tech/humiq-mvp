@@ -188,20 +188,11 @@ const EvidencePack = () => {
                 <Award className="w-5 h-5" />
                 <span className="font-semibold text-lg">{verdictStyle.label}</span>
               </div>
-              <p className="text-sm text-muted-foreground">{verdictStyle.description}</p>
             </div>
           )}
-
-          {/* Confidence Badge */}
-          <div className="flex justify-center">
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${confidenceStyle.class}`}>
-              <Shield className="w-4 h-4" />
-              <span className="font-medium">{confidenceStyle.label}</span>
-            </div>
-          </div>
         </motion.div>
 
-        {/* Rationale - truncated for conciseness */}
+        {/* Rationale */}
         {summary.rationale && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -211,11 +202,7 @@ const EvidencePack = () => {
           >
             <Card className="glass-card border-accent/20">
               <CardContent className="pt-6">
-                <p className="text-foreground/90 leading-relaxed">
-                  {summary.rationale.length > 200 
-                    ? `${summary.rationale.slice(0, 200).trim()}…` 
-                    : summary.rationale}
-                </p>
+                <p className="text-foreground/90 leading-relaxed">{summary.rationale}</p>
               </CardContent>
             </Card>
           </motion.div>

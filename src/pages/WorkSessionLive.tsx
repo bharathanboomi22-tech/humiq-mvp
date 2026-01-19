@@ -29,6 +29,8 @@ import {
   StageName, 
   STAGE_ORDER, 
   STAGE_CONFIG,
+  DEMO_STAGE_ORDER,
+  DEMO_STAGE_CONFIG,
   WorkSession,
   ResponseContent,
   CodeSnapshotContent
@@ -71,6 +73,11 @@ const WorkSessionLive = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const autoListenRef = useRef(false);
+
+  // Use demo stages (2 questions) when duration is 5 minutes
+  const isDemoMode = session?.duration === 5;
+  const activeStageOrder = isDemoMode ? DEMO_STAGE_ORDER : STAGE_ORDER;
+  const activeStageConfig = isDemoMode ? DEMO_STAGE_CONFIG : STAGE_CONFIG;
 
   // Speech Recognition hook
   const {
@@ -367,18 +374,19 @@ const WorkSessionLive = () => {
       
       // Check if stage is complete
       if (promptResult.stageComplete) {
-        const currentIndex = STAGE_ORDER.indexOf(currentStage);
-        const isLastStage = currentIndex === STAGE_ORDER.length - 1;
+        const currentIndex = activeStageOrder.indexOf(currentStage);
+        const isLastStage = currentIndex === activeStageOrder.length - 1;
 
         if (isLastStage) {
           handleCompleteSession();
           return;
         } else {
           setCompletedStages(prev => [...prev, currentStage]);
-          const nextStage = STAGE_ORDER[currentIndex + 1];
+          const nextStage = activeStageOrder[currentIndex + 1];
           setCurrentStage(nextStage);
           
-          toast.success(`Stage complete! Moving to ${STAGE_CONFIG[nextStage].label}`);
+          const stageLabel = activeStageConfig[nextStage]?.label || nextStage;
+          toast.success(`Moving to ${stageLabel}`);
         }
       }
 
@@ -389,7 +397,7 @@ const WorkSessionLive = () => {
         id: crypto.randomUUID(),
         type: 'prompt',
         text: promptText,
-        stage: promptResult.stageComplete ? STAGE_ORDER[STAGE_ORDER.indexOf(currentStage) + 1] || currentStage : currentStage,
+        stage: promptResult.stageComplete ? activeStageOrder[activeStageOrder.indexOf(currentStage) + 1] || currentStage : currentStage,
         timestamp: new Date(),
         signalTags: promptResult.signalTags,
       }]);
@@ -419,8 +427,8 @@ const WorkSessionLive = () => {
       cancelSpeech();
     }
 
-    const currentIndex = STAGE_ORDER.indexOf(currentStage);
-    const isLastStage = currentIndex === STAGE_ORDER.length - 1;
+    const currentIndex = activeStageOrder.indexOf(currentStage);
+    const isLastStage = currentIndex === activeStageOrder.length - 1;
 
     if (isLastStage) {
       handleCompleteSession();
@@ -428,7 +436,7 @@ const WorkSessionLive = () => {
     }
 
     setCompletedStages(prev => [...prev, currentStage]);
-    const nextStage = STAGE_ORDER[currentIndex + 1];
+    const nextStage = activeStageOrder[currentIndex + 1];
     setCurrentStage(nextStage);
 
     // Get first prompt for new stage
@@ -531,8 +539,8 @@ const WorkSessionLive = () => {
     return null;
   }
 
-  const currentIndex = STAGE_ORDER.indexOf(currentStage);
-  const isLastStage = currentIndex === STAGE_ORDER.length - 1;
+  const currentIndex = activeStageOrder.indexOf(currentStage);
+  const isLastStage = currentIndex === activeStageOrder.length - 1;
 
   return (
     <main className="min-h-screen bg-ambient flex flex-col">
@@ -567,6 +575,8 @@ const WorkSessionLive = () => {
               <StageProgress
                 currentStage={currentStage}
                 completedStages={completedStages}
+                stageOrder={activeStageOrder}
+                stageConfig={activeStageConfig}
               />
             </div>
 
@@ -590,6 +600,8 @@ const WorkSessionLive = () => {
               currentStage={currentStage}
               completedStages={completedStages}
               className="flex-1"
+              stageOrder={activeStageOrder}
+              stageConfig={activeStageConfig}
             />
             <VoiceControls
               isVoiceMode={isVoiceMode}
@@ -630,7 +642,7 @@ const WorkSessionLive = () => {
                   {message.type === 'prompt' && (
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[10px] uppercase tracking-wider text-accent font-medium">
-                        {STAGE_CONFIG[message.stage].label}
+                        {activeStageConfig[message.stage]?.label || STAGE_CONFIG[message.stage]?.label || message.stage}
                       </span>
                       {message.signalTags && message.signalTags.length > 0 && (
                         <div className="flex gap-1">

@@ -55,7 +55,7 @@ const evidencePackToolSchema = {
         },
         rationale: {
           type: "string",
-          description: "One paragraph explaining the verdict based on combined evidence",
+          description: "2-3 sentences MAX explaining the verdict concisely. Be direct and specific.",
         },
         candidateName: {
           type: "string",

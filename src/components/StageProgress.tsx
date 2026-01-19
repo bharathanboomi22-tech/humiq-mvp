@@ -6,17 +6,26 @@ interface StageProgressProps {
   currentStage: StageName;
   completedStages: StageName[];
   className?: string;
+  stageOrder?: StageName[];
+  stageConfig?: Record<string, { label: string; minMinutes: number; maxMinutes: number }>;
 }
 
-export function StageProgress({ currentStage, completedStages, className }: StageProgressProps) {
-  const currentIndex = STAGE_ORDER.indexOf(currentStage);
+export function StageProgress({ 
+  currentStage, 
+  completedStages, 
+  className,
+  stageOrder = STAGE_ORDER,
+  stageConfig = STAGE_CONFIG,
+}: StageProgressProps) {
+  const currentIndex = stageOrder.indexOf(currentStage);
 
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      {STAGE_ORDER.map((stage, index) => {
+      {stageOrder.map((stage, index) => {
         const isCompleted = completedStages.includes(stage);
         const isCurrent = stage === currentStage;
         const isPending = !isCompleted && !isCurrent;
+        const config = stageConfig[stage] || { label: stage };
 
         return (
           <div key={stage} className="flex items-center">
@@ -46,12 +55,12 @@ export function StageProgress({ currentStage, completedStages, className }: Stag
                   isPending && 'text-muted-foreground'
                 )}
               >
-                {STAGE_CONFIG[stage].label}
+                {config.label}
               </span>
             </div>
 
             {/* Connector line */}
-            {index < STAGE_ORDER.length - 1 && (
+            {index < stageOrder.length - 1 && (
               <div
                 className={cn(
                   'w-8 h-0.5 mx-1 mt-[-18px] transition-all duration-300',
@@ -67,10 +76,16 @@ export function StageProgress({ currentStage, completedStages, className }: Stag
 }
 
 // Compact version for mobile
-export function StageProgressCompact({ currentStage, completedStages, className }: StageProgressProps) {
-  const currentIndex = STAGE_ORDER.indexOf(currentStage);
-  const totalStages = STAGE_ORDER.length;
-  const completedCount = completedStages.length;
+export function StageProgressCompact({ 
+  currentStage, 
+  completedStages, 
+  className,
+  stageOrder = STAGE_ORDER,
+  stageConfig = STAGE_CONFIG,
+}: StageProgressProps) {
+  const currentIndex = stageOrder.indexOf(currentStage);
+  const totalStages = stageOrder.length;
+  const config = stageConfig[currentStage] || { label: currentStage };
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
@@ -84,7 +99,7 @@ export function StageProgressCompact({ currentStage, completedStages, className 
       
       {/* Stage label */}
       <span className="text-xs text-muted-foreground whitespace-nowrap">
-        {STAGE_CONFIG[currentStage].label} ({currentIndex + 1}/{totalStages})
+        {config.label} ({currentIndex + 1}/{totalStages})
       </span>
     </div>
   );

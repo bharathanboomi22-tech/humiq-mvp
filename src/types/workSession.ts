@@ -11,6 +11,13 @@ export type SessionLevel = 'junior' | 'mid' | 'senior';
 export type SessionDuration = 5 | 15 | 30 | 45;
 export type SessionStatus = 'active' | 'completed' | 'abandoned';
 export type StageName = 'framing' | 'approach' | 'build' | 'review';
+
+// Demo mode only uses 2 stages
+export const DEMO_STAGE_ORDER: StageName[] = ['framing', 'build'];
+export const DEMO_STAGE_CONFIG: Record<string, { label: string; minMinutes: number; maxMinutes: number }> = {
+  framing: { label: 'Problem Understanding', minMinutes: 1, maxMinutes: 2 },
+  build: { label: 'Implementation', minMinutes: 1, maxMinutes: 2 },
+};
 export type EventType = 'PROMPT' | 'RESPONSE' | 'CODE_SNAPSHOT' | 'SYSTEM';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
