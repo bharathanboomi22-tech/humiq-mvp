@@ -17,6 +17,7 @@ export type Database = {
       love_letters: {
         Row: {
           created_at: string
+          email: string | null
           id: string
           message: string
           name_or_role: string | null
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email?: string | null
           id?: string
           message: string
           name_or_role?: string | null
@@ -31,6 +33,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email?: string | null
           id?: string
           message?: string
           name_or_role?: string | null
