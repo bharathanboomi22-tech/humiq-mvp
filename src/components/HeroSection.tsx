@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { CandidateInputForm } from './CandidateInputForm';
+import { LoveLetters } from './LoveLetters';
 
 interface HeroSectionProps {
   onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -124,63 +125,73 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         </motion.div>
 
         <div className="flex-1 flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 w-full py-16 lg:py-0">
-          
-          {/* LEFT COLUMN - Editorial text */}
-          <div className="flex flex-col justify-center">
-            {/* Title - Line 1 */}
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="font-display text-[2.5rem] md:text-[3.25rem] lg:text-[3.75rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground"
-            >
-              The CV era is over.
-            </motion.h1>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 w-full py-16 lg:py-0">
             
-            {/* Title - Line 2 */}
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.45, delay: 0.55, ease: 'easeOut' }}
-              className="font-display text-[2.5rem] md:text-[3.25rem] lg:text-[3.75rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground mt-2"
-            >
-              HumIQ is building what comes next.
-            </motion.h1>
-            
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 1.0, ease: 'easeOut' }}
-              className="mt-8 text-lg md:text-xl text-foreground/70 leading-relaxed max-w-[50ch]"
-            >
-              HumIQ replaces CVs with real work evidence — so hiring starts with how someone actually works.
-            </motion.p>
-            
-            {/* Microline - philosophical boundary */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35, delay: 1.4, ease: 'easeOut' }}
-              className="mt-8 text-sm text-muted-foreground tracking-wide"
-            >
-              No optimized CVs. No ATS. No job marketplace.
-            </motion.p>
-          </div>
+            {/* LEFT COLUMN - Editorial text */}
+            <div className="flex flex-col justify-center lg:col-span-1">
+              {/* Title - Line 1 */}
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground"
+              >
+                The CV era is over.
+              </motion.h1>
+              
+              {/* Title - Line 2 */}
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.45, delay: 0.55, ease: 'easeOut' }}
+                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground mt-2"
+              >
+                HumIQ is building what comes next.
+              </motion.h1>
+              
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 1.0, ease: 'easeOut' }}
+                className="mt-6 text-base md:text-lg text-foreground/70 leading-relaxed max-w-[45ch]"
+              >
+                HumIQ replaces CVs with real work evidence — so hiring starts with how someone actually works.
+              </motion.p>
+              
+              {/* Microline - philosophical boundary */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35, delay: 1.4, ease: 'easeOut' }}
+                className="mt-6 text-sm text-muted-foreground tracking-wide"
+              >
+                No optimized CVs. No ATS. No job marketplace.
+              </motion.p>
+            </div>
 
-          {/* RIGHT COLUMN - Product module with title */}
-          <div className="flex flex-col items-center justify-center lg:items-end">
+            {/* CENTER COLUMN - Love Letters */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.35, delay: 0.8, ease: 'easeOut' }}
-              className="w-full max-w-md"
+              transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
+              className="flex flex-col items-center justify-center lg:col-span-1"
             >
-              <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
+              <LoveLetters />
             </motion.div>
+
+            {/* RIGHT COLUMN - Product module */}
+            <div className="flex flex-col items-center justify-center lg:items-end lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35, delay: 0.8, ease: 'easeOut' }}
+                className="w-full max-w-md"
+              >
+                <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
+              </motion.div>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </section>
