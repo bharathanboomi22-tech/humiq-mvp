@@ -6,9 +6,11 @@ interface FounderRecommendationSectionProps {
   recommendation: FounderRecommendation;
 }
 
-const verdictLabels: Record<VerdictType, string> = {
-  pass: 'Pass',
-  fail: 'Fail',
+const verdictConfig: Record<string, { label: string; Icon: LucideIcon }> = {
+  interview: { label: 'Interview Now', Icon: CheckCircle },
+  caution: { label: 'Proceed with Caution', Icon: AlertTriangle },
+  pass: { label: 'Fail', Icon: XCircle },
+  fail: { label: 'Fail', Icon: XCircle },
 };
 
 export function FounderRecommendationSection({ recommendation }: FounderRecommendationSectionProps) {
