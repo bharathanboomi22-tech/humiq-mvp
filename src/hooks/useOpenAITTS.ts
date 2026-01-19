@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 type OpenAIVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
 
@@ -20,7 +19,6 @@ interface UseOpenAITTSReturn {
 
 export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSReturn {
   const {
-    voice = 'echo',
     onStart,
     onEnd,
     onError,
@@ -30,23 +28,13 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const cancel = useCallback(() => {
-    // Cancel any pending request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
     }
-
-    // Stop audio playback
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current = null;
-    }
-
+    utteranceRef.current = null;
     setIsSpeaking(false);
     setIsLoading(false);
   }, []);
@@ -54,77 +42,69 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
   const speak = useCallback(async (text: string) => {
     if (!text.trim()) return;
 
+    // Check browser support
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      const errorMsg = 'Speech synthesis not supported in this browser';
+      setError(errorMsg);
+      onError?.(errorMsg);
+      return;
+    }
+
     // Cancel any existing speech
     cancel();
 
     setError(null);
     setIsLoading(true);
 
-    // Create new abort controller
-    abortControllerRef.current = new AbortController();
-
     try {
-      console.log('Requesting TTS for:', text.substring(0, 50) + '...');
+      const utterance = new SpeechSynthesisUtterance(text);
+      utteranceRef.current = utterance;
 
-      // Call the Edge Function
-      const { data, error: invokeError } = await supabase.functions.invoke<{
-        audio: string;
-        format: string;
-      }>('text-to-speech', {
-        body: { text, voice },
-      });
+      // Configure voice settings
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
 
-      // Check if cancelled
-      if (abortControllerRef.current?.signal.aborted) {
-        return;
+      // Try to get a good English voice
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(v => 
+        v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Samantha'))
+      ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
       }
 
-      if (invokeError) {
-        throw new Error(invokeError.message || 'Failed to generate speech');
-      }
-
-      if (!data?.audio) {
-        throw new Error('No audio data received');
-      }
-
-      // Use data URI - browser natively decodes base64 audio without corruption
-      const audioUrl = `data:audio/mpeg;base64,${data.audio}`;
-
-      // Create and play audio
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-
-      audio.onplay = () => {
+      utterance.onstart = () => {
         setIsLoading(false);
         setIsSpeaking(true);
         onStart?.();
       };
 
-      audio.onended = () => {
+      utterance.onend = () => {
         setIsSpeaking(false);
-        audioRef.current = null;
+        utteranceRef.current = null;
         onEnd?.();
       };
 
-      audio.onerror = (e) => {
-        console.error('Audio playback error:', e);
+      utterance.onerror = (e) => {
+        // Ignore 'interrupted' errors (caused by cancel)
+        if (e.error === 'interrupted') {
+          return;
+        }
+        console.error('Speech synthesis error:', e);
         setIsSpeaking(false);
         setIsLoading(false);
-        audioRef.current = null;
-        const errorMsg = 'Failed to play audio';
+        utteranceRef.current = null;
+        const errorMsg = `Speech synthesis error: ${e.error}`;
         setError(errorMsg);
         onError?.(errorMsg);
       };
 
-      // Start playback
-      await audio.play();
+      // Start speaking
+      window.speechSynthesis.speak(utterance);
 
     } catch (err) {
-      // Check if it was cancelled
-      if (abortControllerRef.current?.signal.aborted) {
-        return;
-      }
-
       console.error('TTS error:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to generate speech';
       setError(errorMsg);
@@ -132,7 +112,7 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
       setIsSpeaking(false);
       onError?.(errorMsg);
     }
-  }, [voice, cancel, onStart, onEnd, onError]);
+  }, [cancel, onStart, onEnd, onError]);
 
   return {
     isSpeaking,
