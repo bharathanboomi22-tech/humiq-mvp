@@ -1,6 +1,7 @@
+import { useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CandidateInputForm } from './CandidateInputForm';
-import { LoveLetters } from './LoveLetters';
+import { LoveLetters, LoveLettersRef } from './LoveLetters';
 
 interface HeroSectionProps {
   onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -9,6 +10,18 @@ interface HeroSectionProps {
 
 export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
+  const loveLettersRef = useRef<LoveLettersRef>(null);
+
+  const scrollToLoveLetters = () => {
+    const element = document.getElementById('love-letters-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Expand the input after scrolling
+      setTimeout(() => {
+        loveLettersRef.current?.expand();
+      }, 500);
+    }
+  };
 
   return (
     <section className="min-h-screen relative overflow-hidden">
@@ -112,23 +125,59 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
 
       {/* Content grid - two columns */}
       <div className="relative z-10 container mx-auto px-6 lg:px-12 min-h-screen flex flex-col">
-        {/* Top logo */}
-        <motion.div
+        {/* Top Navigation */}
+        <motion.nav
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="pt-8 lg:pt-12"
+          className="pt-8 lg:pt-12 flex items-center justify-between"
         >
-          <span className="font-display text-lg font-medium tracking-tight text-foreground/90">
-            HumIQ <span className="text-foreground/50">AI</span>
-          </span>
-        </motion.div>
+          {/* Left - Logo + Beta */}
+          <div className="flex items-center gap-3">
+            <span className="font-display text-lg font-medium tracking-tight text-foreground/90">
+              HumIQ <span className="text-foreground/50">AI</span>
+            </span>
+            <span 
+              className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-medium rounded-full"
+              style={{
+                background: 'rgba(255, 255, 255, 0.06)',
+                color: 'rgba(255, 255, 255, 0.55)',
+              }}
+            >
+              Beta
+            </span>
+          </div>
+
+          {/* Center - Love Letters Nav Item */}
+          <button
+            onClick={scrollToLoveLetters}
+            className="hidden md:block text-sm text-muted-foreground hover:text-foreground/80 
+              transition-all duration-200 hover:opacity-100 opacity-70"
+          >
+            💌 HumIQ Love Letters
+          </button>
+
+          {/* Right - Placeholder for future nav */}
+          <div className="w-[100px]" />
+        </motion.nav>
 
         <div className="flex-1 flex items-center">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 w-full py-16 lg:py-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 w-full py-16 lg:py-0">
             
-            {/* LEFT COLUMN - Editorial text */}
-            <div className="flex flex-col justify-center lg:col-span-1">
+            {/* LEFT COLUMN - Editorial text + Beta indicator */}
+            <div className="flex flex-col justify-center">
+              {/* Beta Microline - Top of content */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="mb-6"
+              >
+                <p className="text-[11px] text-muted-foreground/60 tracking-wide">
+                  Early access · Shaping what comes next
+                </p>
+              </motion.div>
+
               {/* Title - Line 1 */}
               <motion.h1
                 initial={{ opacity: 0 }}
@@ -170,18 +219,8 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               </motion.p>
             </div>
 
-            {/* CENTER COLUMN - Love Letters */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
-              className="flex flex-col items-center justify-center lg:col-span-1"
-            >
-              <LoveLetters />
-            </motion.div>
-
             {/* RIGHT COLUMN - Product module */}
-            <div className="flex flex-col items-center justify-center lg:items-end lg:col-span-1">
+            <div className="flex flex-col items-center justify-center lg:items-end">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -193,6 +232,17 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             </div>
           </div>
         </div>
+
+        {/* Love Letters Section - Below the main grid */}
+        <motion.div
+          id="love-letters-section"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
+          className="pb-16 lg:pb-24"
+        >
+          <LoveLetters ref={loveLettersRef} />
+        </motion.div>
       </div>
     </section>
   );
