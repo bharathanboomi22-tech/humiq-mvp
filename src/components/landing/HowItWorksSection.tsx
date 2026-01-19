@@ -1,174 +1,169 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useReducedMotion, useInView } from 'framer-motion';
-import { User, Mail, Video, FileText, Users } from 'lucide-react';
+import { Video, Code, Palette, FileText } from 'lucide-react';
 
-const steps = [
-  {
-    icon: User,
-    title: 'Talent shares their profile',
-    description: 'Real work, past projects — or nothing at all.',
-  },
-  {
-    icon: Mail,
-    title: 'AI interview invite sent',
-    description: 'Automatically, when a relevant match exists.',
-  },
-  {
-    icon: Video,
-    title: 'AI-led interview',
-    description: 'Explores thinking, tradeoffs, and ownership.',
-  },
-  {
-    icon: FileText,
-    title: 'Decision sent to company',
-    description: 'Clear recommendation, risks, and next steps.',
-  },
-  {
-    icon: Users,
-    title: 'Human interview invite',
-    description: 'Only when the signal is strong.',
-  },
+const signalTiles = [
+  { icon: Video, label: 'AI Walkthrough' },
+  { icon: Code, label: 'Code / Repo' },
+  { icon: Palette, label: 'Design / Prototype' },
+  { icon: FileText, label: 'Docs / Writing' },
 ];
 
 export function HowItWorksSection() {
   const shouldReduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Handle scroll snap for mobile
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const cardWidth = container.offsetWidth * 0.85;
-      const newIndex = Math.round(scrollLeft / cardWidth);
-      setActiveIndex(Math.min(newIndex, steps.length - 1));
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 relative overflow-hidden"
-      style={{ background: '#070A10' }}
+      className="py-24 md:py-32 lg:py-[120px] relative"
+      style={{ background: '#000000' }}
     >
-      {/* Subtle background gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124, 92, 255, 0.04), transparent 60%)',
-        }}
-      />
-
-      <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mb-12 md:mb-16 md:sticky md:top-24 md:z-20"
-        >
-          <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight text-foreground mb-3">
-            How HumIQ works
-          </h2>
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl">
-            From real work to interview — without resumes or screening.
-          </p>
-        </motion.div>
-
-        {/* Horizontal Scroll Cards */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 md:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-        >
-          {steps.map((step, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: shouldReduceMotion ? 0 : 0.35,
-                delay: shouldReduceMotion ? 0 : index * 0.2,
-                ease: 'easeOut',
-              }}
-              className="flex-shrink-0 w-[85%] md:w-[320px] lg:w-[360px] snap-center"
+      <div className="container mx-auto px-6 lg:px-16 max-w-[1200px]">
+        {/* 2-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-[52%_48%] gap-12 lg:gap-16 items-center">
+          
+          {/* LEFT COLUMN — Editorial Text */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ 
+              duration: shouldReduceMotion ? 0 : 0.4, 
+              ease: 'easeOut' 
+            }}
+            className="space-y-0"
+          >
+            {/* Eyebrow */}
+            <p 
+              className="text-xs tracking-[0.08em] uppercase mb-4"
+              style={{ color: 'rgba(255,255,255,0.45)' }}
             >
-              <div className="glass-card p-6 md:p-8 h-full group">
-                {/* Icon */}
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-all duration-300"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                  }}
-                >
-                  <step.icon
-                    className="w-5 h-5 text-foreground/60 transition-all duration-300 group-hover:text-foreground/80"
-                    style={{
-                      filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0))',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches) {
-                        (e.target as SVGElement).style.filter = 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.3))';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.target as SVGElement).style.filter = 'drop-shadow(0 0 8px rgba(255, 255, 255, 0))';
-                    }}
-                  />
-                </div>
+              HOW IT WORKS
+            </p>
 
-                {/* Step number */}
-                <div className="text-xs text-muted-foreground/50 uppercase tracking-wider mb-3">
-                  Step {index + 1}
-                </div>
+            {/* Section Title */}
+            <h2 
+              className="text-3xl md:text-4xl font-medium leading-tight mb-6 max-w-[480px]"
+              style={{ color: '#FFFFFF' }}
+            >
+              Talent shares how they work
+            </h2>
 
-                {/* Title */}
-                <h3 className="font-display text-lg font-medium text-foreground mb-3">
-                  {step.title}
-                </h3>
+            {/* Body Copy */}
+            <div className="space-y-3 max-w-[460px]">
+              <p 
+                className="text-base leading-[1.7]"
+                style={{ color: 'rgba(255,255,255,0.75)' }}
+              >
+                Talent can share real work evidence — code, products, designs, writing, or past projects.
+              </p>
+              <p 
+                className="text-base leading-[1.7]"
+                style={{ color: 'rgba(255,255,255,0.75)' }}
+              >
+                If nothing exists, HumIQ adapts automatically.
+              </p>
+            </div>
 
-                {/* Description */}
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            {/* Boundary Statement */}
+            <p 
+              className="text-[15px] leading-[1.6] mt-5"
+              style={{ color: 'rgba(255,255,255,0.6)' }}
+            >
+              Signal comes from how someone works, not how they present.
+            </p>
 
-        {/* Progress dots - mobile only */}
-        <div className="flex justify-center gap-2 mt-6 md:hidden">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className="w-2 h-2 rounded-full transition-all duration-300"
-              style={{
-                background: index === activeIndex 
-                  ? 'rgba(255, 255, 255, 0.6)' 
-                  : 'rgba(255, 255, 255, 0.15)',
+            {/* Trust Cue Pill */}
+            <div 
+              className="inline-flex items-center h-9 px-4 rounded-full mt-7"
+              style={{ 
+                background: 'rgba(0,255,200,0.08)',
+                border: '1px solid rgba(0,255,200,0.25)'
               }}
-            />
-          ))}
+            >
+              <span 
+                className="text-[13px]"
+                style={{ color: '#6FFFE6' }}
+              >
+                No required uploads. No penalties for missing artifacts.
+              </span>
+            </div>
+          </motion.div>
+
+          {/* RIGHT COLUMN — Visual Card */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ 
+              duration: shouldReduceMotion ? 0 : 0.4, 
+              delay: shouldReduceMotion ? 0 : 0.1,
+              ease: 'easeOut' 
+            }}
+            className="flex justify-center lg:justify-end"
+          >
+            <div 
+              className="w-full max-w-[420px] p-6 rounded-[20px] backdrop-blur-[12px]"
+              style={{ 
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0px 40px 80px rgba(0,0,0,0.45)'
+              }}
+            >
+              {/* Card Title */}
+              <p 
+                className="text-[11px] tracking-[0.12em] uppercase text-center mb-5"
+                style={{ color: 'rgba(255,255,255,0.45)' }}
+              >
+                WORK SIGNALS
+              </p>
+
+              {/* Signal Tiles Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {signalTiles.map((tile, index) => (
+                  <motion.div
+                    key={tile.label}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ 
+                      duration: shouldReduceMotion ? 0 : 0.3, 
+                      delay: shouldReduceMotion ? 0 : 0.2 + index * 0.12,
+                      ease: 'easeOut' 
+                    }}
+                    className="group flex flex-col items-center justify-center h-24 rounded-[14px] transition-all duration-150 ease-out hover:translate-y-[-2px]"
+                    style={{ 
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.1)'
+                    }}
+                    whileHover={shouldReduceMotion ? {} : { 
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.3)' 
+                    }}
+                  >
+                    <tile.icon 
+                      className="w-6 h-6 mb-2"
+                      style={{ color: 'rgba(255,255,255,0.7)' }}
+                    />
+                    <span 
+                      className="text-[13px]"
+                      style={{ color: 'rgba(255,255,255,0.8)' }}
+                    >
+                      {tile.label}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Footer Reassurance */}
+              <p 
+                className="text-sm text-center mt-5"
+                style={{ color: 'rgba(255,255,255,0.65)' }}
+              >
+                Any signal works. Even none.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </div>
-
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </section>
   );
 }
