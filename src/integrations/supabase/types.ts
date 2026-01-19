@@ -148,6 +148,7 @@ export type Database = {
           created_at: string
           duration: number
           ended_at: string | null
+          github_brief: Json | null
           github_url: string
           id: string
           level: string
@@ -160,6 +161,7 @@ export type Database = {
           created_at?: string
           duration: number
           ended_at?: string | null
+          github_brief?: Json | null
           github_url: string
           id?: string
           level: string
@@ -172,6 +174,7 @@ export type Database = {
           created_at?: string
           duration?: number
           ended_at?: string | null
+          github_brief?: Json | null
           github_url?: string
           id?: string
           level?: string
