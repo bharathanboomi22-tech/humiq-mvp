@@ -1,4 +1,10 @@
 // Work Session Types
+import type { 
+  WorkArtifact, 
+  SignalSynthesis as BriefSignalSynthesis, 
+  VerdictType,
+  FounderRecommendation 
+} from './brief';
 
 export type RoleTrack = 'backend' | 'frontend';
 export type SessionLevel = 'junior' | 'mid' | 'senior';
@@ -8,6 +14,22 @@ export type StageName = 'framing' | 'approach' | 'build' | 'review';
 export type EventType = 'PROMPT' | 'RESPONSE' | 'CODE_SNAPSHOT' | 'SYSTEM';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
+export interface GitHubBrief {
+  candidateName: string;
+  verdict: VerdictType;
+  confidence: ConfidenceLevel;
+  rationale: string;
+  workArtifacts: WorkArtifact[];
+  signalSynthesis: BriefSignalSynthesis[];
+  risksUnknowns: { id: string; description: string }[];
+  validationPlan: {
+    riskToValidate: string;
+    question: string;
+    strongAnswer: string;
+  };
+  recommendation: FounderRecommendation;
+}
+
 export interface WorkSession {
   id: string;
   github_url: string;
@@ -16,6 +38,7 @@ export interface WorkSession {
   duration: SessionDuration;
   status: SessionStatus;
   raw_work_evidence: string | null;
+  github_brief: GitHubBrief | null;
   started_at: string;
   ended_at: string | null;
   created_at: string;
@@ -85,10 +108,19 @@ export interface EvidencePackObservation {
   example: string;
 }
 
+export interface ValidationPlan {
+  riskToValidate: string;
+  question: string;
+  strongAnswer?: string;
+}
+
 export interface EvidencePackSummary {
+  // Core assessment
   roleTrack: RoleTrack;
   levelEstimate: SessionLevel;
   confidence: ConfidenceLevel;
+  
+  // Interview-based insights
   strengths: EvidencePackStrength[];
   risks_or_unknowns: EvidencePackRisk[];
   decision_log: EvidencePackDecision[];
@@ -96,6 +128,15 @@ export interface EvidencePackSummary {
   recommended_next_step: string;
   highlights: string[];
   github_summary?: string;
+  
+  // GitHub-sourced data (merged from CandidateBrief)
+  candidateName?: string;
+  verdict?: VerdictType;
+  rationale?: string;
+  workArtifacts?: WorkArtifact[];
+  signalSynthesis?: BriefSignalSynthesis[];
+  recommendation?: FounderRecommendation;
+  validationPlan?: ValidationPlan;
 }
 
 export interface EvidencePack {

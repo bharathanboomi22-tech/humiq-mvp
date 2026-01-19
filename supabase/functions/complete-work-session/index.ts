@@ -6,30 +6,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const EVIDENCE_PACK_SYSTEM_PROMPT = `You are HumIQ AI generating an Evidence Pack report for a technical work session.
+const EVIDENCE_PACK_SYSTEM_PROMPT = `You are HumIQ AI generating a merged Evidence Pack report combining GitHub analysis and interview insights.
 
 CRITICAL RULES:
 - Only claim what was observed (from GitHub evidence or transcript/code)
 - Explicitly list gaps in evidence
 - Avoid generic praise
-- Be specific with examples from the conversation
+- Be specific with examples from the conversation AND from GitHub work
 - Make it skimmable in 5 minutes
 - No numeric scores
+- Provide a clear verdict: "interview" (strong signal to proceed), "caution" (mixed signals), or "pass" (insufficient evidence)
 
 The report should help a hiring manager quickly understand:
-1. What signals were observed
-2. What evidence supports each signal
-3. What's still unknown
-4. Recommended next steps`;
+1. What real work artifacts the candidate has produced (from GitHub)
+2. How they performed in the interview conversation
+3. Signal synthesis combining both sources
+4. What's still unknown or risky
+5. A clear verdict with recommendation`;
 
 const evidencePackToolSchema = {
   type: "function",
   function: {
     name: "generate_evidence_pack",
-    description: "Generate a structured Evidence Pack report from a work session",
+    description: "Generate a merged Evidence Pack report combining GitHub analysis and interview insights",
     parameters: {
       type: "object",
       properties: {
+        // Core assessment
         roleTrack: {
           type: "string",
           enum: ["backend", "frontend"],
@@ -45,13 +48,28 @@ const evidencePackToolSchema = {
           enum: ["high", "medium", "low"],
           description: "Confidence level in the assessment"
         },
+        verdict: {
+          type: "string",
+          enum: ["interview", "caution", "pass"],
+          description: "Overall verdict: interview (proceed), caution (mixed), pass (insufficient)"
+        },
+        rationale: {
+          type: "string",
+          description: "One paragraph explaining the verdict based on combined evidence"
+        },
+        candidateName: {
+          type: "string",
+          description: "Candidate name extracted from GitHub profile or 'Unknown'"
+        },
+        
+        // Interview-based insights
         strengths: {
           type: "array",
           items: {
             type: "object",
             properties: {
               signal: { type: "string", description: "The strength observed" },
-              evidence: { type: "string", description: "Specific example from the session" }
+              evidence: { type: "string", description: "Specific example from interview or GitHub" }
             },
             required: ["signal", "evidence"]
           },
@@ -80,7 +98,7 @@ const evidencePackToolSchema = {
             },
             required: ["decision", "tradeoff", "example"]
           },
-          description: "Key decisions and tradeoffs observed"
+          description: "Key decisions and tradeoffs observed in interview"
         },
         execution_observations: {
           type: "array",
@@ -92,7 +110,7 @@ const evidencePackToolSchema = {
             },
             required: ["observation", "example"]
           },
-          description: "Observations about execution quality"
+          description: "Observations about execution quality in interview"
         },
         recommended_next_step: {
           type: "string",
@@ -106,9 +124,65 @@ const evidencePackToolSchema = {
         github_summary: {
           type: "string",
           description: "Brief summary of GitHub evidence if available"
+        },
+        
+        // GitHub-sourced data
+        workArtifacts: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string", description: "Unique ID for the artifact" },
+              title: { type: "string", description: "Repository or project name" },
+              url: { type: "string", description: "GitHub URL" },
+              whatItIs: { type: "string", description: "Brief description of what this is" },
+              whyItMatters: { type: "string", description: "Why this artifact is significant" },
+              signals: { 
+                type: "array", 
+                items: { type: "string" },
+                description: "Signals this artifact demonstrates (Shipping, Ownership, Judgment, etc.)"
+              }
+            },
+            required: ["id", "title", "whatItIs", "whyItMatters", "signals"]
+          },
+          description: "Notable work artifacts from GitHub"
+        },
+        signalSynthesis: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Signal name (Ownership, Judgment, Execution, Communication)" },
+              level: { 
+                type: "string", 
+                enum: ["high", "medium", "low"],
+                description: "Signal strength level"
+              },
+              evidence: { type: "string", description: "Evidence supporting this signal" }
+            },
+            required: ["name", "level", "evidence"]
+          },
+          description: "Synthesized signals combining GitHub and interview evidence"
+        },
+        recommendation: {
+          type: "object",
+          properties: {
+            verdict: { 
+              type: "string", 
+              enum: ["interview", "caution", "pass"],
+              description: "Final hiring recommendation"
+            },
+            reasons: {
+              type: "array",
+              items: { type: "string" },
+              description: "2-3 key reasons for the recommendation"
+            }
+          },
+          required: ["verdict", "reasons"],
+          description: "Final recommendation for hiring manager"
         }
       },
-      required: ["roleTrack", "levelEstimate", "confidence", "strengths", "risks_or_unknowns", "decision_log", "execution_observations", "recommended_next_step", "highlights"]
+      required: ["roleTrack", "levelEstimate", "confidence", "verdict", "rationale", "strengths", "risks_or_unknowns", "decision_log", "execution_observations", "recommended_next_step", "highlights", "signalSynthesis", "recommendation"]
     }
   }
 };
@@ -181,22 +255,62 @@ serve(async (req) => {
       .filter(e => e.event_type === "PROMPT" && e.content.signal_tags)
       .flatMap(e => e.content.signal_tags);
 
+    // Format GitHub brief if available
+    const githubBrief = session.github_brief;
+    let githubBriefSection = "";
+    if (githubBrief) {
+      githubBriefSection = `
+PRE-COMPUTED GITHUB ANALYSIS (Use this data directly in the merged report):
+- Candidate Name: ${githubBrief.candidateName || "Unknown"}
+- GitHub Verdict: ${githubBrief.verdict}
+- GitHub Confidence: ${githubBrief.confidence}
+- Rationale: ${githubBrief.rationale}
+
+Work Artifacts from GitHub:
+${(githubBrief.workArtifacts || []).map((a: any, i: number) => `${i + 1}. ${a.title}
+   - What it is: ${a.whatItIs}
+   - Why it matters: ${a.whyItMatters}
+   - Signals: ${(a.signals || []).join(", ")}
+   - URL: ${a.url || "N/A"}`).join("\n")}
+
+Signal Synthesis from GitHub:
+${(githubBrief.signalSynthesis || []).map((s: any) => `- ${s.name}: ${s.level.toUpperCase()} — ${s.evidence}`).join("\n")}
+
+Risks/Unknowns from GitHub:
+${(githubBrief.risksUnknowns || []).map((r: any) => `- ${r.description}`).join("\n")}
+
+GitHub Recommendation: ${githubBrief.recommendation?.verdict} 
+Reasons: ${(githubBrief.recommendation?.reasons || []).join("; ")}
+`;
+    }
+
     // Build prompt for evidence pack generation
-    const userPrompt = `Generate an Evidence Pack for this technical work session.
+    const userPrompt = `Generate a MERGED Evidence Pack combining GitHub analysis and interview insights.
 
 SESSION INFO:
 - Role Track: ${session.role_track}
 - Target Level: ${session.level}
 - Duration: ${session.duration} minutes
+- GitHub URL: ${session.github_url}
 
-${session.raw_work_evidence ? `GITHUB EVIDENCE:\n${session.raw_work_evidence.slice(0, 3000)}\n\n` : ""}
+${githubBriefSection || (session.raw_work_evidence ? `RAW GITHUB EVIDENCE:
+${session.raw_work_evidence.slice(0, 3000)}
 
-SESSION TRANSCRIPT:
-${transcript || "(No transcript available)"}
+` : "NO GITHUB EVIDENCE AVAILABLE - Note this as a gap in risks_or_unknowns.\n\n")}
+SESSION TRANSCRIPT (Interview conversation):
+${transcript || "(No transcript available - rely more on GitHub evidence)"}
 
-OBSERVED SIGNAL TAGS: ${allSignalTags.length > 0 ? allSignalTags.join(", ") : "None recorded"}
+OBSERVED SIGNAL TAGS FROM INTERVIEW: ${allSignalTags.length > 0 ? allSignalTags.join(", ") : "None recorded"}
 
-Generate the Evidence Pack now. Be specific, cite examples from the transcript, and explicitly note any gaps.`;
+INSTRUCTIONS:
+1. IMPORTANT: If GitHub analysis is provided above, USE those workArtifacts and signalSynthesis directly in your output
+2. Merge the GitHub signals with interview observations to create updated signalSynthesis
+3. If the interview confirms or contradicts GitHub signals, note this in the evidence field
+4. Provide a final verdict considering BOTH sources: "interview" if strong signals, "caution" if mixed, "pass" if insufficient
+5. The rationale should explain how GitHub work + interview performance combined to reach the verdict
+6. Keep the candidate name from GitHub analysis
+
+Generate the merged Evidence Pack now.`;
 
     // Call LLM
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -241,8 +355,31 @@ Generate the Evidence Pack now. Be specific, cite examples from the transcript, 
       );
     }
 
-    const summaryJson = JSON.parse(toolCall.function.arguments);
+    let summaryJson = JSON.parse(toolCall.function.arguments);
     console.log("Evidence pack generated, confidence:", summaryJson.confidence);
+
+    // Merge with GitHub brief data if available (ensure we don't lose pre-computed data)
+    if (githubBrief) {
+      // Use GitHub candidate name if not set
+      if (!summaryJson.candidateName || summaryJson.candidateName === "Unknown") {
+        summaryJson.candidateName = githubBrief.candidateName || "Unknown";
+      }
+      
+      // If workArtifacts are empty or missing, use GitHub artifacts
+      if (!summaryJson.workArtifacts || summaryJson.workArtifacts.length === 0) {
+        summaryJson.workArtifacts = githubBrief.workArtifacts || [];
+      }
+      
+      // Ensure signalSynthesis has all signals from GitHub if missing
+      if (!summaryJson.signalSynthesis || summaryJson.signalSynthesis.length === 0) {
+        summaryJson.signalSynthesis = githubBrief.signalSynthesis || [];
+      }
+      
+      // Add validation plan from GitHub brief if not present
+      if (githubBrief.validationPlan) {
+        summaryJson.validationPlan = githubBrief.validationPlan;
+      }
+    }
 
     // Create evidence pack record
     const { data: evidencePack, error: packError } = await supabase

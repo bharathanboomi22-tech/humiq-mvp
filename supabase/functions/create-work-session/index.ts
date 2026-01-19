@@ -6,6 +6,118 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// GitHub Analysis System Prompt (from analyze-candidate)
+const ANALYSIS_SYSTEM_PROMPT = `You are HumIQ AI.
+
+You evaluate Founding Engineers for early-stage startups.
+
+You must act like a founder who has been burned by bad hires.
+
+CRITICAL RULES:
+- You may ONLY use the text inside RAW_WORK_EVIDENCE below.
+- You must NOT infer, guess, scrape, or invent information.
+- Candidate links are reference only.
+- If RAW_WORK_EVIDENCE is empty or insufficient, you MUST say so clearly.
+- No resumes, no buzzwords, no hype.
+- No numeric scores.`;
+
+const analysisToolSchema = {
+  type: "function",
+  function: {
+    name: "generate_candidate_brief",
+    description: "Generate a structured candidate brief for a founding engineer candidate based ONLY on provided Raw Work Evidence.",
+    parameters: {
+      type: "object",
+      properties: {
+        candidateName: {
+          type: "string",
+          description: "The candidate's name ONLY if it appears in Raw Work Evidence. Otherwise empty string."
+        },
+        verdict: {
+          type: "string",
+          enum: ["interview", "caution", "pass"],
+          description: "interview = Interview Now, caution = Proceed with Caution, pass = Do Not Advance."
+        },
+        confidence: {
+          type: "string",
+          enum: ["high", "medium", "low"],
+          description: "Confidence level based on evidence quality."
+        },
+        rationale: {
+          type: "string",
+          description: "One calm, specific sentence tied to evidence."
+        },
+        workArtifacts: {
+          type: "array",
+          maxItems: 3,
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              title: { type: "string" },
+              url: { type: "string" },
+              whatItIs: { type: "string" },
+              whyItMatters: { type: "string" },
+              signals: {
+                type: "array",
+                maxItems: 2,
+                items: { type: "string", enum: ["Shipping", "Ownership", "Judgment", "Product Sense", "Communication"] }
+              }
+            },
+            required: ["id", "title", "whatItIs", "whyItMatters", "signals"]
+          }
+        },
+        signalSynthesis: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", enum: ["Ownership", "Judgment", "Execution", "Communication"] },
+              level: { type: "string", enum: ["high", "medium", "low"] },
+              evidence: { type: "string" }
+            },
+            required: ["name", "level", "evidence"]
+          }
+        },
+        risksUnknowns: {
+          type: "array",
+          maxItems: 3,
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              description: { type: "string" }
+            },
+            required: ["id", "description"]
+          }
+        },
+        validationPlan: {
+          type: "object",
+          properties: {
+            riskToValidate: { type: "string" },
+            question: { type: "string" },
+            strongAnswer: { type: "string" }
+          },
+          required: ["riskToValidate", "question", "strongAnswer"]
+        },
+        recommendation: {
+          type: "object",
+          properties: {
+            verdict: { type: "string", enum: ["interview", "caution", "pass"] },
+            reasons: {
+              type: "array",
+              maxItems: 2,
+              items: { type: "string" }
+            }
+          },
+          required: ["verdict", "reasons"]
+        }
+      },
+      required: ["candidateName", "verdict", "confidence", "rationale", "workArtifacts", "signalSynthesis", "risksUnknowns", "validationPlan", "recommendation"]
+    }
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -138,12 +250,64 @@ serve(async (req) => {
       }
     }
 
+    // Run GitHub analysis to generate CandidateBrief (if we have evidence)
+    let githubBrief = null;
+    if (rawWorkEvidence && rawWorkEvidence.length > 100) {
+      try {
+        console.log("Running GitHub analysis...");
+        const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+        
+        if (LOVABLE_API_KEY) {
+          const analysisPrompt = `TASK:
+Based ONLY on RAW_WORK_EVIDENCE, generate a Work Evidence Brief that helps a founder decide whether to interview this candidate.
+
+RAW_WORK_EVIDENCE:
+<<<
+${rawWorkEvidence}
+>>>
+
+Generate the candidate brief now. Be specific, cite actual repository names, and note any gaps.`;
+
+          const analysisResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-pro",
+              messages: [
+                { role: "system", content: ANALYSIS_SYSTEM_PROMPT },
+                { role: "user", content: analysisPrompt }
+              ],
+              tools: [analysisToolSchema],
+              tool_choice: { type: "function", function: { name: "generate_candidate_brief" } }
+            }),
+          });
+
+          if (analysisResponse.ok) {
+            const analysisData = await analysisResponse.json();
+            const toolCall = analysisData.choices?.[0]?.message?.tool_calls?.[0];
+            
+            if (toolCall && toolCall.function.name === "generate_candidate_brief") {
+              githubBrief = JSON.parse(toolCall.function.arguments);
+              console.log("GitHub brief generated, verdict:", githubBrief.verdict);
+            }
+          } else {
+            console.warn("GitHub analysis failed:", analysisResponse.status);
+          }
+        }
+      } catch (analysisError) {
+        console.warn("GitHub analysis error:", analysisError);
+      }
+    }
+
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Insert work session
+    // Insert work session with GitHub brief
     const { data: session, error: sessionError } = await supabase
       .from("work_sessions")
       .insert({
@@ -153,6 +317,7 @@ serve(async (req) => {
         duration: duration,
         status: "active",
         raw_work_evidence: rawWorkEvidence || null,
+        github_brief: githubBrief || null,
         started_at: new Date().toISOString(),
       })
       .select()

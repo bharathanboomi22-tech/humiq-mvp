@@ -16,17 +16,46 @@ import {
   Clock,
   Loader2,
   Github,
+  Briefcase,
+  TrendingUp,
+  Award,
+  HelpCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getEvidencePack } from '@/lib/workSession';
 import { EvidencePackSummary, ConfidenceLevel, WorkSession } from '@/types/workSession';
+import type { VerdictType, SignalLevel } from '@/types/brief';
 
 const confidenceConfig: Record<ConfidenceLevel, { label: string; class: string }> = {
   high: { label: 'High Confidence', class: 'verdict-interview' },
   medium: { label: 'Medium Confidence', class: 'verdict-caution' },
   low: { label: 'Low Confidence', class: 'verdict-pass' },
+};
+
+const verdictConfig: Record<VerdictType, { label: string; class: string; description: string }> = {
+  interview: { 
+    label: 'Proceed to Interview', 
+    class: 'verdict-interview',
+    description: 'Strong signals observed. Recommend advancing.'
+  },
+  caution: { 
+    label: 'Proceed with Caution', 
+    class: 'verdict-caution',
+    description: 'Mixed signals. Additional validation recommended.'
+  },
+  pass: { 
+    label: 'Pass', 
+    class: 'verdict-pass',
+    description: 'Insufficient evidence for this role.'
+  },
+};
+
+const signalLevelConfig: Record<SignalLevel, { class: string }> = {
+  high: { class: 'signal-high' },
+  medium: { class: 'signal-medium' },
+  low: { class: 'signal-low' },
 };
 
 const EvidencePack = () => {
@@ -103,6 +132,7 @@ const EvidencePack = () => {
   }
 
   const confidenceStyle = confidenceConfig[summary.confidence];
+  const verdictStyle = summary.verdict ? verdictConfig[summary.verdict] : null;
 
   return (
     <main className="min-h-screen bg-ambient">
@@ -138,18 +168,29 @@ const EvidencePack = () => {
               HumIQ Evidence Pack
             </div>
             <h1 className="text-2xl md:text-3xl font-display font-semibold text-foreground mb-2">
-              Tech Work Session Results
+              {summary.candidateName || 'Candidate'} — Assessment Report
             </h1>
             {session && (
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                 <span className="capitalize">{session.role_track} Engineering</span>
                 <span>•</span>
-                <span className="capitalize">{session.level} Level</span>
+                <span className="capitalize">{summary.levelEstimate} Level</span>
                 <span>•</span>
-                <span>{session.duration} min session</span>
+                <span>GitHub + Interview Analysis</span>
               </div>
             )}
           </div>
+
+          {/* Verdict Badge - Main decision point */}
+          {verdictStyle && (
+            <div className="flex flex-col items-center gap-3 mb-6">
+              <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${verdictStyle.class}`}>
+                <Award className="w-5 h-5" />
+                <span className="font-semibold text-lg">{verdictStyle.label}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{verdictStyle.description}</p>
+            </div>
+          )}
 
           {/* Confidence Badge */}
           <div className="flex justify-center">
@@ -159,6 +200,22 @@ const EvidencePack = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Rationale */}
+        {summary.rationale && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="mb-8"
+          >
+            <Card className="glass-card border-accent/20">
+              <CardContent className="pt-6">
+                <p className="text-foreground/90 leading-relaxed">{summary.rationale}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Highlights */}
         {summary.highlights && summary.highlights.length > 0 && (
@@ -189,12 +246,91 @@ const EvidencePack = () => {
           </motion.div>
         )}
 
+        {/* Work Artifacts from GitHub */}
+        {summary.workArtifacts && summary.workArtifacts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="mb-8"
+          >
+            <h2 className="section-header flex items-center gap-2">
+              <Github className="w-4 h-4" />
+              Real Work Evidence
+            </h2>
+            <div className="space-y-4">
+              {summary.workArtifacts.map((artifact, i) => (
+                <Card key={artifact.id || i} className="glass-card-hover">
+                  <CardContent className="pt-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-medium text-foreground">{artifact.title}</h3>
+                          {artifact.url && (
+                            <a 
+                              href={artifact.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-accent hover:text-accent/80"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
+                        </div>
+                        <p className="text-sm text-foreground/80 mb-2">{artifact.whatItIs}</p>
+                        <p className="text-sm text-muted-foreground mb-3">{artifact.whyItMatters}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {artifact.signals.map((signal, j) => (
+                            <Badge key={j} variant="secondary" className="text-xs">
+                              {signal}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Signal Synthesis - Combined */}
+        {summary.signalSynthesis && summary.signalSynthesis.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.14 }}
+            className="mb-8"
+          >
+            <h2 className="section-header flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Signal Synthesis
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {summary.signalSynthesis.map((signal, i) => (
+                <Card key={i} className="glass-card">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-foreground">{signal.name}</span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${signalLevelConfig[signal.level].class}`}>
+                        {signal.level.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{signal.evidence}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* GitHub Summary */}
         {summary.github_summary && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
+            transition={{ delay: 0.16 }}
             className="mb-8"
           >
             <Card className="glass-card">
@@ -211,7 +347,7 @@ const EvidencePack = () => {
           </motion.div>
         )}
 
-        {/* Strengths */}
+        {/* Interview Strengths */}
         {summary.strengths && summary.strengths.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -221,7 +357,7 @@ const EvidencePack = () => {
           >
             <h2 className="section-header flex items-center gap-2">
               <Target className="w-4 h-4" />
-              Observed Strengths
+              Interview Strengths
             </h2>
             <div className="space-y-4">
               {summary.strengths.map((strength, i) => (
@@ -339,6 +475,73 @@ const EvidencePack = () => {
           </motion.div>
         )}
 
+        {/* Validation Plan */}
+        {summary.validationPlan && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.37 }}
+            className="mb-8"
+          >
+            <Card className="glass-card border-accent/10">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-accent" />
+                  Fastest Way to Validate
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Risk to validate:</p>
+                  <p className="text-foreground font-medium">{summary.validationPlan.riskToValidate}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-muted/30 border border-border">
+                  <p className="text-sm text-muted-foreground mb-2">Ask this question:</p>
+                  <p className="text-foreground italic">"{summary.validationPlan.question}"</p>
+                </div>
+                {summary.validationPlan.strongAnswer && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Strong answer sounds like:</p>
+                    <p className="text-foreground/80 text-sm">{summary.validationPlan.strongAnswer}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Recommendation */}
+        {summary.recommendation && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38 }}
+            className="mb-8"
+          >
+            <Card className="glass-card bg-accent/5 border-accent/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2 text-accent">
+                  <Briefcase className="w-5 h-5" />
+                  Hiring Recommendation
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 ${verdictConfig[summary.recommendation.verdict].class}`}>
+                  <span className="font-medium">{verdictConfig[summary.recommendation.verdict].label}</span>
+                </div>
+                <ul className="space-y-2">
+                  {summary.recommendation.reasons.map((reason, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-accent mt-0.5">•</span>
+                      <span className="text-foreground/90">{reason}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Recommended Next Step */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -372,10 +575,10 @@ const EvidencePack = () => {
           <div className="flex items-center justify-center gap-4">
             <Button
               variant="outline"
-              onClick={() => navigate('/work-session/start')}
+              onClick={() => navigate('/')}
               className="gap-2"
             >
-              Start New Session
+              Start New Assessment
             </Button>
             <Button
               onClick={handleCopyLink}
