@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      evidence_packs: {
+        Row: {
+          created_at: string
+          generated_at: string
+          id: string
+          public_share_id: string
+          session_id: string
+          summary_json: Json
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          public_share_id?: string
+          session_id: string
+          summary_json?: Json
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          public_share_id?: string
+          session_id?: string
+          summary_json?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_packs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       love_letters: {
         Row: {
           created_at: string
@@ -38,6 +73,112 @@ export type Database = {
           message?: string
           name_or_role?: string | null
           user_type?: string | null
+        }
+        Relationships: []
+      }
+      work_session_events: {
+        Row: {
+          content: Json
+          created_at: string
+          event_type: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          event_type: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          event_type?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_session_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_session_stages: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          session_id: string
+          stage_name: string
+          started_at: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          session_id: string
+          stage_name: string
+          started_at?: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          session_id?: string
+          stage_name?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_session_stages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_sessions: {
+        Row: {
+          created_at: string
+          duration: number
+          ended_at: string | null
+          github_url: string
+          id: string
+          level: string
+          raw_work_evidence: string | null
+          role_track: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          duration: number
+          ended_at?: string | null
+          github_url: string
+          id?: string
+          level: string
+          raw_work_evidence?: string | null
+          role_track: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          duration?: number
+          ended_at?: string | null
+          github_url?: string
+          id?: string
+          level?: string
+          raw_work_evidence?: string | null
+          role_track?: string
+          started_at?: string
+          status?: string
         }
         Relationships: []
       }
