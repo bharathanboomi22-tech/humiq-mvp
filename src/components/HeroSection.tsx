@@ -178,44 +178,34 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
                 </p>
               </motion.div>
 
-              {/* Title - Line 1 */}
+              {/* Headline */}
               <motion.h1
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.45, ease: 'easeOut' }}
-                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground"
+                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.2] tracking-[-0.02em] text-foreground"
               >
-                The CV era is over.
+                Hiring — without resumes or screening.
               </motion.h1>
               
-              {/* Title - Line 2 */}
-              <motion.h1
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.45, delay: 0.55, ease: 'easeOut' }}
-                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.1] tracking-[-0.03em] text-foreground mt-2"
-              >
-                HumIQ is building what comes next.
-              </motion.h1>
-              
-              {/* Subtitle */}
+              {/* Subheadline */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 1.0, ease: 'easeOut' }}
-                className="mt-6 text-base md:text-lg text-foreground/70 leading-relaxed max-w-[45ch]"
+                transition={{ duration: 0.4, delay: 0.5, ease: 'easeOut' }}
+                className="mt-6 text-base md:text-lg text-foreground/70 leading-relaxed max-w-[50ch]"
               >
-                HumIQ replaces CVs with real work evidence — so hiring starts with how someone actually works.
+                HumIQ evaluates real work, runs the first interview with AI, and sends companies only decision-ready candidates.
               </motion.p>
               
-              {/* Microline - philosophical boundary */}
+              {/* Supporting microcopy */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.35, delay: 1.4, ease: 'easeOut' }}
-                className="mt-6 text-sm text-muted-foreground tracking-wide"
+                transition={{ duration: 0.35, delay: 0.9, ease: 'easeOut' }}
+                className="mt-5 text-sm text-muted-foreground/60 tracking-wide"
               >
-                No optimized CVs. No ATS. No job marketplace.
+                No applications. No optimized CVs. No guesswork.
               </motion.p>
             </div>
 

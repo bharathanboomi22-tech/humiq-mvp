@@ -32,8 +32,11 @@ interface SpeechRecognitionErrorEvent extends Event {
   message?: string;
 }
 
+// Browser SpeechRecognition type
+type SpeechRecognitionType = typeof window extends { SpeechRecognition: infer T } ? T : any;
+
 // Check for browser support
-const getSpeechRecognition = (): typeof SpeechRecognition | null => {
+const getSpeechRecognition = (): SpeechRecognitionType | null => {
   if (typeof window === 'undefined') return null;
   
   return (
@@ -59,7 +62,7 @@ export function useSpeechRecognition(options: SpeechRecognitionOptions = {}): Us
   const [interimTranscript, setInterimTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const transcriptRef = useRef(''); // Keep track of transcript for onEnd callback
   const isListeningRef = useRef(false);
