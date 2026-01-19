@@ -223,10 +223,46 @@ Generate the next prompt for the ${currentStage} stage.${shouldCompleteStage ? "
     }
 
     const data = await response.json();
+    console.log("AI response structure:", JSON.stringify(data.choices?.[0]?.message, null, 2));
+    
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     
+    // Handle case where model returns content directly instead of tool call
     if (!toolCall || toolCall.function.name !== "generate_next_prompt") {
-      console.error("Unexpected AI response format");
+      // Try to extract from message content if tool call failed
+      const messageContent = data.choices?.[0]?.message?.content;
+      if (messageContent) {
+        console.log("No tool call, attempting to parse content as fallback");
+        // Generate a fallback response
+        const fallbackResult = {
+          nextPrompt: typeof messageContent === "string" 
+            ? messageContent.slice(0, 500) 
+            : "Let's continue. Can you tell me more about your approach?",
+          stageComplete: false,
+          signalTags: []
+        };
+        
+        // Store the prompt as an event
+        await supabase
+          .from("work_session_events")
+          .insert({
+            session_id: sessionId,
+            event_type: "PROMPT",
+            content: {
+              text: fallbackResult.nextPrompt,
+              stage: currentStage,
+              signal_tags: fallbackResult.signalTags
+            },
+            created_at: new Date().toISOString(),
+          });
+
+        return new Response(
+          JSON.stringify(fallbackResult),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      console.error("Unexpected AI response format:", JSON.stringify(data));
       return new Response(
         JSON.stringify({ error: "Failed to generate prompt" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
