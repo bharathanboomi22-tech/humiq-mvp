@@ -1,5 +1,6 @@
 import { FounderRecommendation, VerdictType } from '@/types/brief';
 import { motion } from 'framer-motion';
+import { CheckCircle, AlertTriangle, XCircle, LucideIcon } from 'lucide-react';
 
 interface FounderRecommendationSectionProps {
   recommendation: FounderRecommendation;
@@ -25,9 +26,15 @@ export function FounderRecommendationSection({ recommendation }: FounderRecommen
         transition={{ duration: 0.22, ease: 'easeOut' }}
       >
         {/* Verdict with subtle glow */}
-        <p className={`verdict-${recommendation.verdict} inline-block px-4 py-2 rounded-lg text-foreground font-medium text-lg mb-6`}>
-          {verdictLabels[recommendation.verdict]}
-        </p>
+        {(() => {
+          const { label, Icon } = verdictConfig[recommendation.verdict];
+          return (
+            <p className={`verdict-${recommendation.verdict} inline-flex items-center gap-2 px-4 py-2 rounded-lg text-foreground font-medium text-lg mb-6`}>
+              <Icon className="w-5 h-5" />
+              {label}
+            </p>
+          );
+        })()}
 
         {/* Reasons */}
         <ul className="space-y-3">
