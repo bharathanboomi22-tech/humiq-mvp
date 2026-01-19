@@ -22,6 +22,22 @@ interface GetEvidencePackResponse {
   session: WorkSession;
 }
 
+function promiseWithTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  return (Promise.race([promise, timeoutPromise]) as Promise<T>).finally(() => {
+    if (timeoutId) clearTimeout(timeoutId);
+  });
+}
+
 export async function createWorkSession(
   input: CreateWorkSessionInput
 ): Promise<CreateWorkSessionResponse> {
@@ -82,15 +98,16 @@ export async function getNextPrompt(
   currentStage: StageName,
   candidateResponse?: string
 ): Promise<GetNextPromptResponse> {
-  const { data, error } = await supabase.functions.invoke<GetNextPromptResponse>(
-    'work-session-next-prompt',
-    {
+  const { data, error } = await promiseWithTimeout(
+    supabase.functions.invoke<GetNextPromptResponse>('work-session-next-prompt', {
       body: {
         sessionId,
         currentStage,
         candidateResponse,
       },
-    }
+    }),
+    30_000,
+    'AI is taking too long. Please try again.'
   );
 
   if (error) {

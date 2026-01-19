@@ -144,37 +144,64 @@ Generate the next prompt for the ${currentStage} stage. Consider whether we have
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
-        messages: [
-          { role: "system", content: INTERVIEWER_SYSTEM_PROMPT },
-          { role: "user", content: userPrompt }
-        ],
-        tools: [promptToolSchema],
-        tool_choice: { type: "function", function: { name: "generate_next_prompt" } }
-      }),
-    });
+    const AI_TIMEOUT_MS = 25_000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+    let response: Response;
+    try {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          max_tokens: 250,
+          messages: [
+            { role: "system", content: INTERVIEWER_SYSTEM_PROMPT },
+            { role: "user", content: userPrompt },
+          ],
+          tools: [promptToolSchema],
+          tool_choice: { type: "function", function: { name: "generate_next_prompt" } },
+        }),
+      });
+    } catch (e) {
+      const isAbort = e instanceof Error && e.name === "AbortError";
+      if (isAbort) {
+        return new Response(
+          JSON.stringify({ error: "AI is taking too long. Please retry." }),
+          { status: 504, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      
+
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
-      
+
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Please add credits and retry." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
       return new Response(
         JSON.stringify({ error: "Failed to generate prompt" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
