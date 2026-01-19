@@ -177,11 +177,6 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               transition={{ duration: 0.35, delay: 0.8, ease: 'easeOut' }}
               className="w-full max-w-md"
             >
-              {/* Editorial title above card */}
-              <h2 className="font-display text-xl md:text-2xl font-medium leading-relaxed tracking-[-0.01em] text-foreground/85 mb-8 text-center">
-                See how people actually work, before you hire them.
-              </h2>
-              
               <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
             </motion.div>
           </div>
