@@ -177,5 +177,7 @@ export async function getWorkSession(sessionId: string): Promise<WorkSession | n
     return null;
   }
 
-  return data as WorkSession;
+  // Cast the database response to our WorkSession type
+  // The github_brief field comes as Json from Supabase but should match GitHubBrief structure
+  return data as unknown as WorkSession;
 }
