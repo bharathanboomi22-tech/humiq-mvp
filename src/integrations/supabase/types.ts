@@ -41,6 +41,147 @@ export type Database = {
         }
         Relationships: []
       }
+      work_sessions: {
+        Row: {
+          id: string
+          github_url: string
+          role_track: string
+          level: string
+          duration: number
+          status: string
+          raw_work_evidence: string | null
+          started_at: string
+          ended_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          github_url: string
+          role_track: string
+          level: string
+          duration: number
+          status?: string
+          raw_work_evidence?: string | null
+          started_at?: string
+          ended_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          github_url?: string
+          role_track?: string
+          level?: string
+          duration?: number
+          status?: string
+          raw_work_evidence?: string | null
+          started_at?: string
+          ended_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      work_session_stages: {
+        Row: {
+          id: string
+          session_id: string
+          stage_name: string
+          started_at: string
+          ended_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          stage_name: string
+          started_at?: string
+          ended_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          stage_name?: string
+          started_at?: string
+          ended_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_session_stages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      work_session_events: {
+        Row: {
+          id: string
+          session_id: string
+          event_type: string
+          content: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          event_type: string
+          content?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          event_type?: string
+          content?: Json
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_session_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      evidence_packs: {
+        Row: {
+          id: string
+          session_id: string
+          public_share_id: string
+          summary_json: Json
+          generated_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          public_share_id?: string
+          summary_json?: Json
+          generated_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          public_share_id?: string
+          summary_json?: Json
+          generated_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_packs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       love_letters_public: {

@@ -5,3 +5,18 @@ verify_jwt = false
 
 [functions.fetch-github-evidence]
 verify_jwt = false
+
+[functions.create-work-session]
+verify_jwt = false
+
+[functions.work-session-event]
+verify_jwt = false
+
+[functions.work-session-next-prompt]
+verify_jwt = false
+
+[functions.complete-work-session]
+verify_jwt = false
+
+[functions.get-evidence-pack]
+verify_jwt = false
