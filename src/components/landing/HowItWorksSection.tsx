@@ -32,51 +32,51 @@ export function HowItWorksSection() {
               duration: shouldReduceMotion ? 0 : 0.4, 
               ease: 'easeOut' 
             }}
-            className="space-y-0"
+            className="flex flex-col"
           >
-            {/* Eyebrow */}
+            {/* Section Label */}
             <p 
-              className="text-xs tracking-[0.08em] uppercase mb-4"
-              style={{ color: 'rgba(255,255,255,0.45)' }}
+              className="text-sm font-medium tracking-[0.08em] uppercase mb-6"
+              style={{ color: 'rgba(255,255,255,0.6)' }}
             >
               HOW IT WORKS
             </p>
 
-            {/* Section Title */}
+            {/* Primary Headline */}
             <h2 
-              className="text-3xl md:text-4xl font-medium leading-tight mb-6 max-w-[480px]"
+              className="text-[32px] md:text-[40px] font-medium leading-[1.2] mb-7 max-w-[520px]"
               style={{ color: '#FFFFFF' }}
             >
               Talent shares how they work
             </h2>
 
             {/* Body Copy */}
-            <div className="space-y-3 max-w-[460px]">
+            <div className="space-y-4 max-w-[480px]">
               <p 
-                className="text-base leading-[1.7]"
+                className="text-base leading-[1.75]"
                 style={{ color: 'rgba(255,255,255,0.75)' }}
               >
-                Talent can share real work evidence — code, products, designs, writing, or past projects.
+                Talent can share real work evidence - code, products, designs, writing, or past projects.
               </p>
               <p 
-                className="text-base leading-[1.7]"
+                className="text-base leading-[1.75]"
                 style={{ color: 'rgba(255,255,255,0.75)' }}
               >
                 If nothing exists, HumIQ adapts automatically.
               </p>
             </div>
 
-            {/* Boundary Statement */}
+            {/* Principle Line */}
             <p 
-              className="text-[15px] leading-[1.6] mt-5"
+              className="text-[15px] leading-[1.6] mt-5 mb-8"
               style={{ color: 'rgba(255,255,255,0.6)' }}
             >
               Signal comes from how someone works, not how they present.
             </p>
 
-            {/* Trust Cue Pill */}
+            {/* Trust Pill */}
             <div 
-              className="inline-flex items-center h-9 px-4 rounded-full mt-7"
+              className="inline-flex items-center h-9 px-[18px] rounded-full"
               style={{ 
                 background: 'rgba(0,255,200,0.08)',
                 border: '1px solid rgba(0,255,200,0.25)'
