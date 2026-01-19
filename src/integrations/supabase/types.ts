@@ -43,7 +43,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      love_letters_public: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          message: string | null
+          name_or_role: string | null
+          user_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          name_or_role?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          name_or_role?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
