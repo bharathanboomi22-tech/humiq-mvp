@@ -41,9 +41,34 @@ export const LoveLetters = forwardRef<LoveLettersRef, LoveLettersProps>(
       expand: () => setIsExpanded(true),
     }));
 
-    // Fetch letters on mount
+    // Fetch letters on mount and subscribe to realtime
     useEffect(() => {
       fetchLetters();
+
+      // Subscribe to realtime inserts
+      const channel = supabase
+        .channel('love-letters-realtime')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'love_letters',
+          },
+          (payload) => {
+            const newLetter = payload.new as LoveLetter;
+            setLetters((prev) => {
+              // Avoid duplicates (in case we just submitted it ourselves)
+              if (prev.some((l) => l.id === newLetter.id)) return prev;
+              return [newLetter, ...prev];
+            });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }, []);
 
     const fetchLetters = async () => {
