@@ -4,7 +4,7 @@ CREATE TABLE public.work_sessions (
   github_url TEXT NOT NULL,
   role_track TEXT NOT NULL CHECK (role_track IN ('backend', 'frontend')),
   level TEXT NOT NULL CHECK (level IN ('junior', 'mid', 'senior')),
-  duration INTEGER NOT NULL CHECK (duration IN (15, 30, 45)),
+  duration INTEGER NOT NULL CHECK (duration IN (5, 15, 30, 45)),
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'abandoned')),
   raw_work_evidence TEXT,
   started_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

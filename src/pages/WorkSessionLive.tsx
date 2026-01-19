@@ -5,11 +5,9 @@ import { toast } from 'sonner';
 import { 
   Send, 
   Loader2, 
-  CheckCircle2, 
   ArrowRight, 
   Code, 
-  MessageSquare,
-  AlertTriangle
+  Mic,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +15,10 @@ import { Card } from '@/components/ui/card';
 import { WorkSessionTimer } from '@/components/WorkSessionTimer';
 import { StageProgress, StageProgressCompact } from '@/components/StageProgress';
 import { CodeEditor } from '@/components/CodeEditor';
+import { VoiceControls, LiveTranscript } from '@/components/VoiceControls';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useOpenAITTS } from '@/hooks/useOpenAITTS';
+import { checkVoiceFeatures, requestMicrophonePermission } from '@/lib/audioPermissions';
 import { 
   getWorkSession, 
   addSessionEvent, 
@@ -28,7 +30,6 @@ import {
   STAGE_ORDER, 
   STAGE_CONFIG,
   WorkSession,
-  PromptContent,
   ResponseContent,
   CodeSnapshotContent
 } from '@/types/workSession';
@@ -40,6 +41,7 @@ interface Message {
   stage: StageName;
   timestamp: Date;
   signalTags?: string[];
+  isVoice?: boolean;
 }
 
 const WorkSessionLive = () => {
@@ -59,8 +61,101 @@ const WorkSessionLive = () => {
   const [code, setCode] = useState('');
   const [showCodeEditor, setShowCodeEditor] = useState(false);
   
+  // Voice state
+  const [isVoiceMode, setIsVoiceMode] = useState(true); // Auto-activate voice mode
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [pendingSpeak, setPendingSpeak] = useState<string | null>(null);
+  const [voiceInitialized, setVoiceInitialized] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const autoListenRef = useRef(false);
+
+  // Speech Recognition hook
+  const {
+    isListening,
+    transcript,
+    interimTranscript,
+    error: recognitionError,
+    isSupported: recognitionSupported,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useSpeechRecognition({
+    lang: 'en-US',
+    continuous: true,
+    interimResults: true,
+    silenceTimeout: 5000,
+    onEnd: (finalTranscript) => {
+      // Auto-submit when stopped and has transcript
+      console.log('Recognition ended with transcript:', finalTranscript);
+      if (finalTranscript && isVoiceMode) {
+        handleVoiceSubmit(finalTranscript);
+      }
+    },
+    onError: (error) => {
+      setVoiceError(error);
+      if (error.includes('denied')) {
+        setIsVoiceMode(false);
+        toast.error('Microphone access denied. Switching to text mode.');
+      }
+    },
+  });
+
+  // OpenAI TTS hook (Echo voice)
+  const {
+    isSpeaking,
+    isLoading: isTTSLoading,
+    speak,
+    cancel: cancelSpeech,
+  } = useOpenAITTS({
+    voice: 'echo',
+    onEnd: () => {
+      // Auto-start listening after AI finishes speaking
+      if (isVoiceMode && autoListenRef.current) {
+        autoListenRef.current = false;
+        setTimeout(() => {
+          resetTranscript();
+          startListening();
+        }, 500);
+      }
+    },
+    onError: (error) => {
+      setVoiceError(error);
+      console.error('TTS Error:', error);
+    },
+  });
+
+  // Check voice support on mount and auto-initialize
+  useEffect(() => {
+    async function checkSupport() {
+      const status = await checkVoiceFeatures();
+      // TTS is always available via OpenAI API, we just need mic for input
+      setVoiceSupported(status.canUseRecognition || true); // TTS always works
+      
+      if (!voiceInitialized) {
+        // Auto-request microphone permission for voice input
+        const granted = await requestMicrophonePermission();
+        if (granted) {
+          setVoiceInitialized(true);
+          console.log('Voice mode initialized with OpenAI TTS');
+        } else {
+          // Can still use TTS for output, just not voice input
+          setVoiceInitialized(true);
+          toast.info('Microphone not available. AI will speak, but you\'ll type responses.');
+        }
+      }
+    }
+    checkSupport();
+  }, [voiceInitialized]);
+
+  // Update voice error from recognition
+  useEffect(() => {
+    if (recognitionError) {
+      setVoiceError(recognitionError);
+    }
+  }, [recognitionError]);
 
   // Scroll to bottom of messages
   const scrollToBottom = useCallback(() => {
@@ -70,6 +165,15 @@ const WorkSessionLive = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  // Speak pending prompt when voice mode is active
+  useEffect(() => {
+    if (pendingSpeak && isVoiceMode && !isSpeaking && !isListening) {
+      autoListenRef.current = true;
+      speak(pendingSpeak);
+      setPendingSpeak(null);
+    }
+  }, [pendingSpeak, isVoiceMode, isSpeaking, isListening, speak]);
 
   // Load session and get first prompt
   useEffect(() => {
@@ -81,7 +185,6 @@ const WorkSessionLive = () => {
       }
 
       try {
-        // Fetch session details
         const sessionData = await getWorkSession(sessionId);
         if (!sessionData) {
           toast.error('Session not found');
@@ -102,14 +205,18 @@ const WorkSessionLive = () => {
         setIsLoadingPrompt(true);
         const promptResult = await getNextPrompt(sessionId, 'framing');
         
+        const promptText = promptResult.nextPrompt;
         setMessages([{
           id: crypto.randomUUID(),
           type: 'prompt',
-          text: promptResult.nextPrompt,
+          text: promptText,
           stage: 'framing',
           timestamp: new Date(),
           signalTags: promptResult.signalTags,
         }]);
+        
+        // Queue for speaking if voice mode is on
+        setPendingSpeak(promptText);
         setIsLoadingPrompt(false);
       } catch (error) {
         console.error('Failed to initialize session:', error);
@@ -121,7 +228,88 @@ const WorkSessionLive = () => {
     init();
   }, [sessionId, navigate]);
 
-  // Handle response submission
+  // Handle voice mode toggle
+  const handleVoiceModeChange = async (enabled: boolean) => {
+    if (enabled) {
+      // Request permission first
+      const granted = await requestMicrophonePermission();
+      if (!granted) {
+        toast.error('Microphone permission is required for voice mode');
+        return;
+      }
+    } else {
+      // Stop any ongoing voice activity
+      stopListening();
+      cancelSpeech();
+    }
+    setIsVoiceMode(enabled);
+    setVoiceError(null);
+  };
+
+  // Handle microphone button click
+  const handleMicClick = () => {
+    if (isListening) {
+      // Stop and submit
+      handleSubmitVoice();
+    } else {
+      resetTranscript();
+      startListening();
+    }
+  };
+
+  // Handle manual voice submit (button click or auto from silence)
+  const handleSubmitVoice = useCallback(() => {
+    const currentTranscript = transcript.trim();
+    console.log('Submitting voice response:', currentTranscript);
+    
+    stopListening();
+    
+    if (!currentTranscript || !sessionId) {
+      console.log('No transcript to submit');
+      return;
+    }
+
+    // Add response to messages
+    const responseMessage: Message = {
+      id: crypto.randomUUID(),
+      type: 'response',
+      text: currentTranscript,
+      stage: currentStage,
+      timestamp: new Date(),
+      isVoice: true,
+    };
+    setMessages(prev => [...prev, responseMessage]);
+    
+    resetTranscript();
+
+    // Process the response
+    processResponse(currentTranscript);
+  }, [transcript, sessionId, currentStage, stopListening, resetTranscript]);
+
+  // Handle voice submit from onEnd callback
+  const handleVoiceSubmit = async (voiceText: string) => {
+    if (!voiceText.trim() || !sessionId) return;
+
+    console.log('Auto-submitting voice:', voiceText);
+    
+    // Add response to messages
+    const responseMessage: Message = {
+      id: crypto.randomUUID(),
+      type: 'response',
+      text: voiceText,
+      stage: currentStage,
+      timestamp: new Date(),
+      isVoice: true,
+    };
+    setMessages(prev => [...prev, responseMessage]);
+    
+    resetTranscript();
+
+    // Process the response
+    await processResponse(voiceText);
+  };
+
+  // Handle text response submission
   const handleSubmitResponse = async () => {
     if (!response.trim() && !code.trim()) {
       toast.error('Please enter a response');
@@ -139,12 +327,21 @@ const WorkSessionLive = () => {
       text: responseText,
       stage: currentStage,
       timestamp: new Date(),
+      isVoice: false,
     };
     setMessages(prev => [...prev, responseMessage]);
     
     // Clear inputs
     setResponse('');
     
+    // Process the response
+    await processResponse(responseText);
+  };
+
+  // Common response processing
+  const processResponse = async (responseText: string) => {
+    if (!sessionId) return;
+
     // Save response event
     try {
       await addSessionEvent(sessionId, 'RESPONSE', {
@@ -174,11 +371,9 @@ const WorkSessionLive = () => {
         const isLastStage = currentIndex === STAGE_ORDER.length - 1;
 
         if (isLastStage) {
-          // Session complete
           handleCompleteSession();
           return;
         } else {
-          // Move to next stage
           setCompletedStages(prev => [...prev, currentStage]);
           const nextStage = STAGE_ORDER[currentIndex + 1];
           setCurrentStage(nextStage);
@@ -187,27 +382,42 @@ const WorkSessionLive = () => {
         }
       }
 
+      const promptText = promptResult.nextPrompt;
+      
       // Add prompt to messages
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         type: 'prompt',
-        text: promptResult.nextPrompt,
+        text: promptText,
         stage: promptResult.stageComplete ? STAGE_ORDER[STAGE_ORDER.indexOf(currentStage) + 1] || currentStage : currentStage,
         timestamp: new Date(),
         signalTags: promptResult.signalTags,
       }]);
+
+      // Queue for speaking if voice mode is on
+      if (isVoiceMode) {
+        setPendingSpeak(promptText);
+      }
     } catch (error) {
       console.error('Failed to get next prompt:', error);
       toast.error('Failed to get next prompt');
     } finally {
       setIsLoadingPrompt(false);
-      textareaRef.current?.focus();
+      if (!isVoiceMode) {
+        textareaRef.current?.focus();
+      }
     }
   };
 
-  // Handle stage skip (I'm done button)
+  // Handle stage skip
   const handleSkipStage = async () => {
     if (!sessionId) return;
+
+    // Stop voice activity
+    if (isVoiceMode) {
+      stopListening();
+      cancelSpeech();
+    }
 
     const currentIndex = STAGE_ORDER.indexOf(currentStage);
     const isLastStage = currentIndex === STAGE_ORDER.length - 1;
@@ -225,15 +435,21 @@ const WorkSessionLive = () => {
     setIsLoadingPrompt(true);
     try {
       const promptResult = await getNextPrompt(sessionId, nextStage);
+      const promptText = promptResult.nextPrompt;
       
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         type: 'prompt',
-        text: promptResult.nextPrompt,
+        text: promptText,
         stage: nextStage,
         timestamp: new Date(),
         signalTags: promptResult.signalTags,
       }]);
+
+      // Queue for speaking if voice mode is on
+      if (isVoiceMode) {
+        setPendingSpeak(promptText);
+      }
     } catch (error) {
       console.error('Failed to get prompt for new stage:', error);
       toast.error('Failed to start new stage');
@@ -246,9 +462,15 @@ const WorkSessionLive = () => {
   const handleCompleteSession = async () => {
     if (!sessionId) return;
 
+    // Stop voice activity
+    if (isVoiceMode) {
+      stopListening();
+      cancelSpeech();
+    }
+
     setIsCompleting(true);
     try {
-      const result = await completeSession(sessionId);
+      await completeSession(sessionId);
       toast.success('Session completed! Generating Evidence Pack...');
       navigate(`/evidence-pack/${sessionId}`);
     } catch (error) {
@@ -288,7 +510,7 @@ const WorkSessionLive = () => {
 
   // Handle key press
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !isVoiceMode) {
       e.preventDefault();
       handleSubmitResponse();
     }
@@ -326,8 +548,22 @@ const WorkSessionLive = () => {
               onTimeExpired={handleTimeExpired}
             />
 
+            {/* Voice Controls - Desktop */}
+            <div className="hidden md:flex items-center">
+              <VoiceControls
+                isVoiceMode={isVoiceMode}
+                onVoiceModeChange={handleVoiceModeChange}
+                isListening={isListening}
+                isSpeaking={isSpeaking}
+                isSupported={voiceSupported && recognitionSupported}
+                error={voiceError}
+                onMicClick={handleMicClick}
+                onStopSpeaking={cancelSpeech}
+              />
+            </div>
+
             {/* Stage Progress - Desktop */}
-            <div className="hidden md:block flex-1 max-w-xl mx-4">
+            <div className="hidden lg:block flex-1 max-w-xl mx-4">
               <StageProgress
                 currentStage={currentStage}
                 completedStages={completedStages}
@@ -340,7 +576,7 @@ const WorkSessionLive = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleSkipStage}
-                disabled={isLoadingPrompt || isCompleting}
+                disabled={isLoadingPrompt || isCompleting || isSpeaking}
               >
                 {isLastStage ? 'Finish Session' : 'Skip Stage'}
                 <ArrowRight className="w-4 h-4" />
@@ -348,11 +584,23 @@ const WorkSessionLive = () => {
             </div>
           </div>
 
-          {/* Stage Progress - Mobile */}
-          <div className="md:hidden mt-3">
+          {/* Mobile row: Stage Progress + Voice Controls */}
+          <div className="lg:hidden mt-3 flex items-center justify-between gap-4">
             <StageProgressCompact
               currentStage={currentStage}
               completedStages={completedStages}
+              className="flex-1"
+            />
+            <VoiceControls
+              isVoiceMode={isVoiceMode}
+              onVoiceModeChange={handleVoiceModeChange}
+              isListening={isListening}
+              isSpeaking={isSpeaking}
+              isSupported={voiceSupported && recognitionSupported}
+              error={voiceError}
+              onMicClick={handleMicClick}
+              onStopSpeaking={cancelSpeech}
+              compact
             />
           </div>
         </div>
@@ -398,6 +646,13 @@ const WorkSessionLive = () => {
                       )}
                     </div>
                   )}
+                  {/* Voice indicator for responses */}
+                  {message.type === 'response' && message.isVoice && (
+                    <div className="flex items-center gap-1 mb-2">
+                      <Mic className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">Voice</span>
+                    </div>
+                  )}
                   <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                 </Card>
               </motion.div>
@@ -405,7 +660,7 @@ const WorkSessionLive = () => {
           </AnimatePresence>
 
           {/* Loading indicator */}
-          {isLoadingPrompt && (
+          {(isLoadingPrompt || isTTSLoading) && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -414,7 +669,9 @@ const WorkSessionLive = () => {
               <Card className="glass-card p-4">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">Thinking...</span>
+                  <span className="text-sm">
+                    {isTTSLoading ? 'Preparing voice...' : 'Thinking...'}
+                  </span>
                 </div>
               </Card>
             </motion.div>
@@ -425,6 +682,48 @@ const WorkSessionLive = () => {
 
         {/* Input Area */}
         <div className="space-y-4">
+          {/* Live Transcript with Submit Button (Voice Mode) */}
+          <AnimatePresence>
+            {isVoiceMode && (isListening || transcript || interimTranscript) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="space-y-3"
+              >
+                <LiveTranscript
+                  transcript={transcript}
+                  interimTranscript={interimTranscript}
+                  isListening={isListening}
+                />
+                {/* Voice Submit Button */}
+                {(transcript || interimTranscript) && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleSubmitVoice}
+                      disabled={isLoadingPrompt || isCompleting || !transcript.trim()}
+                      className="flex-1 bg-accent hover:bg-accent/90"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Send Voice Response
+                    </Button>
+                    {isListening && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          stopListening();
+                          resetTranscript();
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Code Editor Toggle */}
           <div className="flex items-center gap-2">
             <Button
@@ -456,28 +755,61 @@ const WorkSessionLive = () => {
             )}
           </AnimatePresence>
 
-          {/* Response Input */}
-          <div className="flex gap-3">
-            <div className="flex-1 relative">
-              <Textarea
-                ref={textareaRef}
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Type your response... (Press Enter to send, Shift+Enter for new line)"
-                className="min-h-[100px] resize-none bg-card/50 pr-12"
-                disabled={isLoadingPrompt || isCompleting}
-              />
-              <Button
-                size="icon"
-                onClick={handleSubmitResponse}
-                disabled={isLoadingPrompt || isCompleting || (!response.trim() && !code.trim())}
-                className="absolute bottom-3 right-3 bg-accent hover:bg-accent/90"
+          {/* Voice Mode: Start Recording Button */}
+          <AnimatePresence>
+            {isVoiceMode && !isListening && !transcript && !isSpeaking && !isLoadingPrompt && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="flex justify-center"
               >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    resetTranscript();
+                    startListening();
+                  }}
+                  className="gap-3 bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/30"
+                >
+                  <Mic className="w-5 h-5" />
+                  Click to Start Speaking
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Text Response Input (shown when not in voice mode, or as fallback) */}
+          <AnimatePresence>
+            {!isVoiceMode && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex gap-3"
+              >
+                <div className="flex-1 relative">
+                  <Textarea
+                    ref={textareaRef}
+                    value={response}
+                    onChange={(e) => setResponse(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Type your response... (Press Enter to send, Shift+Enter for new line)"
+                    className="min-h-[100px] resize-none bg-card/50 pr-12"
+                    disabled={isLoadingPrompt || isCompleting || isSpeaking}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={handleSubmitResponse}
+                    disabled={isLoadingPrompt || isCompleting || isSpeaking || (!response.trim() && !code.trim())}
+                    className="absolute bottom-3 right-3 bg-accent hover:bg-accent/90"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

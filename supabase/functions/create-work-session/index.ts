@@ -36,9 +36,9 @@ serve(async (req) => {
       );
     }
 
-    if (![15, 30, 45].includes(duration)) {
+    if (![5, 15, 30, 45].includes(duration)) {
       return new Response(
-        JSON.stringify({ error: "duration must be 15, 30, or 45 minutes" }),
+        JSON.stringify({ error: "duration must be 5, 15, 30, or 45 minutes" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

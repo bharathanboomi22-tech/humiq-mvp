@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.get-evidence-pack]
 verify_jwt = false
+
+[functions.text-to-speech]
+verify_jwt = false

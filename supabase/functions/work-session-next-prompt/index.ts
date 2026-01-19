@@ -15,14 +15,20 @@ CRITICAL RULES:
 - Focus on real work: requirements, tradeoffs, execution, testing, observability
 - No trivia, no gotchas, no leetcode-style puzzles
 - If evidence is missing, ask questions that can reveal it
-- Keep questions concise (2-3 sentences max)
-- Acknowledge good answers briefly before moving on
+- Keep questions SHORT and concise (1-2 sentences max)
+- This is a DEMO session - be brief and move quickly
+- After 1 question per stage, mark stageComplete as true
 
-STAGE GUIDELINES:
-- Framing (5-10 min): Understand problem space, clarify requirements, identify constraints
-- Approach (10-15 min): Explore solution options, discuss tradeoffs, system design
-- Build (10-20 min): Walk through implementation, pseudocode, key decisions
-- Review (5-10 min): Edge cases, testing strategy, observability, deployment considerations
+DEMO MODE (5 min session):
+- Ask only ONE focused question per stage
+- Keep your responses very short
+- Move to next stage after the candidate answers
+
+STAGE GUIDELINES (1 question each):
+- Framing: Ask about understanding the problem and key requirements
+- Approach: Ask about their solution design or architecture choice
+- Build: Ask about implementation approach or key code decisions
+- Review: Ask about testing, edge cases, or deployment
 
 SIGNAL TAGS (use 1-2 per response):
 - Ownership: Takes responsibility, drives to completion
@@ -123,11 +129,20 @@ serve(async (req) => {
       githubSummary = `\nGITHUB INSIGHTS (use to tailor questions):\n${session.raw_work_evidence.slice(0, 2000)}`;
     }
 
+    // Count responses in current stage
+    const stageResponses = (events || []).filter(
+      e => e.event_type === "RESPONSE" && e.content?.stage === currentStage
+    ).length;
+
+    // In demo mode (5 min), move to next stage after 1 response
+    const isDemoMode = session.duration === 5;
+    const shouldCompleteStage = isDemoMode && candidateResponse && stageResponses >= 0;
+
     // Build user prompt
     const userPrompt = `SESSION CONTEXT:
 Role Track: ${session.role_track}
 Level: ${session.level}
-Duration: ${session.duration} minutes
+Duration: ${session.duration} minutes (${isDemoMode ? "DEMO MODE - 1 question per stage" : "standard"})
 Current Stage: ${currentStage}
 ${githubSummary}
 
@@ -136,7 +151,9 @@ ${conversationHistory || "(Starting conversation)"}
 
 ${candidateResponse ? `CANDIDATE'S LATEST RESPONSE:\n${candidateResponse}` : "Generate the opening question for this stage."}
 
-Generate the next prompt for the ${currentStage} stage. Consider whether we have enough signal to move to the next stage.`;
+${isDemoMode && candidateResponse ? "IMPORTANT: This is DEMO MODE. The candidate has answered. Set stageComplete to TRUE and provide brief acknowledgment before moving on." : ""}
+
+Generate the next prompt for the ${currentStage} stage.${shouldCompleteStage ? " Mark stageComplete as true since this is demo mode and the candidate has responded." : ""}`;
 
     // Call LLM
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

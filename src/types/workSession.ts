@@ -2,7 +2,7 @@
 
 export type RoleTrack = 'backend' | 'frontend';
 export type SessionLevel = 'junior' | 'mid' | 'senior';
-export type SessionDuration = 15 | 30 | 45;
+export type SessionDuration = 5 | 15 | 30 | 45;
 export type SessionStatus = 'active' | 'completed' | 'abandoned';
 export type StageName = 'framing' | 'approach' | 'build' | 'review';
 export type EventType = 'PROMPT' | 'RESPONSE' | 'CODE_SNAPSHOT' | 'SYSTEM';
@@ -146,10 +146,10 @@ export interface CompleteSessionResponse {
 
 // Stage configuration
 export const STAGE_CONFIG: Record<StageName, { label: string; minMinutes: number; maxMinutes: number }> = {
-  framing: { label: 'Problem Framing', minMinutes: 5, maxMinutes: 10 },
-  approach: { label: 'Solution Approach', minMinutes: 10, maxMinutes: 15 },
-  build: { label: 'Build / Pseudocode', minMinutes: 10, maxMinutes: 20 },
-  review: { label: 'Review & Hardening', minMinutes: 5, maxMinutes: 10 },
+  framing: { label: 'Problem Framing', minMinutes: 1, maxMinutes: 2 },
+  approach: { label: 'Solution Approach', minMinutes: 1, maxMinutes: 2 },
+  build: { label: 'Build / Pseudocode', minMinutes: 1, maxMinutes: 2 },
+  review: { label: 'Review & Hardening', minMinutes: 1, maxMinutes: 2 },
 };
 
 export const STAGE_ORDER: StageName[] = ['framing', 'approach', 'build', 'review'];

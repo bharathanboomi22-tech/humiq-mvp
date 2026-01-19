@@ -24,7 +24,7 @@ const WorkSessionStart = () => {
   const [githubUrl, setGithubUrl] = useState(searchParams.get('github') || '');
   const [roleTrack, setRoleTrack] = useState<RoleTrack>('backend');
   const [level, setLevel] = useState<SessionLevel>('mid');
-  const [duration, setDuration] = useState<SessionDuration>(30);
+  const [duration, setDuration] = useState<SessionDuration>(5);
   const [isLoading, setIsLoading] = useState(false);
   const [hasGitHubData, setHasGitHubData] = useState(false);
 
@@ -182,32 +182,33 @@ const WorkSessionStart = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="15">15 minutes (Quick)</SelectItem>
-                    <SelectItem value="30">30 minutes (Standard)</SelectItem>
-                    <SelectItem value="45">45 minutes (Deep Dive)</SelectItem>
+                    <SelectItem value="5">5 minutes (Demo)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Session Format Info */}
               <div className="p-4 rounded-lg bg-muted/30 border border-border space-y-3">
-                <h4 className="font-medium text-sm text-foreground">Session Format</h4>
+                <h4 className="font-medium text-sm text-foreground">Demo Session Format</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Quick 5-minute session with 1 question per stage
+                </p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-accent mt-1">1.</span>
-                    <span><strong className="text-foreground/80">Problem Framing</strong> — Understand requirements and constraints</span>
+                    <span><strong className="text-foreground/80">Framing</strong> — Understanding the problem</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-accent mt-1">2.</span>
-                    <span><strong className="text-foreground/80">Solution Approach</strong> — Discuss design and tradeoffs</span>
+                    <span><strong className="text-foreground/80">Approach</strong> — Solution design</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-accent mt-1">3.</span>
-                    <span><strong className="text-foreground/80">Build</strong> — Walk through implementation or pseudocode</span>
+                    <span><strong className="text-foreground/80">Build</strong> — Implementation</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-accent mt-1">4.</span>
-                    <span><strong className="text-foreground/80">Review</strong> — Edge cases, testing, observability</span>
+                    <span><strong className="text-foreground/80">Review</strong> — Testing & edge cases</span>
                   </li>
                 </ul>
               </div>
