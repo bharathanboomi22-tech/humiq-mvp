@@ -2,7 +2,7 @@ import { CandidateBrief } from '@/types/brief';
 
 export const mockBrief: CandidateBrief = {
   candidateName: 'Sarah Chen',
-  verdict: 'interview',
+  verdict: 'pass',
   confidence: 'high',
   rationale: 'Strong shipping and ownership signals, but limited evidence of collaboration in team environments.',
   
@@ -78,7 +78,7 @@ export const mockBrief: CandidateBrief = {
   },
 
   recommendation: {
-    verdict: 'interview',
+    verdict: 'pass',
     reasons: [
       'Strong evidence of shipping complete products independently — rare founder-engineer trait.',
       'Primary risk (team collaboration) is testable in a 30-minute conversation.',

@@ -18,8 +18,7 @@ const staggerDelay = 0.08;
 
 export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
   const isInsufficientEvidence = 
-    brief.verdict === 'caution' && 
-    brief.confidence === 'low' &&
+    brief.verdict === 'fail' &&
     (!brief.workArtifacts || brief.workArtifacts.length === 0);
 
   return (

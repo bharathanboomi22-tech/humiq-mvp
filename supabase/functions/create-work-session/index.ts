@@ -36,8 +36,8 @@ const analysisToolSchema = {
         },
         verdict: {
           type: "string",
-          enum: ["interview", "caution", "pass"],
-          description: "interview = Interview Now, caution = Proceed with Caution, pass = Do Not Advance.",
+          enum: ["pass", "fail"],
+          description: "'pass' if strong signals to proceed, 'fail' if insufficient evidence",
         },
         confidence: {
           type: "string",
@@ -107,7 +107,7 @@ const analysisToolSchema = {
         recommendation: {
           type: "object",
           properties: {
-            verdict: { type: "string", enum: ["interview", "caution", "pass"] },
+            verdict: { type: "string", enum: ["pass", "fail"] },
             reasons: {
               type: "array",
               maxItems: 2,

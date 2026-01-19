@@ -10,9 +10,8 @@ interface VerdictHeaderProps {
 }
 
 const verdictLabels: Record<VerdictType, string> = {
-  interview: 'Interview Now',
-  caution: 'Proceed with Caution',
-  pass: 'Do Not Advance',
+  pass: 'Pass',
+  fail: 'Fail',
 };
 
 const confidenceLabels: Record<ConfidenceLevel, string> = {

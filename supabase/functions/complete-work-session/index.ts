@@ -15,7 +15,7 @@ CRITICAL RULES:
 - Be specific with examples from the conversation AND from GitHub work
 - Make it skimmable in 5 minutes
 - No numeric scores
-- Provide a clear verdict: "interview" (strong signal to proceed), "caution" (mixed signals), or "pass" (insufficient evidence)
+- Provide a clear verdict: "pass" (strong signals to proceed) or "fail" (insufficient evidence)
 
 The report should help a hiring manager quickly understand:
 1. What real work artifacts the candidate has produced (from GitHub)
@@ -50,8 +50,8 @@ const evidencePackToolSchema = {
         },
         verdict: {
           type: "string",
-          enum: ["interview", "caution", "pass"],
-          description: "Overall verdict: interview (proceed), caution (mixed), pass (insufficient)",
+          enum: ["pass", "fail"],
+          description: "Overall verdict: 'pass' if strong signals to proceed, 'fail' if insufficient evidence",
         },
         rationale: {
           type: "string",
@@ -169,8 +169,8 @@ const evidencePackToolSchema = {
           properties: {
             verdict: {
               type: "string",
-              enum: ["interview", "caution", "pass"],
-              description: "Final hiring recommendation",
+              enum: ["pass", "fail"],
+              description: "Final hiring recommendation: 'pass' to proceed, 'fail' if insufficient",
             },
             reasons: {
               type: "array",
@@ -329,7 +329,7 @@ INSTRUCTIONS:
 1. IMPORTANT: If GitHub analysis is provided above, USE those workArtifacts and signalSynthesis directly in your output
 2. Merge the GitHub signals with interview observations to create updated signalSynthesis
 3. If the interview confirms or contradicts GitHub signals, note this in the evidence field
-4. Provide a final verdict considering BOTH sources: "interview" if strong signals, "caution" if mixed, "pass" if insufficient
+4. Provide a final verdict considering BOTH sources: "pass" if strong signals to proceed, "fail" if insufficient evidence
 5. The rationale should explain how GitHub work + interview performance combined to reach the verdict
 6. Keep the candidate name from GitHub analysis
 

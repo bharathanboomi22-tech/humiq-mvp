@@ -1,4 +1,4 @@
-export type VerdictType = 'interview' | 'caution' | 'pass';
+export type VerdictType = 'pass' | 'fail';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 export type SignalLevel = 'high' | 'medium' | 'low';
 

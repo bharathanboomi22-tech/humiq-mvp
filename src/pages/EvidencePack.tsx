@@ -35,19 +35,14 @@ const confidenceConfig: Record<ConfidenceLevel, { label: string; class: string }
 };
 
 const verdictConfig: Record<VerdictType, { label: string; class: string; description: string }> = {
-  interview: { 
-    label: 'Interview Now', 
-    class: 'verdict-interview',
+  pass: { 
+    label: 'Pass', 
+    class: 'verdict-interview', // Keep using verdict-interview styling for pass
     description: 'Strong signals observed. Recommend advancing.'
   },
-  caution: { 
-    label: 'Proceed with Caution', 
-    class: 'verdict-caution',
-    description: 'Mixed signals. Additional validation recommended.'
-  },
-  pass: { 
+  fail: { 
     label: 'Fail', 
-    class: 'verdict-pass',
+    class: 'verdict-pass', // Keep using verdict-pass styling for fail
     description: 'Insufficient evidence for this role.'
   },
 };

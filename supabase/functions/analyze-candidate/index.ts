@@ -34,8 +34,8 @@ const analysisToolSchema = {
         },
         verdict: {
           type: "string",
-          enum: ["interview", "caution", "pass"],
-          description: "interview = Interview Now, caution = Proceed with Caution, pass = Do Not Advance. Use 'caution' with 'low' confidence if evidence is insufficient."
+          enum: ["pass", "fail"],
+          description: "'pass' if strong signals to proceed, 'fail' if insufficient evidence"
         },
         confidence: {
           type: "string",
@@ -107,7 +107,7 @@ const analysisToolSchema = {
         recommendation: {
           type: "object",
           properties: {
-            verdict: { type: "string", enum: ["interview", "caution", "pass"] },
+            verdict: { type: "string", enum: ["pass", "fail"] },
             reasons: {
               type: "array",
               maxItems: 2,
@@ -151,7 +151,7 @@ ${rawWorkEvidence || ""}
 
 OUTPUT FORMAT (FOLLOW EXACTLY):
 
-Verdict: <Interview Now | Proceed with Caution | Do Not Advance>
+Verdict: <Pass | Fail>
 Confidence: <High | Medium | Low>
 Rationale: <1 calm sentence tied directly to evidence or explicit gaps>
 
