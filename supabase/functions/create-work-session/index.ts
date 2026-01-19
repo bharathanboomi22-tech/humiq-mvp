@@ -25,27 +25,28 @@ const analysisToolSchema = {
   type: "function",
   function: {
     name: "generate_candidate_brief",
-    description: "Generate a structured candidate brief for a founding engineer candidate based ONLY on provided Raw Work Evidence.",
+    description:
+      "Generate a structured candidate brief for a founding engineer candidate based ONLY on provided Raw Work Evidence.",
     parameters: {
       type: "object",
       properties: {
         candidateName: {
           type: "string",
-          description: "The candidate's name ONLY if it appears in Raw Work Evidence. Otherwise empty string."
+          description: "The candidate's name ONLY if it appears in Raw Work Evidence. Otherwise empty string.",
         },
         verdict: {
           type: "string",
           enum: ["interview", "caution", "pass"],
-          description: "interview = Interview Now, caution = Proceed with Caution, pass = Do Not Advance."
+          description: "interview = Interview Now, caution = Proceed with Caution, pass = Do Not Advance.",
         },
         confidence: {
           type: "string",
           enum: ["high", "medium", "low"],
-          description: "Confidence level based on evidence quality."
+          description: "Confidence level based on evidence quality.",
         },
         rationale: {
           type: "string",
-          description: "One calm, specific sentence tied to evidence."
+          description: "One calm, specific sentence tied to evidence.",
         },
         workArtifacts: {
           type: "array",
@@ -61,11 +62,14 @@ const analysisToolSchema = {
               signals: {
                 type: "array",
                 maxItems: 2,
-                items: { type: "string", enum: ["Shipping", "Ownership", "Judgment", "Product Sense", "Communication"] }
-              }
+                items: {
+                  type: "string",
+                  enum: ["Shipping", "Ownership", "Judgment", "Product Sense", "Communication"],
+                },
+              },
             },
-            required: ["id", "title", "whatItIs", "whyItMatters", "signals"]
-          }
+            required: ["id", "title", "whatItIs", "whyItMatters", "signals"],
+          },
         },
         signalSynthesis: {
           type: "array",
@@ -74,10 +78,10 @@ const analysisToolSchema = {
             properties: {
               name: { type: "string", enum: ["Ownership", "Judgment", "Execution", "Communication"] },
               level: { type: "string", enum: ["high", "medium", "low"] },
-              evidence: { type: "string" }
+              evidence: { type: "string" },
             },
-            required: ["name", "level", "evidence"]
-          }
+            required: ["name", "level", "evidence"],
+          },
         },
         risksUnknowns: {
           type: "array",
@@ -86,19 +90,19 @@ const analysisToolSchema = {
             type: "object",
             properties: {
               id: { type: "string" },
-              description: { type: "string" }
+              description: { type: "string" },
             },
-            required: ["id", "description"]
-          }
+            required: ["id", "description"],
+          },
         },
         validationPlan: {
           type: "object",
           properties: {
             riskToValidate: { type: "string" },
             question: { type: "string" },
-            strongAnswer: { type: "string" }
+            strongAnswer: { type: "string" },
           },
-          required: ["riskToValidate", "question", "strongAnswer"]
+          required: ["riskToValidate", "question", "strongAnswer"],
         },
         recommendation: {
           type: "object",
@@ -107,15 +111,25 @@ const analysisToolSchema = {
             reasons: {
               type: "array",
               maxItems: 2,
-              items: { type: "string" }
-            }
+              items: { type: "string" },
+            },
           },
-          required: ["verdict", "reasons"]
-        }
+          required: ["verdict", "reasons"],
+        },
       },
-      required: ["candidateName", "verdict", "confidence", "rationale", "workArtifacts", "signalSynthesis", "risksUnknowns", "validationPlan", "recommendation"]
-    }
-  }
+      required: [
+        "candidateName",
+        "verdict",
+        "confidence",
+        "rationale",
+        "workArtifacts",
+        "signalSynthesis",
+        "risksUnknowns",
+        "validationPlan",
+        "recommendation",
+      ],
+    },
+  },
 };
 
 serve(async (req) => {
@@ -128,31 +142,31 @@ serve(async (req) => {
 
     // Validate inputs
     if (!githubUrl || !roleTrack || !level || !duration) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields: githubUrl, roleTrack, level, duration" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Missing required fields: githubUrl, roleTrack, level, duration" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (!["backend", "frontend"].includes(roleTrack)) {
-      return new Response(
-        JSON.stringify({ error: "roleTrack must be 'backend' or 'frontend'" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "roleTrack must be 'backend' or 'frontend'" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (!["junior", "mid", "senior"].includes(level)) {
-      return new Response(
-        JSON.stringify({ error: "level must be 'junior', 'mid', or 'senior'" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "level must be 'junior', 'mid', or 'senior'" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (![5, 15, 30, 45].includes(duration)) {
-      return new Response(
-        JSON.stringify({ error: "duration must be 5, 15, 30, or 45 minutes" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "duration must be 5, 15, 30, or 45 minutes" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("Creating work session:", { githubUrl, roleTrack, level, duration });
@@ -164,22 +178,19 @@ serve(async (req) => {
     if (githubUrl.includes("github.com")) {
       try {
         console.log("Fetching GitHub evidence...");
-        
+
         // Extract username from GitHub URL
         const githubMatch = githubUrl.match(/github\.com\/([^\/]+)\/?$/);
         if (githubMatch) {
           const username = githubMatch[1];
-          
+
           // Fetch repos
-          const reposResponse = await fetch(
-            `https://api.github.com/users/${username}/repos?sort=updated&per_page=10`,
-            {
-              headers: {
-                "Accept": "application/vnd.github.v3+json",
-                "User-Agent": "HumIQ-WorkSession",
-              },
-            }
-          );
+          const reposResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=10`, {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+              "User-Agent": "HumIQ-WorkSession",
+            },
+          });
 
           if (reposResponse.ok) {
             const repos = await reposResponse.json();
@@ -191,20 +202,17 @@ serve(async (req) => {
 
             for (const repo of relevantRepos) {
               try {
-                const readmeResponse = await fetch(
-                  `https://api.github.com/repos/${repo.full_name}/readme`,
-                  {
-                    headers: {
-                      "Accept": "application/vnd.github.v3+json",
-                      "User-Agent": "HumIQ-WorkSession",
-                    },
-                  }
-                );
+                const readmeResponse = await fetch(`https://api.github.com/repos/${repo.full_name}/readme`, {
+                  headers: {
+                    Accept: "application/vnd.github.v3+json",
+                    "User-Agent": "HumIQ-WorkSession",
+                  },
+                });
 
                 if (readmeResponse.ok) {
                   const readmeData = await readmeResponse.json();
                   const readmeContent = atob(readmeData.content.replace(/\n/g, ""));
-                  
+
                   const cleanedContent = readmeContent
                     .replace(/!\[.*?\]\(.*?\)/g, "")
                     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
@@ -216,10 +224,10 @@ serve(async (req) => {
                   if (cleanedContent.length > 100) {
                     evidenceBlocks.push(
                       `SOURCE: GitHub README — ${repo.name}\n` +
-                      `Repository: ${repo.full_name}\n` +
-                      `Stars: ${repo.stargazers_count} | Language: ${repo.language || "Not specified"}\n` +
-                      `Description: ${repo.description || "No description"}\n\n` +
-                      `TEXT:\n${cleanedContent}`
+                        `Repository: ${repo.full_name}\n` +
+                        `Stars: ${repo.stargazers_count} | Language: ${repo.language || "Not specified"}\n` +
+                        `Description: ${repo.description || "No description"}\n\n` +
+                        `TEXT:\n${cleanedContent}`,
                     );
                   }
                 }
@@ -230,12 +238,12 @@ serve(async (req) => {
 
             // Add repo metadata
             for (const repo of relevantRepos) {
-              if (!evidenceBlocks.some(b => b.includes(repo.name))) {
+              if (!evidenceBlocks.some((b) => b.includes(repo.name))) {
                 evidenceBlocks.push(
                   `SOURCE: GitHub Repository — ${repo.name}\n` +
-                  `Language: ${repo.language || "Not specified"}\n` +
-                  `Stars: ${repo.stargazers_count} | Forks: ${repo.forks_count}\n` +
-                  `Description: ${repo.description || "No description"}`
+                    `Language: ${repo.language || "Not specified"}\n` +
+                    `Stars: ${repo.stargazers_count} | Forks: ${repo.forks_count}\n` +
+                    `Description: ${repo.description || "No description"}`,
                 );
               }
             }
@@ -256,7 +264,7 @@ serve(async (req) => {
       try {
         console.log("Running GitHub analysis...");
         const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-        
+
         if (LOVABLE_API_KEY) {
           const analysisPrompt = `TASK:
 Based ONLY on RAW_WORK_EVIDENCE, generate a Work Evidence Brief that helps a founder decide whether to interview this candidate.
@@ -278,17 +286,17 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
               model: "google/gemini-2.5-pro",
               messages: [
                 { role: "system", content: ANALYSIS_SYSTEM_PROMPT },
-                { role: "user", content: analysisPrompt }
+                { role: "user", content: analysisPrompt },
               ],
               tools: [analysisToolSchema],
-              tool_choice: { type: "function", function: { name: "generate_candidate_brief" } }
+              tool_choice: { type: "function", function: { name: "generate_candidate_brief" } },
             }),
           });
 
           if (analysisResponse.ok) {
             const analysisData = await analysisResponse.json();
             const toolCall = analysisData.choices?.[0]?.message?.tool_calls?.[0];
-            
+
             if (toolCall && toolCall.function.name === "generate_candidate_brief") {
               githubBrief = JSON.parse(toolCall.function.arguments);
               console.log("GitHub brief generated, verdict:", githubBrief.verdict);
@@ -325,20 +333,18 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
 
     if (sessionError) {
       console.error("Error creating session:", sessionError);
-      return new Response(
-        JSON.stringify({ error: "Failed to create work session" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Failed to create work session" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Create initial stage (framing)
-    const { error: stageError } = await supabase
-      .from("work_session_stages")
-      .insert({
-        session_id: session.id,
-        stage_name: "framing",
-        started_at: new Date().toISOString(),
-      });
+    const { error: stageError } = await supabase.from("work_session_stages").insert({
+      session_id: session.id,
+      stage_name: "framing",
+      started_at: new Date().toISOString(),
+    });
 
     if (stageError) {
       console.warn("Error creating initial stage:", stageError);
@@ -352,13 +358,13 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
         githubUrl: githubUrl,
         hasGitHubData: hasGitHubData,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("Error in create-work-session:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
