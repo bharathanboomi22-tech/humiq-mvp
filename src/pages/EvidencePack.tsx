@@ -36,7 +36,7 @@ const confidenceConfig: Record<ConfidenceLevel, { label: string; class: string }
 
 const verdictConfig: Record<VerdictType, { label: string; class: string; description: string }> = {
   interview: { 
-    label: 'Proceed to Interview', 
+    label: 'Interview Now', 
     class: 'verdict-interview',
     description: 'Strong signals observed. Recommend advancing.'
   },
@@ -46,7 +46,7 @@ const verdictConfig: Record<VerdictType, { label: string; class: string; descrip
     description: 'Mixed signals. Additional validation recommended.'
   },
   pass: { 
-    label: 'Pass', 
+    label: 'Do Not Advance', 
     class: 'verdict-pass',
     description: 'Insufficient evidence for this role.'
   },
@@ -201,7 +201,7 @@ const EvidencePack = () => {
           </div>
         </motion.div>
 
-        {/* Rationale */}
+        {/* Rationale - truncated for conciseness */}
         {summary.rationale && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -211,7 +211,11 @@ const EvidencePack = () => {
           >
             <Card className="glass-card border-accent/20">
               <CardContent className="pt-6">
-                <p className="text-foreground/90 leading-relaxed">{summary.rationale}</p>
+                <p className="text-foreground/90 leading-relaxed">
+                  {summary.rationale.length > 200 
+                    ? `${summary.rationale.slice(0, 200).trim()}…` 
+                    : summary.rationale}
+                </p>
               </CardContent>
             </Card>
           </motion.div>
