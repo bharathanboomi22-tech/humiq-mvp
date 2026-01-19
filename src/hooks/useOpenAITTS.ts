@@ -87,14 +87,8 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
         throw new Error('No audio data received');
       }
 
-      // Convert base64 to audio blob
-      const binaryString = atob(data.audio);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      const audioBlob = new Blob([bytes], { type: 'audio/mpeg' });
-      const audioUrl = URL.createObjectURL(audioBlob);
+      // Use data URI - browser natively decodes base64 audio without corruption
+      const audioUrl = `data:audio/mpeg;base64,${data.audio}`;
 
       // Create and play audio
       const audio = new Audio(audioUrl);
@@ -108,7 +102,6 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
 
       audio.onended = () => {
         setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
         audioRef.current = null;
         onEnd?.();
       };
@@ -117,7 +110,6 @@ export function useOpenAITTS(options: UseOpenAITTSOptions = {}): UseOpenAITTSRet
         console.error('Audio playback error:', e);
         setIsSpeaking(false);
         setIsLoading(false);
-        URL.revokeObjectURL(audioUrl);
         audioRef.current = null;
         const errorMsg = 'Failed to play audio';
         setError(errorMsg);
