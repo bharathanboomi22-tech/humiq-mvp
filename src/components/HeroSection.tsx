@@ -233,15 +233,15 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Love Letters Section - Below the main grid */}
+        {/* Love Letters Section - Center bottom of hero */}
         <motion.div
           id="love-letters-section"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
-          className="pb-16 lg:pb-24"
+          className="pb-16 lg:pb-24 flex flex-col items-center"
         >
-          <LoveLetters ref={loveLettersRef} />
+          <LoveLetters ref={loveLettersRef} showButton={true} />
         </motion.div>
       </div>
     </section>
