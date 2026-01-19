@@ -1,10 +1,18 @@
-import { useRef } from 'react';
+import { useRef, ReactNode } from 'react';
 import { motion, useReducedMotion, useInView } from 'framer-motion';
+import {
+  WorkSignalsVisual,
+  InboxMomentVisual,
+  ConversationVisual,
+  DecisionBriefVisual,
+  FinalHandoffVisual,
+} from './visuals';
 
 interface DeepDiveSection {
   title: string;
   body: string[];
   trustCue: string;
+  visual: (isInView: boolean) => ReactNode;
 }
 
 const sections: DeepDiveSection[] = [
@@ -17,6 +25,7 @@ const sections: DeepDiveSection[] = [
       'Signal comes from how someone works, not how they present.',
     ],
     trustCue: 'No required uploads. No penalties for missing artifacts.',
+    visual: (isInView) => <WorkSignalsVisual isInView={isInView} />,
   },
   {
     title: 'The first interview happens automatically',
@@ -26,6 +35,7 @@ const sections: DeepDiveSection[] = [
       'Every candidate starts from the same place.',
     ],
     trustCue: 'Access is consistent. Bias is reduced.',
+    visual: (isInView) => <InboxMomentVisual isInView={isInView} />,
   },
   {
     title: 'A real work conversation — not a test',
@@ -35,6 +45,7 @@ const sections: DeepDiveSection[] = [
       'This replaces screening calls and first-round interviews — without scripts or trick questions.',
     ],
     trustCue: 'Not a quiz. Not a challenge. No memorization.',
+    visual: (isInView) => <ConversationVisual isInView={isInView} />,
   },
   {
     title: 'Companies receive a hiring decision',
@@ -48,6 +59,7 @@ const sections: DeepDiveSection[] = [
       'No scores. No dashboards.',
     ],
     trustCue: 'If the signal is weak, HumIQ says so.',
+    visual: (isInView) => <DecisionBriefVisual isInView={isInView} />,
   },
   {
     title: 'Humans step in only when it matters',
@@ -56,6 +68,7 @@ const sections: DeepDiveSection[] = [
       'Human judgment stays where it belongs — at the final decision.',
     ],
     trustCue: 'AI stops before humans matter most.',
+    visual: (isInView) => <FinalHandoffVisual isInView={isInView} />,
   },
 ];
 
@@ -117,81 +130,12 @@ function DeepDiveCard({ section, index }: { section: DeepDiveSection; index: num
           </motion.div>
 
           {/* Visual Column */}
-          <motion.div
-            initial={{ opacity: 0, x: isEven ? 30 : -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{
-              duration: shouldReduceMotion ? 0 : 0.45,
-              delay: shouldReduceMotion ? 0 : 0.15,
-              ease: 'easeOut',
-            }}
-            className={isEven ? '' : 'lg:order-1'}
+          <div
+            className={`flex justify-center ${isEven ? 'lg:justify-end' : 'lg:justify-start lg:order-1'}`}
             style={{ direction: 'ltr' }}
           >
-            {/* Abstract UI frame */}
-            <div
-              className="aspect-[4/3] rounded-2xl relative overflow-hidden"
-              style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-              }}
-            >
-              {/* Mock UI elements */}
-              <div className="absolute inset-6 flex flex-col gap-4">
-                {/* Header bar */}
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.04)' }}
-                  />
-                  <div className="flex-1 space-y-2">
-                    <div
-                      className="h-2 w-24 rounded"
-                      style={{ background: 'rgba(255, 255, 255, 0.08)' }}
-                    />
-                    <div
-                      className="h-1.5 w-16 rounded"
-                      style={{ background: 'rgba(255, 255, 255, 0.04)' }}
-                    />
-                  </div>
-                </div>
-
-                {/* Content lines */}
-                <div className="flex-1 space-y-3 pt-4">
-                  {[...Array(4)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-2 rounded"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        width: `${85 - i * 15}%`,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Bottom action */}
-                <div className="flex gap-3">
-                  <div
-                    className="h-8 w-20 rounded-lg"
-                    style={{ background: 'rgba(124, 92, 255, 0.15)' }}
-                  />
-                  <div
-                    className="h-8 w-16 rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.04)' }}
-                  />
-                </div>
-              </div>
-
-              {/* Subtle glow */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `radial-gradient(ellipse 60% 60% at ${isEven ? '30% 70%' : '70% 70%'}, rgba(124, 92, 255, 0.06), transparent)`,
-                }}
-              />
-            </div>
-          </motion.div>
+            {section.visual(isInView)}
+          </div>
         </div>
       </motion.div>
     </div>
