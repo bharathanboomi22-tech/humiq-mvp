@@ -36,32 +36,32 @@ const evidencePackToolSchema = {
         roleTrack: {
           type: "string",
           enum: ["backend", "frontend"],
-          description: "The role track of the session"
+          description: "The role track of the session",
         },
         levelEstimate: {
           type: "string",
           enum: ["junior", "mid", "senior"],
-          description: "Estimated level based on observed signals"
+          description: "Estimated level based on observed signals",
         },
         confidence: {
           type: "string",
           enum: ["high", "medium", "low"],
-          description: "Confidence level in the assessment"
+          description: "Confidence level in the assessment",
         },
         verdict: {
           type: "string",
           enum: ["interview", "caution", "pass"],
-          description: "Overall verdict: interview (proceed), caution (mixed), pass (insufficient)"
+          description: "Overall verdict: interview (proceed), caution (mixed), pass (insufficient)",
         },
         rationale: {
           type: "string",
-          description: "One paragraph explaining the verdict based on combined evidence"
+          description: "One paragraph explaining the verdict based on combined evidence",
         },
         candidateName: {
           type: "string",
-          description: "Candidate name extracted from GitHub profile or 'Unknown'"
+          description: "Candidate name extracted from GitHub profile or 'Unknown'",
         },
-        
+
         // Interview-based insights
         strengths: {
           type: "array",
@@ -69,11 +69,11 @@ const evidencePackToolSchema = {
             type: "object",
             properties: {
               signal: { type: "string", description: "The strength observed" },
-              evidence: { type: "string", description: "Specific example from interview or GitHub" }
+              evidence: { type: "string", description: "Specific example from interview or GitHub" },
             },
-            required: ["signal", "evidence"]
+            required: ["signal", "evidence"],
           },
-          description: "Observed strengths with evidence"
+          description: "Observed strengths with evidence",
         },
         risks_or_unknowns: {
           type: "array",
@@ -81,11 +81,11 @@ const evidencePackToolSchema = {
             type: "object",
             properties: {
               signal: { type: "string", description: "The risk or unknown area" },
-              evidence_gap: { type: "string", description: "What evidence is missing" }
+              evidence_gap: { type: "string", description: "What evidence is missing" },
             },
-            required: ["signal", "evidence_gap"]
+            required: ["signal", "evidence_gap"],
           },
-          description: "Risks and unknowns with evidence gaps"
+          description: "Risks and unknowns with evidence gaps",
         },
         decision_log: {
           type: "array",
@@ -94,11 +94,11 @@ const evidencePackToolSchema = {
             properties: {
               decision: { type: "string", description: "A decision the candidate made" },
               tradeoff: { type: "string", description: "The tradeoff they considered" },
-              example: { type: "string", description: "Quote or specific example" }
+              example: { type: "string", description: "Quote or specific example" },
             },
-            required: ["decision", "tradeoff", "example"]
+            required: ["decision", "tradeoff", "example"],
           },
-          description: "Key decisions and tradeoffs observed in interview"
+          description: "Key decisions and tradeoffs observed in interview",
         },
         execution_observations: {
           type: "array",
@@ -106,26 +106,26 @@ const evidencePackToolSchema = {
             type: "object",
             properties: {
               observation: { type: "string", description: "What was observed" },
-              example: { type: "string", description: "Specific example" }
+              example: { type: "string", description: "Specific example" },
             },
-            required: ["observation", "example"]
+            required: ["observation", "example"],
           },
-          description: "Observations about execution quality in interview"
+          description: "Observations about execution quality in interview",
         },
         recommended_next_step: {
           type: "string",
-          description: "Recommendation: skip to onsite, 15-min follow-up, etc."
+          description: "Recommendation: skip to onsite, 15-min follow-up, etc.",
         },
         highlights: {
           type: "array",
           items: { type: "string" },
-          description: "3-5 key highlights for quick scanning"
+          description: "3-5 key highlights for quick scanning",
         },
         github_summary: {
           type: "string",
-          description: "Brief summary of GitHub evidence if available"
+          description: "Brief summary of GitHub evidence if available",
         },
-        
+
         // GitHub-sourced data
         workArtifacts: {
           type: "array",
@@ -137,15 +137,15 @@ const evidencePackToolSchema = {
               url: { type: "string", description: "GitHub URL" },
               whatItIs: { type: "string", description: "Brief description of what this is" },
               whyItMatters: { type: "string", description: "Why this artifact is significant" },
-              signals: { 
-                type: "array", 
+              signals: {
+                type: "array",
                 items: { type: "string" },
-                description: "Signals this artifact demonstrates (Shipping, Ownership, Judgment, etc.)"
-              }
+                description: "Signals this artifact demonstrates (Shipping, Ownership, Judgment, etc.)",
+              },
             },
-            required: ["id", "title", "whatItIs", "whyItMatters", "signals"]
+            required: ["id", "title", "whatItIs", "whyItMatters", "signals"],
           },
-          description: "Notable work artifacts from GitHub"
+          description: "Notable work artifacts from GitHub",
         },
         signalSynthesis: {
           type: "array",
@@ -153,38 +153,52 @@ const evidencePackToolSchema = {
             type: "object",
             properties: {
               name: { type: "string", description: "Signal name (Ownership, Judgment, Execution, Communication)" },
-              level: { 
-                type: "string", 
+              level: {
+                type: "string",
                 enum: ["high", "medium", "low"],
-                description: "Signal strength level"
+                description: "Signal strength level",
               },
-              evidence: { type: "string", description: "Evidence supporting this signal" }
+              evidence: { type: "string", description: "Evidence supporting this signal" },
             },
-            required: ["name", "level", "evidence"]
+            required: ["name", "level", "evidence"],
           },
-          description: "Synthesized signals combining GitHub and interview evidence"
+          description: "Synthesized signals combining GitHub and interview evidence",
         },
         recommendation: {
           type: "object",
           properties: {
-            verdict: { 
-              type: "string", 
+            verdict: {
+              type: "string",
               enum: ["interview", "caution", "pass"],
-              description: "Final hiring recommendation"
+              description: "Final hiring recommendation",
             },
             reasons: {
               type: "array",
               items: { type: "string" },
-              description: "2-3 key reasons for the recommendation"
-            }
+              description: "2-3 key reasons for the recommendation",
+            },
           },
           required: ["verdict", "reasons"],
-          description: "Final recommendation for hiring manager"
-        }
+          description: "Final recommendation for hiring manager",
+        },
       },
-      required: ["roleTrack", "levelEstimate", "confidence", "verdict", "rationale", "strengths", "risks_or_unknowns", "decision_log", "execution_observations", "recommended_next_step", "highlights", "signalSynthesis", "recommendation"]
-    }
-  }
+      required: [
+        "roleTrack",
+        "levelEstimate",
+        "confidence",
+        "verdict",
+        "rationale",
+        "strengths",
+        "risks_or_unknowns",
+        "decision_log",
+        "execution_observations",
+        "recommended_next_step",
+        "highlights",
+        "signalSynthesis",
+        "recommendation",
+      ],
+    },
+  },
 };
 
 serve(async (req) => {
@@ -196,10 +210,10 @@ serve(async (req) => {
     const { sessionId } = await req.json();
 
     if (!sessionId) {
-      return new Response(
-        JSON.stringify({ error: "Missing required field: sessionId" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Missing required field: sessionId" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("Completing work session:", sessionId);
@@ -217,10 +231,10 @@ serve(async (req) => {
       .single();
 
     if (sessionError || !session) {
-      return new Response(
-        JSON.stringify({ error: "Session not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Session not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Fetch all events
@@ -236,7 +250,7 @@ serve(async (req) => {
 
     // Build transcript
     const transcript = (events || [])
-      .map(e => {
+      .map((e) => {
         const timestamp = new Date(e.created_at).toLocaleTimeString();
         if (e.event_type === "PROMPT") {
           return `[${timestamp}] INTERVIEWER: ${e.content.text}`;
@@ -252,8 +266,8 @@ serve(async (req) => {
 
     // Collect signal tags
     const allSignalTags = (events || [])
-      .filter(e => e.event_type === "PROMPT" && e.content.signal_tags)
-      .flatMap(e => e.content.signal_tags);
+      .filter((e) => e.event_type === "PROMPT" && e.content.signal_tags)
+      .flatMap((e) => e.content.signal_tags);
 
     // Format GitHub brief if available
     const githubBrief = session.github_brief;
@@ -267,11 +281,15 @@ PRE-COMPUTED GITHUB ANALYSIS (Use this data directly in the merged report):
 - Rationale: ${githubBrief.rationale}
 
 Work Artifacts from GitHub:
-${(githubBrief.workArtifacts || []).map((a: any, i: number) => `${i + 1}. ${a.title}
+${(githubBrief.workArtifacts || [])
+  .map(
+    (a: any, i: number) => `${i + 1}. ${a.title}
    - What it is: ${a.whatItIs}
    - Why it matters: ${a.whyItMatters}
    - Signals: ${(a.signals || []).join(", ")}
-   - URL: ${a.url || "N/A"}`).join("\n")}
+   - URL: ${a.url || "N/A"}`,
+  )
+  .join("\n")}
 
 Signal Synthesis from GitHub:
 ${(githubBrief.signalSynthesis || []).map((s: any) => `- ${s.name}: ${s.level.toUpperCase()} — ${s.evidence}`).join("\n")}
@@ -293,10 +311,15 @@ SESSION INFO:
 - Duration: ${session.duration} minutes
 - GitHub URL: ${session.github_url}
 
-${githubBriefSection || (session.raw_work_evidence ? `RAW GITHUB EVIDENCE:
+${
+  githubBriefSection ||
+  (session.raw_work_evidence
+    ? `RAW GITHUB EVIDENCE:
 ${session.raw_work_evidence.slice(0, 3000)}
 
-` : "NO GITHUB EVIDENCE AVAILABLE - Note this as a gap in risks_or_unknowns.\n\n")}
+`
+    : "NO GITHUB EVIDENCE AVAILABLE - Note this as a gap in risks_or_unknowns.\n\n")
+}
 SESSION TRANSCRIPT (Interview conversation):
 ${transcript || "(No transcript available - rely more on GitHub evidence)"}
 
@@ -328,20 +351,20 @@ Generate the merged Evidence Pack now.`;
         model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: EVIDENCE_PACK_SYSTEM_PROMPT },
-          { role: "user", content: userPrompt }
+          { role: "user", content: userPrompt },
         ],
         tools: [evidencePackToolSchema],
-        tool_choice: { type: "function", function: { name: "generate_evidence_pack" } }
+        tool_choice: { type: "function", function: { name: "generate_evidence_pack" } },
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      return new Response(
-        JSON.stringify({ error: "Failed to generate evidence pack" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Failed to generate evidence pack" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.json();
@@ -349,10 +372,10 @@ Generate the merged Evidence Pack now.`;
 
     if (!toolCall || toolCall.function.name !== "generate_evidence_pack") {
       console.error("Unexpected AI response format");
-      return new Response(
-        JSON.stringify({ error: "Failed to generate evidence pack" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Failed to generate evidence pack" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     let summaryJson = JSON.parse(toolCall.function.arguments);
@@ -364,17 +387,17 @@ Generate the merged Evidence Pack now.`;
       if (!summaryJson.candidateName || summaryJson.candidateName === "Unknown") {
         summaryJson.candidateName = githubBrief.candidateName || "Unknown";
       }
-      
+
       // If workArtifacts are empty or missing, use GitHub artifacts
       if (!summaryJson.workArtifacts || summaryJson.workArtifacts.length === 0) {
         summaryJson.workArtifacts = githubBrief.workArtifacts || [];
       }
-      
+
       // Ensure signalSynthesis has all signals from GitHub if missing
       if (!summaryJson.signalSynthesis || summaryJson.signalSynthesis.length === 0) {
         summaryJson.signalSynthesis = githubBrief.signalSynthesis || [];
       }
-      
+
       // Add validation plan from GitHub brief if not present
       if (githubBrief.validationPlan) {
         summaryJson.validationPlan = githubBrief.validationPlan;
@@ -394,10 +417,10 @@ Generate the merged Evidence Pack now.`;
 
     if (packError) {
       console.error("Error creating evidence pack:", packError);
-      return new Response(
-        JSON.stringify({ error: "Failed to save evidence pack" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Failed to save evidence pack" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Update session status
@@ -423,13 +446,13 @@ Generate the merged Evidence Pack now.`;
         evidencePackId: evidencePack.id,
         shareId: evidencePack.public_share_id,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("Error in complete-work-session:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
