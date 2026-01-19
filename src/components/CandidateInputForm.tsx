@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Globe } from 'lucide-react';
+import { ArrowRight, Github, Figma, FileText, FolderOpen, Wrench } from 'lucide-react';
 
 interface CandidateInputFormProps {
   onSubmit: (data: { 
@@ -23,57 +23,75 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
 
   return (
     <div className="space-y-6">
-      {/* Module header */}
-      <div className="text-center mb-2">
-        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2">
-          Work Evidence Brief
+      {/* Card Header */}
+      <div className="text-center space-y-2">
+        <h2 className="font-display text-lg md:text-xl font-medium leading-relaxed tracking-[-0.01em] text-foreground/90">
+          See how candidates actually work — before you hire them.
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          HumIQ adapts to the role and the evidence available.
         </p>
-        <p className="text-sm text-foreground/60">
-          Under 60 seconds
+      </div>
+
+      {/* Evidence Types Row */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-center gap-5">
+          <div className="p-2 rounded-lg bg-white/[0.03]">
+            <Github className="w-4 h-4 text-foreground/40" />
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.03]">
+            <Figma className="w-4 h-4 text-foreground/40" />
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.03]">
+            <FileText className="w-4 h-4 text-foreground/40" />
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.03]">
+            <FolderOpen className="w-4 h-4 text-foreground/40" />
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.03]">
+            <Wrench className="w-4 h-4 text-foreground/40" />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground/70 text-center">
+          Different roles demonstrate work in different ways.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Active Demo Input */}
         <div className="space-y-4">
-          {/* GitHub URL */}
           <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2.5">
-              <Github className="w-4 h-4 text-muted-foreground transition-opacity duration-200 hover:opacity-80" />
-              GitHub URL
+            <label className="flex items-center gap-2 text-sm text-foreground/70 mb-2.5">
+              <Github className="w-4 h-4 text-muted-foreground" />
+              Example: Engineering work
             </label>
             <input
               type="url"
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
-              placeholder="https://github.com/..."
-              className="w-full px-4 py-3.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30 transition-all duration-200"
+              placeholder="Paste a GitHub PR or repository"
+              className="w-full px-4 py-3.5 rounded-lg bg-white/[0.03] border-0 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/40 transition-all duration-200"
             />
-          </div>
-
-          {/* Other Links (optional) */}
-          <div>
-            <label className="flex items-center gap-2 text-sm text-foreground/80 mb-2.5">
-              <Globe className="w-4 h-4 text-muted-foreground transition-opacity duration-200 hover:opacity-80" />
-              Other Links
-              <span className="text-muted-foreground text-xs">(optional)</span>
-            </label>
-            <input
-              type="text"
-              value={otherLinks}
-              onChange={(e) => setOtherLinks(e.target.value)}
-              placeholder="Portfolio, LinkedIn, product demos..."
-              className="w-full px-4 py-3.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30 transition-all duration-200"
-            />
+            <p className="text-xs text-muted-foreground/60 mt-2 text-center">
+              This is one example. HumIQ works with many forms of real work.
+            </p>
           </div>
         </div>
 
-        {/* Helper text */}
-        <p className="text-xs text-muted-foreground text-center leading-relaxed">
-          HumIQ evaluates verified work evidence.<br />
-          If evidence is limited, it will clearly say so.
-        </p>
+        {/* HumIQ Intelligence Signal */}
+        <div className="space-y-2 pt-2">
+          <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground/50 text-center">
+            HumIQ AI observes
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <span className="text-xs text-foreground/40">• Decisions</span>
+            <span className="text-xs text-foreground/40">• Ownership</span>
+            <span className="text-xs text-foreground/40">• Tradeoffs</span>
+            <span className="text-xs text-foreground/40">• Execution</span>
+          </div>
+        </div>
 
-        {/* Submit button - heavy, intentional feel */}
+        {/* Submit button - UNCHANGED */}
         <motion.button
           type="submit"
           disabled={!isValid || isLoading}
@@ -96,6 +114,11 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           )}
         </motion.button>
       </form>
+
+      {/* Footnote Trust Signal */}
+      <p className="text-[10px] text-muted-foreground/40 text-center leading-relaxed pt-1">
+        HumIQ evaluates real work evidence. If evidence is limited, it will clearly say so.
+      </p>
     </div>
   );
 }
