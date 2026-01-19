@@ -2,6 +2,10 @@ import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '@/components/HeroSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
+import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
+import { DeepDiveSections } from '@/components/landing/DeepDiveSections';
+import { WhyDifferentSection } from '@/components/landing/WhyDifferentSection';
+import { FinalCTASection } from '@/components/landing/FinalCTASection';
 import { createWorkSession } from '@/lib/workSession';
 import { toast } from 'sonner';
 
@@ -69,10 +73,20 @@ const Index = () => {
     tryNavigate();
   }, [tryNavigate]);
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <main className="min-h-screen" style={{ background: '#0B0E12' }}>
       {viewState === 'input' && (
-        <HeroSection onSubmit={handleSubmit} />
+        <>
+          <HeroSection onSubmit={handleSubmit} />
+          <HowItWorksSection />
+          <DeepDiveSections />
+          <WhyDifferentSection />
+          <FinalCTASection onCTAClick={scrollToTop} />
+        </>
       )}
       
       {viewState === 'loading' && (
