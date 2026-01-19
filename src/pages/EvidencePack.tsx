@@ -18,8 +18,10 @@ import {
   Github,
   Briefcase,
   TrendingUp,
-  Award,
   HelpCircle,
+  CheckCircle,
+  XCircle,
+  LucideIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,21 +36,24 @@ const confidenceConfig: Record<ConfidenceLevel, { label: string; class: string }
   low: { label: 'Low Confidence', class: 'verdict-pass' },
 };
 
-const verdictConfig: Record<VerdictType, { label: string; class: string; description: string }> = {
+const verdictConfig: Record<VerdictType, { label: string; class: string; description: string; Icon: LucideIcon }> = {
   interview: { 
     label: 'Interview Now', 
     class: 'verdict-interview',
-    description: 'Strong signals observed. Recommend advancing.'
+    description: 'Strong signals observed. Recommend advancing.',
+    Icon: CheckCircle,
   },
   caution: { 
     label: 'Proceed with Caution', 
     class: 'verdict-caution',
-    description: 'Mixed signals. Additional validation recommended.'
+    description: 'Mixed signals. Additional validation recommended.',
+    Icon: AlertTriangle,
   },
   pass: { 
     label: 'Fail', 
     class: 'verdict-pass',
-    description: 'Insufficient evidence for this role.'
+    description: 'Insufficient evidence for this role.',
+    Icon: XCircle,
   },
 };
 
@@ -185,9 +190,10 @@ const EvidencePack = () => {
           {verdictStyle && (
             <div className="flex flex-col items-center gap-3 mb-6">
               <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${verdictStyle.class}`}>
-                <Award className="w-5 h-5" />
+                <verdictStyle.Icon className="w-5 h-5" />
                 <span className="font-semibold text-lg">{verdictStyle.label}</span>
               </div>
+              <p className="text-sm text-muted-foreground">{verdictStyle.description}</p>
             </div>
           )}
         </motion.div>
