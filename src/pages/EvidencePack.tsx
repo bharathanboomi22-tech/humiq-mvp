@@ -46,7 +46,7 @@ const verdictConfig: Record<VerdictType, { label: string; class: string; descrip
     description: 'Mixed signals. Additional validation recommended.'
   },
   pass: { 
-    label: 'Do Not Advance', 
+    label: 'Not a Fit', 
     class: 'verdict-pass',
     description: 'Insufficient evidence for this role.'
   },
