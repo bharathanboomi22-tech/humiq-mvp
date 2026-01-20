@@ -169,6 +169,54 @@ export type Database = {
           },
         ]
       }
+      interview_results: {
+        Row: {
+          company_recap: Json
+          confidence: string | null
+          created_at: string
+          id: string
+          interview_request_id: string
+          passed: boolean
+          talent_recap: Json
+          work_session_id: string
+        }
+        Insert: {
+          company_recap?: Json
+          confidence?: string | null
+          created_at?: string
+          id?: string
+          interview_request_id: string
+          passed: boolean
+          talent_recap?: Json
+          work_session_id: string
+        }
+        Update: {
+          company_recap?: Json
+          confidence?: string | null
+          created_at?: string
+          id?: string
+          interview_request_id?: string
+          passed?: boolean
+          talent_recap?: Json
+          work_session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_results_interview_request_id_fkey"
+            columns: ["interview_request_id"]
+            isOneToOne: false
+            referencedRelation: "interview_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_results_work_session_id_fkey"
+            columns: ["work_session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_postings: {
         Row: {
           analyzed_data: Json | null
@@ -505,7 +553,7 @@ export type Database = {
           duration: number
           ended_at: string | null
           github_brief: Json | null
-          github_url: string
+          github_url: string | null
           id: string
           job_context: Json | null
           level: string
@@ -520,7 +568,7 @@ export type Database = {
           duration: number
           ended_at?: string | null
           github_brief?: Json | null
-          github_url: string
+          github_url?: string | null
           id?: string
           job_context?: Json | null
           level: string
@@ -535,7 +583,7 @@ export type Database = {
           duration?: number
           ended_at?: string | null
           github_brief?: Json | null
-          github_url?: string
+          github_url?: string | null
           id?: string
           job_context?: Json | null
           level?: string
