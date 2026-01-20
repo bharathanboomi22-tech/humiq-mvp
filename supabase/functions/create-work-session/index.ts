@@ -138,7 +138,7 @@ serve(async (req) => {
   }
 
   try {
-    const { githubUrl, roleTrack, level, duration, jobPostingId, interviewRequestId } = await req.json();
+    const { githubUrl, roleTrack, level, duration } = await req.json();
 
     // Validate inputs
     if (!githubUrl || !roleTrack || !level || !duration) {
@@ -315,36 +315,7 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch job posting data if jobPostingId is provided
-    let jobContext = null;
-    if (jobPostingId) {
-      try {
-        const { data: jobPosting, error: jobError } = await supabase
-          .from("job_postings")
-          .select("*")
-          .eq("id", jobPostingId)
-          .single();
-
-        if (!jobError && jobPosting) {
-          jobContext = {
-            id: jobPosting.id,
-            title: jobPosting.title,
-            description: jobPosting.description,
-            requirements: jobPosting.requirements,
-            analyzed_data: jobPosting.analyzed_data,
-            company_id: jobPosting.company_id,
-            interview_request_id: interviewRequestId || null,
-          };
-          console.log("Job context fetched for interview:", jobPosting.title);
-        } else {
-          console.warn("Job posting not found:", jobPostingId);
-        }
-      } catch (error) {
-        console.warn("Error fetching job posting:", error);
-      }
-    }
-
-    // Insert work session with GitHub brief and job context
+    // Insert work session with GitHub brief
     const { data: session, error: sessionError } = await supabase
       .from("work_sessions")
       .insert({
@@ -355,7 +326,6 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
         status: "active",
         raw_work_evidence: rawWorkEvidence || null,
         github_brief: githubBrief || null,
-        job_context: jobContext,
         started_at: new Date().toISOString(),
       })
       .select()
