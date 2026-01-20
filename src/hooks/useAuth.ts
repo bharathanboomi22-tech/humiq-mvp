@@ -28,23 +28,11 @@ export function useAuth(): UseAuthReturn {
     isAuthenticated: false,
   });
 
-  // Fetch user role from user_profiles table
-  const fetchUserRole = useCallback(async (userId: string): Promise<UserRole> => {
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('role')
-        .eq('id', userId)
-        .single();
-
-      if (error || !data) {
-        return null;
-      }
-
-      return data.role as UserRole;
-    } catch {
-      return null;
-    }
+  // For MVP, we don't have a user_profiles table - just return null role
+  const fetchUserRole = useCallback(async (_userId: string): Promise<UserRole> => {
+    // In MVP phase without auth, we don't have user roles
+    // Role could be determined by checking if user has a company or talent profile
+    return null;
   }, []);
 
   // Initialize auth state
@@ -146,24 +134,13 @@ export function useAuth(): UseAuthReturn {
     });
   }, []);
 
-  // Set user role (called after signup to choose role)
+  // Set user role (placeholder for when auth is fully implemented)
   const setUserRole = useCallback(async (role: 'company' | 'talent') => {
     if (!state.user) {
       throw new Error('No authenticated user');
     }
 
-    const { error } = await supabase
-      .from('user_profiles')
-      .upsert({
-        id: state.user.id,
-        role,
-        updated_at: new Date().toISOString(),
-      });
-
-    if (error) {
-      throw new Error(`Failed to set user role: ${error.message}`);
-    }
-
+    // For MVP, just update local state
     setState((prev) => ({ ...prev, role }));
   }, [state.user]);
 

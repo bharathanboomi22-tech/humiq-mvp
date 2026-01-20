@@ -39,7 +39,7 @@ const TalentDiscoverySession = () => {
   const hasInitialized = useRef(false);
 
   // Voice hooks
-  const { speak, isSpeaking, stop: stopSpeaking } = useOpenAITTS();
+  const { speak, isSpeaking, stop: stopSpeaking } = useOpenAITTS() as { speak: (text: string) => Promise<void>; isSpeaking: boolean; stop?: () => void };
   const { 
     isListening, 
     startListening, 
@@ -75,23 +75,23 @@ const TalentDiscoverySession = () => {
 
         setSession(sessionData);
 
-        // Load existing messages
-        if (sessionData.transcript && sessionData.transcript.length > 0) {
-          setMessages(sessionData.transcript.map((m, i) => ({
+        // Load existing messages from session
+        if (sessionData.messages && sessionData.messages.length > 0) {
+          setMessages(sessionData.messages.map((m, i) => ({
             id: `${i}`,
             ...m,
           })));
         }
 
         // If session is already complete, redirect
-        if (sessionData.status === 'completed') {
+        if (sessionData.completed_at) {
           setIsComplete(true);
           setIsLoading(false);
           return;
         }
 
         // Get first AI prompt if no messages yet
-        if (!sessionData.transcript || sessionData.transcript.length === 0) {
+        if (!sessionData.messages || sessionData.messages.length === 0) {
           setIsLoading(false);
           await getNextAIPrompt();
         } else {

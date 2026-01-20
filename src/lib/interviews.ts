@@ -159,7 +159,7 @@ export const getInterviewResult = async (resultId: string): Promise<InterviewRes
     return null;
   }
 
-  return data as InterviewResult;
+  return data as unknown as InterviewResult;
 };
 
 export const getInterviewResultsForTalent = async (talentId: string): Promise<InterviewResult[]> => {
@@ -187,7 +187,7 @@ export const getInterviewResultsForTalent = async (talentId: string): Promise<In
     return [];
   }
 
-  return (data || []) as InterviewResult[];
+  return (data || []) as unknown as InterviewResult[];
 };
 
 export const getInterviewResultForRequest = async (interviewRequestId: string): Promise<InterviewResult | null> => {
@@ -215,7 +215,7 @@ export const getInterviewResultForRequest = async (interviewRequestId: string): 
     return null;
   }
 
-  return (data as InterviewResult) || null;
+  return (data as unknown as InterviewResult) || null;
 };
 
 export interface InterviewResultWithTalent extends InterviewResult {
@@ -225,7 +225,7 @@ export interface InterviewResultWithTalent extends InterviewResult {
       name?: string;
       email?: string;
       github_url?: string;
-      consolidated_profile?: any;
+      consolidated_profile?: unknown;
     };
     job_posting?: {
       id: string;
@@ -264,5 +264,5 @@ export const getInterviewResultsForCompany = async (companyId: string): Promise<
     return [];
   }
 
-  return (data || []) as InterviewResultWithTalent[];
+  return (data || []) as unknown as InterviewResultWithTalent[];
 };
