@@ -58,6 +58,8 @@ export const useTalentOnboarding = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [hasGitHub, setHasGitHub] = useState(false);
 
   // Load existing profile data
   useEffect(() => {
@@ -158,6 +160,22 @@ export const useTalentOnboarding = () => {
           localStorage.setItem(DEMO_TALENT_KEY, talentId);
         }
       } else {
+        // Get existing consolidated_profile to preserve analysis data
+        const { data: existingProfile } = await supabase
+          .from('talent_profiles')
+          .select('consolidated_profile')
+          .eq('id', talentId)
+          .single();
+
+        const existingConsolidated = (existingProfile?.consolidated_profile as Record<string, unknown>) || {};
+        
+        // Merge: keep existing analysis data (strengths, areasForGrowth, etc.) but update primaryRole/experienceRange
+        const mergedConsolidated = {
+          ...existingConsolidated,
+          primaryRole: data.primaryRole,
+          experienceRange: data.experienceRange,
+        };
+
         // Update existing profile
         const { error: updateError } = await supabase
           .from('talent_profiles')
@@ -174,10 +192,7 @@ export const useTalentOnboarding = () => {
             how_i_work: data.howIWork,
             profile_visibility: data.profileVisibility,
             allow_proof_requests: data.allowProofRequests,
-            consolidated_profile: {
-              primaryRole: data.primaryRole,
-              experienceRange: data.experienceRange,
-            } as unknown as Json,
+            consolidated_profile: mergedConsolidated as unknown as Json,
             last_updated_at: new Date().toISOString(),
           })
           .eq('id', talentId);
@@ -204,6 +219,7 @@ export const useTalentOnboarding = () => {
     if (!talentId) return false;
 
     setSaving(true);
+    setAnalysisComplete(false);
 
     try {
       // Mark onboarding as completed
@@ -220,13 +236,17 @@ export const useTalentOnboarding = () => {
       // Check if we have a GitHub URL to analyze
       const githubUrl = data.workLinks.find(l => l.type === 'github')?.url;
       if (githubUrl) {
+        setHasGitHub(true);
         setAnalyzing(true);
         setSaving(false);
         
-        // Run GitHub analysis in background (will update profile)
+        // Run GitHub analysis (will update profile in database)
         await analyzeGitHubForOnboarding(talentId, githubUrl);
         
-        setAnalyzing(false);
+        // Mark analysis as complete - keep analyzing=true so LoadingExperience stays visible
+        setAnalysisComplete(true);
+      } else {
+        setHasGitHub(false);
       }
 
       return true;
@@ -237,7 +257,6 @@ export const useTalentOnboarding = () => {
       return false;
     } finally {
       setSaving(false);
-      setAnalyzing(false);
     }
   };
 
@@ -268,5 +287,7 @@ export const useTalentOnboarding = () => {
     loading,
     saving,
     analyzing,
+    analysisComplete,
+    hasGitHub,
   };
 };
