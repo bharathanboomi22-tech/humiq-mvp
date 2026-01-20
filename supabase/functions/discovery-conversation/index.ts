@@ -101,21 +101,21 @@ Generate:
 
 Keep it conversational and friendly. This is about understanding them, not testing them.`;
 
-      const response = await fetch('https://api.lovable.dev/v1/chat/completions', {
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${lovableApiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: 'google/gemini-3-flash-preview',
+          max_tokens: 300,
           messages: [
             { role: 'system', content: DISCOVERY_SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
           tools: [questionToolSchema],
           tool_choice: { type: 'function', function: { name: 'generate_question' } },
-          temperature: 0.7,
         }),
       });
 
@@ -178,21 +178,21 @@ Talent's last answer: ${answer}
 
 Generate the next question (question ${questionCount + 1} of 2). Build on their previous answers. Keep it conversational.`;
 
-      const response = await fetch('https://api.lovable.dev/v1/chat/completions', {
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${lovableApiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: 'google/gemini-3-flash-preview',
+          max_tokens: 300,
           messages: [
             { role: 'system', content: DISCOVERY_SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
           tools: [questionToolSchema],
           tool_choice: { type: 'function', function: { name: 'generate_question' } },
-          temperature: 0.7,
         }),
       });
 

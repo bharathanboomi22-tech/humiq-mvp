@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      companies: {
+        Row: {
+          analyzed_data: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          website_url: string
+        }
+        Insert: {
+          analyzed_data?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          website_url: string
+        }
+        Update: {
+          analyzed_data?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          website_url?: string
+        }
+        Relationships: []
+      }
+      discovery_conversations: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          messages: Json
+          talent_profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          talent_profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          talent_profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_conversations_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_packs: {
         Row: {
           created_at: string
@@ -49,6 +108,105 @@ export type Database = {
           },
         ]
       }
+      interview_requests: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          job_posting_id: string | null
+          message: string | null
+          requested_at: string
+          responded_at: string | null
+          status: string
+          talent_profile_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          job_posting_id?: string | null
+          message?: string | null
+          requested_at?: string
+          responded_at?: string | null
+          status?: string
+          talent_profile_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          job_posting_id?: string | null
+          message?: string | null
+          requested_at?: string
+          responded_at?: string | null
+          status?: string
+          talent_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_requests_job_posting_id_fkey"
+            columns: ["job_posting_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_requests_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_postings: {
+        Row: {
+          analyzed_data: Json | null
+          company_id: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          requirements: string | null
+          title: string
+        }
+        Insert: {
+          analyzed_data?: Json | null
+          company_id: string
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean
+          requirements?: string | null
+          title: string
+        }
+        Update: {
+          analyzed_data?: Json | null
+          company_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          requirements?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_postings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       love_letters: {
         Row: {
           created_at: string
@@ -75,6 +233,201 @@ export type Database = {
           user_type?: string | null
         }
         Relationships: []
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          job_posting_id: string
+          match_score: number
+          score_breakdown: Json | null
+          talent_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_posting_id: string
+          match_score: number
+          score_breakdown?: Json | null
+          talent_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_posting_id?: string
+          match_score?: number
+          score_breakdown?: Json | null
+          talent_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_job_posting_id_fkey"
+            columns: ["job_posting_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_profiles: {
+        Row: {
+          allow_proof_requests: boolean | null
+          availability_status: string | null
+          consolidated_profile: Json | null
+          created_at: string
+          discovery_completed: boolean | null
+          email: string | null
+          github_url: string | null
+          how_i_work: string | null
+          id: string
+          languages: string[] | null
+          last_updated_at: string
+          level: string | null
+          location: string | null
+          name: string | null
+          onboarding_completed: boolean | null
+          profile_visibility: string | null
+          skills: Json | null
+          timezone: string | null
+          work_context: Json | null
+          work_links: Json | null
+        }
+        Insert: {
+          allow_proof_requests?: boolean | null
+          availability_status?: string | null
+          consolidated_profile?: Json | null
+          created_at?: string
+          discovery_completed?: boolean | null
+          email?: string | null
+          github_url?: string | null
+          how_i_work?: string | null
+          id?: string
+          languages?: string[] | null
+          last_updated_at?: string
+          level?: string | null
+          location?: string | null
+          name?: string | null
+          onboarding_completed?: boolean | null
+          profile_visibility?: string | null
+          skills?: Json | null
+          timezone?: string | null
+          work_context?: Json | null
+          work_links?: Json | null
+        }
+        Update: {
+          allow_proof_requests?: boolean | null
+          availability_status?: string | null
+          consolidated_profile?: Json | null
+          created_at?: string
+          discovery_completed?: boolean | null
+          email?: string | null
+          github_url?: string | null
+          how_i_work?: string | null
+          id?: string
+          languages?: string[] | null
+          last_updated_at?: string
+          level?: string | null
+          location?: string | null
+          name?: string | null
+          onboarding_completed?: boolean | null
+          profile_visibility?: string | null
+          skills?: Json | null
+          timezone?: string | null
+          work_context?: Json | null
+          work_links?: Json | null
+        }
+        Relationships: []
+      }
+      talent_test_results: {
+        Row: {
+          analysis: Json | null
+          completed_at: string
+          created_at: string
+          id: string
+          scores_by_skill: Json
+          talent_profile_id: string
+          test_type: string
+          work_session_id: string | null
+        }
+        Insert: {
+          analysis?: Json | null
+          completed_at?: string
+          created_at?: string
+          id?: string
+          scores_by_skill?: Json
+          talent_profile_id: string
+          test_type: string
+          work_session_id?: string | null
+        }
+        Update: {
+          analysis?: Json | null
+          completed_at?: string
+          created_at?: string
+          id?: string
+          scores_by_skill?: Json
+          talent_profile_id?: string
+          test_type?: string
+          work_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_test_results_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_test_results_work_session_id_fkey"
+            columns: ["work_session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_work_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          talent_profile_id: string
+          work_session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          talent_profile_id: string
+          work_session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          talent_profile_id?: string
+          work_session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_work_sessions_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_work_sessions_work_session_id_fkey"
+            columns: ["work_session_id"]
+            isOneToOne: false
+            referencedRelation: "work_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       work_session_events: {
         Row: {
@@ -156,6 +509,7 @@ export type Database = {
           role_track: string
           started_at: string
           status: string
+          talent_profile_id: string | null
         }
         Insert: {
           created_at?: string
@@ -169,6 +523,7 @@ export type Database = {
           role_track: string
           started_at?: string
           status?: string
+          talent_profile_id?: string | null
         }
         Update: {
           created_at?: string
@@ -182,8 +537,17 @@ export type Database = {
           role_track?: string
           started_at?: string
           status?: string
+          talent_profile_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "work_sessions_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

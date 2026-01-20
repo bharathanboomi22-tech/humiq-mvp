@@ -98,20 +98,20 @@ Current profile data:
 
 Extract skills, work style, mindset, and strengths. Return as JSON.`;
 
-    const response = await fetch('https://api.lovable.dev/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'google/gemini-3-flash-preview',
+        max_tokens: 1000,
         messages: [
           { role: 'system', content: PROFILE_UPDATE_SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.7,
       }),
     });
 
