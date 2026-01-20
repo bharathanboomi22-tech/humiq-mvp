@@ -58,30 +58,9 @@ const AuthCallback = () => {
             // Role might already exist, continue anyway
           }
 
-          // Link to existing profile if any
-          if (pendingRole === 'company') {
-            // Check if user already has a company linked
-            const { data: existingCompany } = await supabase
-              .from('companies')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (existingCompany) {
-              setStoredCompanyId(existingCompany.id);
-            }
-          } else if (pendingRole === 'talent') {
-            // Check if user already has a talent profile linked
-            const { data: existingTalent } = await supabase
-              .from('talent_profiles')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (existingTalent) {
-              setStoredTalentId(existingTalent.id);
-            }
-          }
+          // In MVP mode, we use localStorage-based ID storage
+          // User authentication linking will be added when auth is fully implemented
+          // For now, just redirect based on role
 
           setState('success');
           toast.success('Successfully signed in!');
