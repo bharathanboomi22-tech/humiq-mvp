@@ -11,11 +11,9 @@ import { toast } from 'sonner';
 import { analyzeCompany, setStoredCompanyId } from '@/lib/company';
 import { useAuth } from '@/hooks/useAuth';
 
-const DEMO_COMPANY_KEY = 'humiq_demo_company_id';
-
 const CompanySetup = () => {
   const navigate = useNavigate();
-  const { isDemo } = useAuth();
+  const { setCompanyId } = useAuth();
   const [companyName, setCompanyName] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -41,16 +39,11 @@ const CompanySetup = () => {
         name: companyName.trim(),
         websiteUrl: websiteUrl.trim(),
         description: description.trim() || undefined,
-        // userId not passed in demo mode - no authenticated user
       });
 
-      // Store company ID
+      // Store company ID in both localStorage and auth state
       setStoredCompanyId(company.id);
-      
-      // If demo mode, also store in demo key
-      if (isDemo) {
-        localStorage.setItem(DEMO_COMPANY_KEY, company.id);
-      }
+      setCompanyId(company.id);
 
       toast.success('Company profile created successfully!');
       navigate('/company/dashboard');
