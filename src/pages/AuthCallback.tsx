@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
@@ -12,8 +12,15 @@ const AuthCallback = () => {
   const navigate = useNavigate();
   const [state, setState] = useState<CallbackState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution in React Strict Mode
+    if (hasRun.current) return;
+    hasRun.current = true;
+
+    let isMounted = true;
+
     const handleCallback = async () => {
       try {
         // Handle the hash fragment from magic link
@@ -25,8 +32,10 @@ const AuthCallback = () => {
         
         if (hashError) {
           console.error('Auth error from hash:', hashError, hashErrorDescription);
-          setErrorMessage(hashErrorDescription || hashError);
-          setState('error');
+          if (isMounted) {
+            setErrorMessage(hashErrorDescription || hashError);
+            setState('error');
+          }
           return;
         }
         
@@ -43,6 +52,8 @@ const AuthCallback = () => {
             refresh_token: refreshToken,
           });
 
+          if (!isMounted) return;
+
           if (sessionError) {
             console.error('Error setting session:', sessionError);
             setErrorMessage(sessionError.message);
@@ -55,6 +66,8 @@ const AuthCallback = () => {
 
         // Get the current session
         const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (!isMounted) return;
 
         console.log('getSession result:', { hasSession: !!session, error: error?.message });
 
@@ -79,11 +92,15 @@ const AuthCallback = () => {
           supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
         ]);
 
+        if (!isMounted) return;
+
         setState('success');
         toast.success('Successfully signed in!');
 
         // Redirect based on user profile
         setTimeout(() => {
+          if (!isMounted) return;
+          
           if (companyResult.data) {
             // User has a company profile
             localStorage.setItem('humiq_company_id', companyResult.data.id);
@@ -98,14 +115,26 @@ const AuthCallback = () => {
           }
         }, 1500);
       } catch (error) {
+        // Ignore abort errors (component unmounted)
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('Auth callback aborted (component unmounted)');
+          return;
+        }
+        
         console.error('Callback error:', error);
-        const message = error instanceof Error ? error.message : 'An unexpected error occurred';
-        setErrorMessage(message);
-        setState('error');
+        if (isMounted) {
+          const message = error instanceof Error ? error.message : 'An unexpected error occurred';
+          setErrorMessage(message);
+          setState('error');
+        }
       }
     };
 
     handleCallback();
+
+    return () => {
+      isMounted = false;
+    };
   }, [navigate]);
 
   if (state === 'loading') {
