@@ -12,15 +12,21 @@ CRITICAL RULES:
 - Ask exactly 1 question at a time
 - Be conversational, not interrogative
 - Base prompts on GitHub insights when available
+- If job context is provided, tailor questions to test the specific skills and requirements mentioned in the job posting
 - Focus on real work: requirements, tradeoffs, execution
 - No trivia, no gotchas, no leetcode-style puzzles
 - Keep questions SHORT (1 sentence max)
 - This is a QUICK DEMO - only 2 questions total
 
 DEMO MODE (2 questions only):
-- Stage 1 (framing): Ask ONE question about how they'd understand/approach a problem
-- Stage 2 (build): Ask ONE question about implementation or technical decisions
+- Stage 1 (framing): Ask ONE question about how they'd understand/approach a problem relevant to the job
+- Stage 2 (build): Ask ONE question about implementation or technical decisions relevant to the job's tech stack/requirements
 - After candidate answers, ALWAYS mark stageComplete as true
+
+JOB-BASED INTERVIEWING:
+- Use the job title, description, requirements, and tech stack to craft relevant questions
+- Test the specific skills mentioned in the job posting
+- Reference the job's context naturally in your questions
 
 SIGNAL TAGS (use 1-2 per response):
 - Ownership, Judgment, Execution, Communication, ProductSense`;
@@ -111,12 +117,30 @@ serve(async (req) => {
       })
       .join("\n\n");
 
-    // Summarize GitHub insights if available (optional)
+    // Summarize GitHub insights if available
     let githubSummary = "";
-    if (session.raw_work_evidence && session.raw_work_evidence.trim()) {
+    if (session.raw_work_evidence) {
       githubSummary = `\nGITHUB INSIGHTS (use to tailor questions):\n${session.raw_work_evidence.slice(0, 2000)}`;
-    } else {
-      githubSummary = `\nNOTE: No GitHub profile provided. Focus questions on the job requirements and general experience.`;
+    }
+
+    // Extract job context if available
+    let jobContextSummary = "";
+    if (session.job_context) {
+      const job = session.job_context;
+      const analyzedData = job.analyzed_data || {};
+      const requiredSkills = analyzedData.requiredSkills || [];
+      const niceToHaveSkills = analyzedData.niceToHaveSkills || [];
+      const techStack = analyzedData.techStack || [];
+      
+      jobContextSummary = `\nJOB POSTING CONTEXT (CRITICAL - tailor questions to this):
+Job Title: ${job.title || "Not specified"}
+Description: ${job.description ? job.description.slice(0, 500) : "Not specified"}
+Requirements: ${job.requirements ? job.requirements.slice(0, 500) : "Not specified"}
+Required Skills: ${requiredSkills.length > 0 ? requiredSkills.join(", ") : "Not specified"}
+Nice-to-Have Skills: ${niceToHaveSkills.length > 0 ? niceToHaveSkills.join(", ") : "None"}
+Tech Stack: ${techStack.length > 0 ? techStack.join(", ") : "Not specified"}
+
+IMPORTANT: Your questions MUST test the candidate's ability to work on this specific role. Reference the job's requirements, tech stack, and context naturally in your questions.`;
     }
 
     // Count responses in current stage
@@ -135,6 +159,7 @@ Level: ${session.level}
 DEMO MODE: Only 2 questions total (framing + build)
 Current Stage: ${currentStage}
 ${githubSummary}
+${jobContextSummary}
 
 CONVERSATION SO FAR:
 ${conversationHistory || "(Starting conversation)"}

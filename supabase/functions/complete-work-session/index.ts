@@ -404,7 +404,202 @@ Generate the merged Evidence Pack now.`;
       }
     }
 
-    // Create evidence pack record
+    // Check if this is an interview (has job_context)
+    const isInterview = session.job_context && Object.keys(session.job_context).length > 0;
+
+    if (isInterview) {
+      // Generate interview-specific recaps
+      console.log("This is an interview, generating talent and company recaps");
+
+      const interviewRecapPrompt = `You are generating interview results for a job interview.
+
+JOB CONTEXT:
+${JSON.stringify(session.job_context, null, 2)}
+
+INTERVIEW TRANSCRIPT:
+${transcript || "No transcript available"}
+
+EVIDENCE PACK SUMMARY:
+- Verdict: ${summaryJson.verdict}
+- Confidence: ${summaryJson.confidence}
+- Strengths: ${(summaryJson.strengths || []).map((s: any) => s.signal).join(", ")}
+- Risks: ${(summaryJson.risks_or_unknowns || []).map((r: any) => r.signal).join(", ")}
+
+Generate TWO separate recaps:
+
+1. TALENT RECAP (for the candidate):
+   - summary: Brief overview of their performance (2-3 sentences)
+   - strengths: Array of 2-3 strengths observed
+   - areasToImprove: Array of 2-3 areas to work on (if failed) or empty if passed
+   - advice: Specific, actionable advice (1-2 sentences)
+   - nextSteps: What they should do next (1 sentence)
+
+2. COMPANY RECAP (for hiring decision):
+   - summary: Brief assessment for hiring (2-3 sentences)
+   - fitScore: Number 0-100 indicating job fit
+   - skillsAssessed: Array of skills evaluated and level (e.g., ["Node.js: Strong", "System Design: Needs improvement"])
+   - redFlags: Array of concerns (empty if none)
+   - recommendation: "hire", "maybe", or "pass" with brief reason
+
+Determine if they PASSED (passed: true) based on the evidence pack verdict and interview quality.`;
+
+      const interviewRecapResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-pro",
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert interviewer generating feedback for both candidates and hiring managers. Be specific, constructive, and honest.",
+            },
+            { role: "user", content: interviewRecapPrompt },
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 1500,
+        }),
+      });
+
+      if (!interviewRecapResponse.ok) {
+        console.error("Failed to generate interview recaps");
+        // Fallback: create basic recaps
+        const passed = summaryJson.verdict === "pass";
+        const talentRecap = {
+          summary: passed
+            ? "You demonstrated strong technical understanding and problem-solving skills during the interview."
+            : "The interview revealed some areas where you can improve your technical responses.",
+          strengths: (summaryJson.strengths || []).slice(0, 3).map((s: any) => s.signal),
+          areasToImprove: passed ? [] : (summaryJson.risks_or_unknowns || []).slice(0, 3).map((r: any) => r.signal),
+          advice: "Continue building your skills and preparing for technical discussions.",
+          nextSteps: "Review the feedback and focus on the areas mentioned.",
+        };
+
+        const companyRecap = {
+          summary: passed
+            ? "Candidate showed good technical competence and communication skills."
+            : "Candidate needs more preparation for technical interviews.",
+          fitScore: passed ? 75 : 45,
+          skillsAssessed: [],
+          redFlags: [],
+          recommendation: passed ? "maybe" : "pass",
+        };
+
+        // Find interview_request_id from job_context
+        const interviewRequestId = session.job_context?.interview_request_id;
+
+        if (interviewRequestId) {
+          const { data: interviewResult, error: resultError } = await supabase
+            .from("interview_results")
+            .insert({
+              interview_request_id: interviewRequestId,
+              work_session_id: sessionId,
+              passed,
+              confidence: summaryJson.confidence || "medium",
+              talent_recap: talentRecap,
+              company_recap: companyRecap,
+            })
+            .select()
+            .single();
+
+          if (!resultError && interviewResult) {
+            // Update interview request status
+            await supabase
+              .from("interview_requests")
+              .update({ status: "completed" })
+              .eq("id", interviewRequestId);
+
+            // Update session status
+            await supabase
+              .from("work_sessions")
+              .update({
+                status: "completed",
+                ended_at: new Date().toISOString(),
+              })
+              .eq("id", sessionId);
+
+            return new Response(
+              JSON.stringify({
+                interviewResultId: interviewResult.id,
+                isInterview: true,
+              }),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+            );
+          }
+        }
+      } else {
+        const recapData = await interviewRecapResponse.json();
+        const recapContent = JSON.parse(recapData.choices[0].message.content);
+
+        const passed = summaryJson.verdict === "pass";
+        const interviewRequestId = session.job_context?.interview_request_id;
+
+        if (interviewRequestId) {
+          const { data: interviewResult, error: resultError } = await supabase
+            .from("interview_results")
+            .insert({
+              interview_request_id: interviewRequestId,
+              work_session_id: sessionId,
+              passed,
+              confidence: summaryJson.confidence || "medium",
+              talent_recap: recapContent.talentRecap || {
+                summary: "Interview completed",
+                strengths: [],
+                areasToImprove: [],
+                advice: "",
+                nextSteps: "",
+              },
+              company_recap: recapContent.companyRecap || {
+                summary: "Interview completed",
+                fitScore: 50,
+                skillsAssessed: [],
+                redFlags: [],
+                recommendation: "maybe",
+              },
+            })
+            .select()
+            .single();
+
+          if (!resultError && interviewResult) {
+            // Update interview request status
+            await supabase
+              .from("interview_requests")
+              .update({ status: "completed" })
+              .eq("id", interviewRequestId);
+
+            // Update session status
+            await supabase
+              .from("work_sessions")
+              .update({
+                status: "completed",
+                ended_at: new Date().toISOString(),
+              })
+              .eq("id", sessionId);
+
+            // Close current stage
+            await supabase
+              .from("work_session_stages")
+              .update({ ended_at: new Date().toISOString() })
+              .eq("session_id", sessionId)
+              .is("ended_at", null);
+
+            console.log("Interview result created:", interviewResult.id);
+
+            return new Response(
+              JSON.stringify({
+                interviewResultId: interviewResult.id,
+                isInterview: true,
+              }),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+            );
+          }
+        }
+      }
+    }
+
+    // Regular work session (not an interview) - create evidence pack
     const { data: evidencePack, error: packError } = await supabase
       .from("evidence_packs")
       .insert({
@@ -445,6 +640,7 @@ Generate the merged Evidence Pack now.`;
       JSON.stringify({
         evidencePackId: evidencePack.id,
         shareId: evidencePack.public_share_id,
+        isInterview: false,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

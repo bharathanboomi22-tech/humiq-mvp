@@ -63,7 +63,14 @@ serve(async (req) => {
   }
 
   try {
-    const { websiteUrl, description } = await req.json();
+    const { name, websiteUrl, description } = await req.json();
+
+    if (!name) {
+      return new Response(
+        JSON.stringify({ error: "Company name is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     if (!websiteUrl) {
       return new Response(
@@ -127,6 +134,7 @@ serve(async (req) => {
     const { data: company, error } = await supabase
       .from("companies")
       .insert({
+        name: name,
         website_url: websiteUrl,
         description: description || null,
         analyzed_data: analyzedData,
