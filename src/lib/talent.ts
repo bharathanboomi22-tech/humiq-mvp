@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { TalentProfile, ConsolidatedProfile } from '@/types/talent';
 import { WorkSession, EvidencePackSummary } from '@/types/workSession';
+import { Json } from '@/integrations/supabase/types';
 
 const TALENT_ID_KEY = 'humiq_talent_id';
 
@@ -28,7 +29,7 @@ export const getTalentProfile = async (talentId: string): Promise<TalentProfile 
     return null;
   }
 
-  return data as TalentProfile;
+  return data as unknown as TalentProfile;
 };
 
 // Demo mode: get all talents
@@ -43,7 +44,7 @@ export const getAllTalents = async (): Promise<TalentProfile[]> => {
     return [];
   }
 
-  return (data || []) as TalentProfile[];
+  return (data || []) as unknown as TalentProfile[];
 };
 
 export const createTalentProfile = async (githubUrl: string, name?: string): Promise<TalentProfile> => {
@@ -62,7 +63,7 @@ export const createTalentProfile = async (githubUrl: string, name?: string): Pro
     throw new Error(`Failed to create talent profile: ${error.message}`);
   }
 
-  return data as TalentProfile;
+  return data as unknown as TalentProfile;
 };
 
 export const getOrCreateTalentProfile = async (githubUrl: string): Promise<TalentProfile> => {
@@ -74,7 +75,7 @@ export const getOrCreateTalentProfile = async (githubUrl: string): Promise<Talen
     .single();
 
   if (existing) {
-    return existing as TalentProfile;
+    return existing as unknown as TalentProfile;
   }
 
   // Create new profile
@@ -122,7 +123,7 @@ export const getTalentWorkSessions = async (talentProfileId: string): Promise<Wo
     return [];
   }
 
-  return sessions as WorkSession[];
+  return sessions as unknown as WorkSession[];
 };
 
 export const getTalentEvidencePacks = async (talentProfileId: string): Promise<{ session: WorkSession; pack: EvidencePackSummary }[]> => {
@@ -141,7 +142,7 @@ export const getTalentEvidencePacks = async (talentProfileId: string): Promise<{
     if (pack) {
       results.push({
         session,
-        pack: pack.summary_json as EvidencePackSummary,
+        pack: pack.summary_json as unknown as EvidencePackSummary,
       });
     }
   }
@@ -189,7 +190,7 @@ export const updateTalentProfile = async (
     throw new Error(`Failed to update talent profile: ${error.message}`);
   }
 
-  return data as TalentProfile;
+  return data as unknown as TalentProfile;
 };
 
 // Fetch GitHub evidence (raw data from repos)
@@ -290,7 +291,7 @@ export const transformBriefToProfile = (brief: GitHubBrief): Partial<Consolidate
     strengths: strengths.slice(0, 5), // Max 5 strengths
     areasForGrowth: areasForGrowth.slice(0, 5), // Max 5 areas for growth
     signals: brief.signalSynthesis.map((s) => ({
-      name: s.name as any,
+      name: s.name as unknown as 'problemSolving' | 'collaboration' | 'communication' | 'technicalDepth' | 'ownership' | 'adaptability',
       level: s.level,
       evidence: s.evidence,
     })),
@@ -327,7 +328,7 @@ export const analyzeGitHubForOnboarding = async (
     const { data, error } = await supabase
       .from('talent_profiles')
       .update({
-        consolidated_profile: profileData,
+        consolidated_profile: profileData as unknown as Json,
         name: brief.candidateName || undefined,
         last_updated_at: new Date().toISOString(),
       })
@@ -340,7 +341,7 @@ export const analyzeGitHubForOnboarding = async (
       return null;
     }
 
-    return data as TalentProfile;
+    return data as unknown as TalentProfile;
   } catch (error) {
     console.error('Error in GitHub analysis flow:', error);
     return null;

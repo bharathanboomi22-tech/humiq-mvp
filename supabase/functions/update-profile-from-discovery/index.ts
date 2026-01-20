@@ -15,12 +15,16 @@ Based on the conversation, extract:
 4. Estimated skill levels (beginner/intermediate/advanced) for each skill
 5. Overall profile summary (2-3 sentences)
 
-Return structured JSON with:
-- skills: array of { name: string, level: "beginner" | "intermediate" | "advanced" }
-- workStyle: string (brief description)
-- mindset: string (brief description)
-- strengths: array of strings
-- summary: string (2-3 sentences)`;
+You MUST return valid JSON with this exact structure:
+{
+  "skills": [{ "name": "skill name", "level": "beginner" | "intermediate" | "advanced" }],
+  "workStyle": "brief description of work style",
+  "mindset": "brief description of mindset",
+  "strengths": ["strength 1", "strength 2"],
+  "summary": "2-3 sentence summary"
+}
+
+Return ONLY the JSON object, no other text.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -75,28 +79,33 @@ serve(async (req) => {
     }
 
     // Build conversation summary
-    const conversationSummary = conversation.messages
-      .map((m: any) => `${m.role === 'assistant' ? 'AI' : 'Talent'}: ${m.content}`)
+    const messages = conversation.messages as Array<{ role: string; content: string }> || [];
+    const conversationSummary = messages
+      .map((m) => `${m.role === 'assistant' ? 'AI' : 'Talent'}: ${m.content}`)
       .join('\n\n');
 
-    const answersSummary = answers
-      .map((a: any) => `Q: ${a.question}\nA: ${a.answer}`)
+    const answersArray = answers as Array<{ question: string; answer: string }> || [];
+    const answersSummary = answersArray
+      .map((a) => `Q: ${a.question}\nA: ${a.answer}`)
       .join('\n\n');
 
+    const consolidatedProfile = profile.consolidated_profile as Record<string, unknown> || {};
     const userPrompt = `Analyze this discovery conversation and extract the talent's profile:
 
 Conversation:
-${conversationSummary}
+${conversationSummary || 'No conversation data'}
 
 Answers Summary:
-${answersSummary}
+${answersSummary || 'No answers data'}
 
 Current profile data:
-- Role: ${profile.consolidated_profile?.primaryRole || 'Not set'}
-- Experience: ${profile.consolidated_profile?.experienceRange || 'Not set'}
+- Role: ${consolidatedProfile?.primaryRole || 'Not set'}
+- Experience: ${consolidatedProfile?.experienceRange || 'Not set'}
 - Work Context: ${JSON.stringify(profile.work_context || [])}
 
-Extract skills, work style, mindset, and strengths. Return as JSON.`;
+Extract skills, work style, mindset, and strengths. Return ONLY valid JSON.`;
+
+    console.log('Calling Lovable AI for profile analysis...');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -111,25 +120,96 @@ Extract skills, work style, mindset, and strengths. Return as JSON.`;
           { role: 'system', content: PROFILE_UPDATE_SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
         ],
-        response_format: { type: 'json_object' },
       }),
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`AI API error: ${error}`);
+      const errorText = await response.text();
+      console.error('AI API error:', response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI credits exhausted. Please add funds.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`AI API error: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('AI response received:', JSON.stringify(data).substring(0, 200));
+
     const messageContent = data.choices?.[0]?.message?.content;
     
     if (!messageContent) {
-      throw new Error('No content in AI response');
+      console.error('No content in AI response:', JSON.stringify(data));
+      // Provide fallback analysis instead of throwing
+      const fallbackAnalysis = {
+        skills: [],
+        workStyle: 'To be determined through further discovery',
+        mindset: 'To be determined through further discovery',
+        strengths: [],
+        summary: 'Profile analysis pending. Complete more discovery questions to generate insights.',
+      };
+
+      // Update profile with fallback
+      const updatedConsolidatedProfile = {
+        ...consolidatedProfile,
+        workStyle: fallbackAnalysis.workStyle,
+        mindset: fallbackAnalysis.mindset,
+        strengths: fallbackAnalysis.strengths,
+        summary: fallbackAnalysis.summary,
+        discoveryCompleted: true,
+      };
+
+      const { error: updateError } = await supabase
+        .from('talent_profiles')
+        .update({
+          consolidated_profile: updatedConsolidatedProfile,
+          discovery_completed: true,
+          last_updated_at: new Date().toISOString(),
+        })
+        .eq('id', talentProfileId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          profile: {
+            ...profile,
+            consolidated_profile: updatedConsolidatedProfile,
+          },
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     let analysis;
     try {
-      analysis = JSON.parse(messageContent);
+      // Try to extract JSON from the response (it might be wrapped in markdown)
+      let jsonStr = messageContent.trim();
+      if (jsonStr.startsWith('```json')) {
+        jsonStr = jsonStr.slice(7);
+      }
+      if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.slice(3);
+      }
+      if (jsonStr.endsWith('```')) {
+        jsonStr = jsonStr.slice(0, -3);
+      }
+      jsonStr = jsonStr.trim();
+      
+      analysis = JSON.parse(jsonStr);
     } catch (parseError) {
       console.error('Failed to parse AI response:', messageContent);
       // Provide fallback analysis
@@ -144,9 +224,9 @@ Extract skills, work style, mindset, and strengths. Return as JSON.`;
 
     // Update profile with discovery insights
     const updatedConsolidatedProfile = {
-      ...(profile.consolidated_profile || {}),
-      primaryRole: profile.consolidated_profile?.primaryRole || analysis.primaryRole,
-      experienceRange: profile.consolidated_profile?.experienceRange || analysis.experienceRange,
+      ...consolidatedProfile,
+      primaryRole: consolidatedProfile?.primaryRole || analysis.primaryRole,
+      experienceRange: consolidatedProfile?.experienceRange || analysis.experienceRange,
       workStyle: analysis.workStyle,
       mindset: analysis.mindset,
       strengths: analysis.strengths,
@@ -182,10 +262,11 @@ Extract skills, work style, mindset, and strengths. Return as JSON.`;
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     console.error('Update profile error:', error);
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

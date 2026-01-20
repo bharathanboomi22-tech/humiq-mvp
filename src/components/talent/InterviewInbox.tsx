@@ -113,8 +113,9 @@ export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
       if (status === 'accepted' && request) {
         // Get talent profile for GitHub URL (optional)
         const profile = await getTalentProfile(talentId);
+        const workLinks = profile?.work_links as Array<{ type: string; url: string }> | null;
         const githubUrl = profile?.github_url || 
-          (profile?.work_links as any)?.find((l: any) => l.type === 'github')?.url || '';
+          workLinks?.find((l) => l.type === 'github')?.url || '';
         
         // Create work session for the interview (GitHub is optional)
         const result = await createWorkSession({

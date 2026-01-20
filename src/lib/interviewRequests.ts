@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { InterviewRequest, CreateInterviewRequestInput, InterviewRequestStatus } from '@/types/interviewRequest';
+import { InterviewRequest, CreateInterviewRequestInput } from '@/types/interviewRequest';
 
 export const createInterviewRequest = async (
   input: CreateInterviewRequestInput
@@ -25,7 +25,7 @@ export const createInterviewRequest = async (
     throw new Error(`Failed to create interview request: ${error.message}`);
   }
 
-  return data as InterviewRequest;
+  return data as unknown as InterviewRequest;
 };
 
 export const getInterviewRequestsForTalent = async (
@@ -46,7 +46,7 @@ export const getInterviewRequestsForTalent = async (
     return [];
   }
 
-  return data as InterviewRequest[];
+  return data as unknown as InterviewRequest[];
 };
 
 export const getInterviewRequestsForCompany = async (
@@ -67,7 +67,7 @@ export const getInterviewRequestsForCompany = async (
     return [];
   }
 
-  return data as InterviewRequest[];
+  return data as unknown as InterviewRequest[];
 };
 
 export const respondToInterviewRequest = async (

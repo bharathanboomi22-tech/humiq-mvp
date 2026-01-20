@@ -1,13 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
-import { DiscoverySession, DiscoveryProfile } from '@/types/talent';
+import { DiscoverySession, DiscoveryProfile, DiscoveryMessage } from '@/types/talent';
+import { Json } from '@/integrations/supabase/types';
 
 export async function createDiscoverySession(talentProfileId: string): Promise<DiscoverySession> {
-  const { data, error } = await (supabase
-    .from('discovery_sessions') as any)
+  const { data, error } = await supabase
+    .from('discovery_conversations')
     .insert({
       talent_profile_id: talentProfileId,
-      status: 'in_progress',
-      transcript: [],
+      messages: [],
     })
     .select()
     .single();
@@ -16,12 +16,19 @@ export async function createDiscoverySession(talentProfileId: string): Promise<D
     throw new Error(`Failed to create discovery session: ${error.message}`);
   }
 
-  return data as DiscoverySession;
+  return {
+    id: data.id,
+    talent_profile_id: data.talent_profile_id,
+    messages: (data.messages as unknown as DiscoveryMessage[]) || [],
+    completed_at: data.completed_at,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
 }
 
 export async function getDiscoverySession(sessionId: string): Promise<DiscoverySession | null> {
-  const { data, error } = await (supabase
-    .from('discovery_sessions') as any)
+  const { data, error } = await supabase
+    .from('discovery_conversations')
     .select('*')
     .eq('id', sessionId)
     .single();
@@ -31,12 +38,19 @@ export async function getDiscoverySession(sessionId: string): Promise<DiscoveryS
     return null;
   }
 
-  return data as DiscoverySession;
+  return {
+    id: data.id,
+    talent_profile_id: data.talent_profile_id,
+    messages: (data.messages as unknown as DiscoveryMessage[]) || [],
+    completed_at: data.completed_at,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
 }
 
 export async function getLatestDiscoverySession(talentProfileId: string): Promise<DiscoverySession | null> {
-  const { data, error } = await (supabase
-    .from('discovery_sessions') as any)
+  const { data, error } = await supabase
+    .from('discovery_conversations')
     .select('*')
     .eq('talent_profile_id', talentProfileId)
     .order('created_at', { ascending: false })
@@ -48,7 +62,14 @@ export async function getLatestDiscoverySession(talentProfileId: string): Promis
     return null;
   }
 
-  return data as DiscoverySession;
+  return {
+    id: data.id,
+    talent_profile_id: data.talent_profile_id,
+    messages: (data.messages as unknown as DiscoveryMessage[]) || [],
+    completed_at: data.completed_at,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
 }
 
 export async function appendDiscoveryMessage(
@@ -56,10 +77,10 @@ export async function appendDiscoveryMessage(
   role: 'ai' | 'user',
   content: string
 ): Promise<void> {
-  // Get current transcript
-  const { data: session, error: fetchError } = await (supabase
-    .from('discovery_sessions') as any)
-    .select('transcript')
+  // Get current messages
+  const { data: session, error: fetchError } = await supabase
+    .from('discovery_conversations')
+    .select('messages')
     .eq('id', sessionId)
     .single();
 
@@ -67,16 +88,16 @@ export async function appendDiscoveryMessage(
     throw new Error(`Failed to fetch session: ${fetchError.message}`);
   }
 
-  const transcript = session.transcript || [];
-  transcript.push({
+  const messages = (session.messages as unknown as DiscoveryMessage[]) || [];
+  messages.push({
     role,
     content,
     timestamp: new Date().toISOString(),
   });
 
-  const { error: updateError } = await (supabase
-    .from('discovery_sessions') as any)
-    .update({ transcript })
+  const { error: updateError } = await supabase
+    .from('discovery_conversations')
+    .update({ messages: messages as unknown as Json, updated_at: new Date().toISOString() })
     .eq('id', sessionId);
 
   if (updateError) {

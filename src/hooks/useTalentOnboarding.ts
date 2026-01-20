@@ -78,19 +78,23 @@ export const useTalentOnboarding = () => {
         if (error && error.code !== 'PGRST116') throw error;
 
         if (profile) {
+          const consolidatedProfile = profile.consolidated_profile as Record<string, unknown> | null;
+          const workContext = profile.work_context as unknown as WorkContextEntry[] | null;
+          const workLinks = profile.work_links as unknown as WorkLink[] | null;
+          
           setData({
             fullName: profile.name || '',
             email: profile.email || '',
             location: profile.location || '',
             timezone: profile.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
             languages: profile.languages || [],
-            availabilityStatus: profile.availability_status || 'open',
-            primaryRole: profile.consolidated_profile?.primaryRole || '',
-            experienceRange: profile.consolidated_profile?.experienceRange || '',
-            workContext: profile.work_context || [],
-            workLinks: profile.work_links || [],
+            availabilityStatus: (profile.availability_status as OnboardingData['availabilityStatus']) || 'open',
+            primaryRole: (consolidatedProfile?.primaryRole as string) || '',
+            experienceRange: (consolidatedProfile?.experienceRange as string) || '',
+            workContext: workContext || [],
+            workLinks: workLinks || [],
             howIWork: profile.how_i_work || '',
-            profileVisibility: profile.profile_visibility || 'public',
+            profileVisibility: (profile.profile_visibility as OnboardingData['profileVisibility']) || 'public',
             allowProofRequests: profile.allow_proof_requests ?? true,
           });
         }
@@ -116,11 +120,10 @@ export const useTalentOnboarding = () => {
 
     try {
       let talentId = getStoredTalentId();
+      const githubUrl = data.workLinks.find(l => l.type === 'github')?.url || null;
       
       // Create profile if it doesn't exist
       if (!talentId) {
-        const githubUrl = data.workLinks.find(l => l.type === 'github')?.url || null;
-        
         const { data: newProfile, error: createError } = await supabase
           .from('talent_profiles')
           .insert({
@@ -131,8 +134,8 @@ export const useTalentOnboarding = () => {
             timezone: data.timezone,
             languages: data.languages,
             availability_status: data.availabilityStatus,
-            work_context: data.workContext,
-            work_links: data.workLinks,
+            work_context: data.workContext as unknown as Json,
+            work_links: data.workLinks as unknown as Json,
             how_i_work: data.howIWork,
             profile_visibility: data.profileVisibility,
             allow_proof_requests: data.allowProofRequests,
@@ -156,8 +159,6 @@ export const useTalentOnboarding = () => {
         }
       } else {
         // Update existing profile
-        const githubUrl = data.workLinks.find(l => l.type === 'github')?.url || null;
-        
         const { error: updateError } = await supabase
           .from('talent_profiles')
           .update({
@@ -168,15 +169,15 @@ export const useTalentOnboarding = () => {
             timezone: data.timezone,
             languages: data.languages,
             availability_status: data.availabilityStatus,
-            work_context: data.workContext,
-            work_links: data.workLinks,
+            work_context: data.workContext as unknown as Json,
+            work_links: data.workLinks as unknown as Json,
             how_i_work: data.howIWork,
             profile_visibility: data.profileVisibility,
             allow_proof_requests: data.allowProofRequests,
             consolidated_profile: {
               primaryRole: data.primaryRole,
               experienceRange: data.experienceRange,
-            },
+            } as unknown as Json,
             last_updated_at: new Date().toISOString(),
           })
           .eq('id', talentId);
@@ -185,9 +186,10 @@ export const useTalentOnboarding = () => {
       }
 
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving onboarding:', error);
-      toast.error(error.message || 'Failed to save progress');
+      const message = error instanceof Error ? error.message : 'Failed to save progress';
+      toast.error(message);
       return false;
     } finally {
       setSaving(false);
@@ -228,9 +230,10 @@ export const useTalentOnboarding = () => {
       }
 
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error completing onboarding:', error);
-      toast.error(error.message || 'Failed to complete onboarding');
+      const message = error instanceof Error ? error.message : 'Failed to complete onboarding';
+      toast.error(message);
       return false;
     } finally {
       setSaving(false);

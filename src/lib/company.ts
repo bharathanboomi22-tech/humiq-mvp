@@ -48,7 +48,7 @@ export const getCompany = async (companyId: string): Promise<Company | null> => 
     return null;
   }
 
-  return data as Company;
+  return data as unknown as Company;
 };
 
 export interface UpdateCompanyInput {
@@ -72,7 +72,7 @@ export const updateCompany = async (
     throw new Error(`Failed to update company: ${error.message}`);
   }
 
-  return data as Company;
+  return data as unknown as Company;
 };
 
 export const analyzeJob = async (input: CreateJobInput): Promise<JobPosting> => {
@@ -114,7 +114,7 @@ export const getCompanyJobs = async (companyId: string, includeInactive = false)
     return [];
   }
 
-  return data as JobPosting[];
+  return data as unknown as JobPosting[];
 };
 
 export const getJobPosting = async (jobId: string): Promise<JobPosting | null> => {
@@ -129,7 +129,7 @@ export const getJobPosting = async (jobId: string): Promise<JobPosting | null> =
     return null;
   }
 
-  return data as JobPosting;
+  return data as unknown as JobPosting;
 };
 
 export interface UpdateJobInput {
@@ -154,7 +154,7 @@ export const updateJob = async (jobId: string, input: UpdateJobInput): Promise<J
     throw new Error(`Failed to update job: ${error.message}`);
   }
 
-  return data as JobPosting;
+  return data as unknown as JobPosting;
 };
 
 export const toggleJobActive = async (jobId: string, isActive: boolean): Promise<JobPosting> => {
@@ -169,7 +169,7 @@ export const toggleJobActive = async (jobId: string, isActive: boolean): Promise
     throw new Error(`Failed to toggle job status: ${error.message}`);
   }
 
-  return data as JobPosting;
+  return data as unknown as JobPosting;
 };
 
 export const deleteJob = async (jobId: string): Promise<void> => {
