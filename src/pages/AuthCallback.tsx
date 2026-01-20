@@ -4,21 +4,39 @@ import { motion } from 'framer-motion';
 import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
 type CallbackState = 'loading' | 'success' | 'error';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { userType, isAuthenticated, refreshUserType } = useAuth();
   const [state, setState] = useState<CallbackState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Get session from URL hash (magic link)
+        // Handle the hash fragment from magic link
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        // If we have tokens in the hash, set the session
+        if (accessToken && refreshToken) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (sessionError) {
+            console.error('Error setting session:', sessionError);
+            setErrorMessage(sessionError.message);
+            setState('error');
+            return;
+          }
+        }
+
+        // Get the current session
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
@@ -29,41 +47,32 @@ const AuthCallback = () => {
         }
 
         if (!session?.user) {
-          // Try to get token from URL hash
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          const accessToken = hashParams.get('access_token');
-          
-          if (!accessToken) {
-            setErrorMessage('No authentication token found');
-            setState('error');
-            return;
-          }
-
-          // Wait for auth state to update
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          setErrorMessage('No authentication session found');
+          setState('error');
+          return;
         }
 
-        // Refresh user type detection
-        await refreshUserType();
+        const userId = session.user.id;
+
+        // Check if user has existing profiles linked to their user_id
+        const [companyResult, talentResult] = await Promise.all([
+          supabase.from('companies').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
+        ]);
 
         setState('success');
-        toast.success('Successfully signed in!');
+        toast.success('Connexion réussie !');
 
-        // Wait a bit then check user type and redirect
-        setTimeout(async () => {
-          // MVP: Check localStorage for stored IDs instead of user_id column
-          const storedCompanyId = localStorage.getItem('humiq_company_id');
-          const storedTalentId = localStorage.getItem('humiq_talent_id');
-          
-          const company = storedCompanyId ? { id: storedCompanyId } : null;
-          const talent = storedTalentId ? { id: storedTalentId } : null;
-
-          if (company) {
+        // Redirect based on user profile
+        setTimeout(() => {
+          if (companyResult.data) {
+            // User has a company profile
             navigate('/company/dashboard');
-          } else if (talent) {
+          } else if (talentResult.data) {
+            // User has a talent profile
             navigate('/talent/dashboard');
           } else {
-            // No profile yet - go to role selection
+            // New user - go to role selection then onboarding
             navigate('/auth/role-select');
           }
         }, 1500);
@@ -75,7 +84,7 @@ const AuthCallback = () => {
     };
 
     handleCallback();
-  }, [navigate, refreshUserType]);
+  }, [navigate]);
 
   if (state === 'loading') {
     return (
