@@ -18,12 +18,27 @@ const AuthCallback = () => {
       try {
         // Handle the hash fragment from magic link
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        
+        // Check if there's an error in the hash (Supabase auth errors)
+        const hashError = hashParams.get('error');
+        const hashErrorDescription = hashParams.get('error_description');
+        
+        if (hashError) {
+          console.error('Auth error from hash:', hashError, hashErrorDescription);
+          setErrorMessage(hashErrorDescription || hashError);
+          setState('error');
+          return;
+        }
+        
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type');
+
+        console.log('Auth callback - type:', type, 'hasAccessToken:', !!accessToken, 'hasRefreshToken:', !!refreshToken);
 
         // If we have tokens in the hash, set the session
         if (accessToken && refreshToken) {
-          const { error: sessionError } = await supabase.auth.setSession({
+          const { data, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
           });
@@ -34,10 +49,14 @@ const AuthCallback = () => {
             setState('error');
             return;
           }
+          
+          console.log('Session set successfully:', !!data.session);
         }
 
         // Get the current session
         const { data: { session }, error } = await supabase.auth.getSession();
+
+        console.log('getSession result:', { hasSession: !!session, error: error?.message });
 
         if (error) {
           console.error('Auth callback error:', error);
@@ -47,7 +66,7 @@ const AuthCallback = () => {
         }
 
         if (!session?.user) {
-          setErrorMessage('No authentication session found');
+          setErrorMessage('No authentication session found. The link may have expired.');
           setState('error');
           return;
         }
@@ -80,7 +99,8 @@ const AuthCallback = () => {
         }, 1500);
       } catch (error) {
         console.error('Callback error:', error);
-        setErrorMessage('An unexpected error occurred');
+        const message = error instanceof Error ? error.message : 'An unexpected error occurred';
+        setErrorMessage(message);
         setState('error');
       }
     };
