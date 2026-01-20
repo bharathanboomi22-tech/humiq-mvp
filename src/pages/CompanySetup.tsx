@@ -15,7 +15,7 @@ const DEMO_COMPANY_KEY = 'humiq_demo_company_id';
 
 const CompanySetup = () => {
   const navigate = useNavigate();
-  const { user, isDemo } = useAuth();
+  const { isDemo } = useAuth();
   const [companyName, setCompanyName] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -41,7 +41,7 @@ const CompanySetup = () => {
         name: companyName.trim(),
         websiteUrl: websiteUrl.trim(),
         description: description.trim() || undefined,
-        userId: user?.id, // Link to authenticated user if available
+        // userId not passed in demo mode - no authenticated user
       });
 
       // Store company ID
