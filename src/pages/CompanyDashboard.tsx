@@ -818,7 +818,7 @@ const CompanyDashboard = () => {
                         : 'text-red-500'
                     }`}>
                       {selectedInterview.company_recap?.recommendation === 'hire' ? 'Hire' :
-                       selectedInterview.company_recap?.recommendation === 'maybe' ? 'Consider' : 'Decline'}
+                       selectedInterview.company_recap?.recommendation === 'maybe' ? 'Consider' : 'Reject'}
                     </p>
                   </div>
                 </div>

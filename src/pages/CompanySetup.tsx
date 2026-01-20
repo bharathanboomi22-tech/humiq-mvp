@@ -9,9 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { analyzeCompany, setStoredCompanyId } from '@/lib/company';
+import { useAuth } from '@/hooks/useAuth';
+
+const DEMO_COMPANY_KEY = 'humiq_demo_company_id';
 
 const CompanySetup = () => {
   const navigate = useNavigate();
+  const { user, isDemo } = useAuth();
   const [companyName, setCompanyName] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -37,9 +41,17 @@ const CompanySetup = () => {
         name: companyName.trim(),
         websiteUrl: websiteUrl.trim(),
         description: description.trim() || undefined,
+        userId: user?.id, // Link to authenticated user if available
       });
 
+      // Store company ID
       setStoredCompanyId(company.id);
+      
+      // If demo mode, also store in demo key
+      if (isDemo) {
+        localStorage.setItem(DEMO_COMPANY_KEY, company.id);
+      }
+
       toast.success('Company profile created successfully!');
       navigate('/company/dashboard');
     } catch (error) {

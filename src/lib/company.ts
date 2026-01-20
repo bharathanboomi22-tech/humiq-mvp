@@ -15,12 +15,13 @@ export const clearStoredCompanyId = (): void => {
   localStorage.removeItem(COMPANY_ID_KEY);
 };
 
-export const analyzeCompany = async (input: CreateCompanyInput): Promise<Company> => {
+export const analyzeCompany = async (input: CreateCompanyInput & { userId?: string }): Promise<Company> => {
   const { data, error } = await supabase.functions.invoke('analyze-company', {
     body: {
       name: input.name,
       websiteUrl: input.websiteUrl,
       description: input.description,
+      userId: input.userId,
     },
   });
 

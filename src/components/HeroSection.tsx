@@ -255,7 +255,7 @@ function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
       {/* User Type Selection */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => navigate('/company/setup')}
+          onClick={() => navigate('/auth/login')}
           className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
         >
           <div className="flex items-center gap-3 mb-2">
@@ -269,7 +269,7 @@ function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
         </button>
 
         <button
-          onClick={() => navigate('/talent/onboarding')}
+          onClick={() => navigate('/auth/login')}
           className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
         >
           <div className="flex items-center gap-3 mb-2">

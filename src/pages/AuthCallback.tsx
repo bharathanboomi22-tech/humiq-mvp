@@ -6,21 +6,19 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { setStoredCompanyId } from '@/lib/company';
-import { setStoredTalentId } from '@/lib/talent';
 
 type CallbackState = 'loading' | 'success' | 'error';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { user, setUserRole, role, refreshSession } = useAuth();
+  const { userType, isAuthenticated, refreshUserType } = useAuth();
   const [state, setState] = useState<CallbackState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Get session from URL hash
+        // Get session from URL hash (magic link)
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
@@ -31,7 +29,7 @@ const AuthCallback = () => {
         }
 
         if (!session?.user) {
-          // Try to exchange the code
+          // Try to get token from URL hash
           const hashParams = new URLSearchParams(window.location.hash.substring(1));
           const accessToken = hashParams.get('access_token');
           
@@ -41,76 +39,40 @@ const AuthCallback = () => {
             return;
           }
 
-          // Refresh session after getting token from URL
-          await refreshSession();
+          // Wait for auth state to update
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        // Get pending role from localStorage (set during login)
-        const pendingRole = localStorage.getItem('humiq_pending_role') as 'company' | 'talent' | null;
-        localStorage.removeItem('humiq_pending_role');
+        // Refresh user type detection
+        await refreshUserType();
 
-        if (pendingRole && session?.user) {
-          // Set the user role
-          try {
-            await setUserRole(pendingRole);
-          } catch (error) {
-            console.error('Error setting user role:', error);
-            // Role might already exist, continue anyway
+        setState('success');
+        toast.success('Successfully signed in!');
+
+        // Wait a bit then check user type and redirect
+        setTimeout(async () => {
+          // Check again for user type
+          const { data: company } = await supabase
+            .from('companies')
+            .select('id')
+            .eq('user_id', session?.user?.id)
+            .maybeSingle();
+
+          const { data: talent } = await supabase
+            .from('talent_profiles')
+            .select('id')
+            .eq('user_id', session?.user?.id)
+            .maybeSingle();
+
+          if (company) {
+            navigate('/company/dashboard');
+          } else if (talent) {
+            navigate('/talent/dashboard');
+          } else {
+            // No profile yet - go to role selection
+            navigate('/auth/role-select');
           }
-
-          // Link to existing profile if any
-          if (pendingRole === 'company') {
-            // Check if user already has a company linked
-            const { data: existingCompany } = await supabase
-              .from('companies')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (existingCompany) {
-              setStoredCompanyId(existingCompany.id);
-            }
-          } else if (pendingRole === 'talent') {
-            // Check if user already has a talent profile linked
-            const { data: existingTalent } = await supabase
-              .from('talent_profiles')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (existingTalent) {
-              setStoredTalentId(existingTalent.id);
-            }
-          }
-
-          setState('success');
-          toast.success('Successfully signed in!');
-
-          // Redirect based on role
-          setTimeout(() => {
-            if (pendingRole === 'company') {
-              navigate('/company/dashboard');
-            } else {
-              navigate('/talent/dashboard');
-            }
-          }, 1500);
-        } else if (role) {
-          // User already has a role, redirect to appropriate dashboard
-          setState('success');
-          setTimeout(() => {
-            if (role === 'company') {
-              navigate('/company/dashboard');
-            } else {
-              navigate('/talent/dashboard');
-            }
-          }, 1000);
-        } else {
-          // No role set, need to choose
-          setState('success');
-          setTimeout(() => {
-            navigate('/auth/login');
-          }, 1500);
-        }
+        }, 1500);
       } catch (error) {
         console.error('Callback error:', error);
         setErrorMessage('An unexpected error occurred');
@@ -119,7 +81,7 @@ const AuthCallback = () => {
     };
 
     handleCallback();
-  }, [navigate, setUserRole, role, refreshSession]);
+  }, [navigate, refreshUserType]);
 
   if (state === 'loading') {
     return (
@@ -181,7 +143,7 @@ const AuthCallback = () => {
           Welcome Back!
         </h1>
         <p className="text-muted-foreground">
-          Redirecting you to your dashboard...
+          Redirecting you...
         </p>
       </motion.div>
     </main>

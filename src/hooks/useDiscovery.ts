@@ -108,17 +108,6 @@ export const useDiscovery = (): UseDiscoveryReturn => {
     // Add user's answer
     addMessage('user', answer);
 
-    // Store answer
-    const currentQuestion = messages.filter(m => m.role === 'assistant').pop()?.content || '';
-    setAnswers((prev) => [
-      ...prev,
-      {
-        questionId: `q${currentQuestionIndex}`,
-        question: currentQuestion,
-        answer: answer.trim(),
-      },
-    ]);
-
     setIsLoading(true);
 
     try {
@@ -136,6 +125,25 @@ export const useDiscovery = (): UseDiscoveryReturn => {
       if (response?.error) throw new Error(response.error);
 
       await new Promise((resolve) => setTimeout(resolve, 600));
+
+      // Check if the response needs clarification (invalid answer)
+      if (response.needsClarification) {
+        // Add clarification message - do NOT advance question index
+        addMessage('assistant', response.clarificationMessage);
+        // Don't store the invalid answer
+        return;
+      }
+
+      // Valid response - store the answer
+      const currentQuestion = messages.filter(m => m.role === 'assistant').pop()?.content || '';
+      setAnswers((prev) => [
+        ...prev,
+        {
+          questionId: `q${currentQuestionIndex}`,
+          question: currentQuestion,
+          answer: answer.trim(),
+        },
+      ]);
 
       if (response.complete) {
         addMessage('assistant', response.completionMessage || 'Thank you! I have everything I need to understand your profile.');

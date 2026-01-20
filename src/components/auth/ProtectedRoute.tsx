@@ -1,23 +1,22 @@
-import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth, UserType } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
-import { useAuth, UserRole } from '@/hooks/useAuth';
 
 interface ProtectedRouteProps {
-  children: ReactNode;
-  allowedRoles?: UserRole[];
-  requireAuth?: boolean;
+  children: React.ReactNode;
+  allowedTypes?: UserType[];
+  requireAuth?: boolean; // If false, allows demo mode
 }
 
-export function ProtectedRoute({
+export const ProtectedRoute = ({
   children,
-  allowedRoles,
-  requireAuth = true,
-}: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, role } = useAuth();
+  allowedTypes,
+  requireAuth = false,
+}: ProtectedRouteProps) => {
+  const { isLoading, isAuthenticated, isDemo, userType } = useAuth();
   const location = useLocation();
 
-  // Show loading state while checking auth
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-ambient flex items-center justify-center">
@@ -26,24 +25,38 @@ export function ProtectedRoute({
     );
   }
 
-  // If auth is required and user is not authenticated, redirect to login
+  // Check if user has access
+  const hasAccess = isAuthenticated || isDemo;
+
+  // If auth is required and user is only in demo mode, redirect to login
   if (requireAuth && !isAuthenticated) {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  // If specific roles are required, check if user has the right role
-  if (allowedRoles && allowedRoles.length > 0) {
-    if (!role || !allowedRoles.includes(role)) {
-      // Redirect to appropriate dashboard based on role
-      if (role === 'company') {
-        return <Navigate to="/company/dashboard" replace />;
-      } else if (role === 'talent') {
-        return <Navigate to="/talent/dashboard" replace />;
-      }
-      // No role set, redirect to login
-      return <Navigate to="/auth/login" replace />;
+  // If no access at all, redirect to login
+  if (!hasAccess) {
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  }
+
+  // If user type is restricted and doesn't match
+  if (allowedTypes && allowedTypes.length > 0 && userType && !allowedTypes.includes(userType)) {
+    // Redirect to appropriate dashboard based on user type
+    if (userType === 'company') {
+      return <Navigate to="/company/dashboard" replace />;
+    } else if (userType === 'talent') {
+      return <Navigate to="/talent/dashboard" replace />;
     }
   }
 
   return <>{children}</>;
-}
+};
+
+// Wrapper for company-only routes
+export const CompanyRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute allowedTypes={['company']}>{children}</ProtectedRoute>
+);
+
+// Wrapper for talent-only routes
+export const TalentRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute allowedTypes={['talent']}>{children}</ProtectedRoute>
+);
