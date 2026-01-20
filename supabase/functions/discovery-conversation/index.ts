@@ -55,6 +55,32 @@ const questionToolSchema = {
   },
 };
 
+const validateResponseToolSchema = {
+  type: 'function',
+  function: {
+    name: 'validate_response',
+    description: 'Validate if the user response is meaningful and on-topic',
+    parameters: {
+      type: 'object',
+      properties: {
+        isValid: {
+          type: 'boolean',
+          description: 'Whether the response is valid (meaningful, not gibberish, somewhat on-topic)',
+        },
+        clarificationRequest: {
+          type: 'string',
+          description: 'If invalid, a friendly message asking for clarification (keep it short and encouraging)',
+        },
+        reason: {
+          type: 'string',
+          description: 'Brief reason for the validation result',
+        },
+      },
+      required: ['isValid', 'reason'],
+    },
+  },
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -150,6 +176,75 @@ Keep it conversational and friendly. This is about understanding them, not testi
         .single();
 
       const messages = conversation?.messages || [];
+      
+      // Get the last question asked
+      const lastAssistantMessage = [...messages].reverse().find((m: any) => m.role === 'assistant');
+      const lastQuestion = lastAssistantMessage?.content || 'previous question';
+
+      // STEP 1: Validate the user's response
+      const validationPrompt = `You are validating a user's response in a discovery conversation.
+
+The question asked was: "${lastQuestion}"
+
+The user's response was: "${answer}"
+
+Determine if this response is:
+1. VALID: Meaningful text that attempts to answer the question (even if brief or imperfect)
+2. INVALID: Gibberish, random characters, completely off-topic, or empty/meaningless
+
+Be LENIENT - accept responses that show any genuine attempt to communicate, even if:
+- They're short
+- They have typos
+- They're not perfectly on-topic
+
+Mark as INVALID only if the response is:
+- Random characters/gibberish (e.g., "asdfghjkl", "zoifddklfdk")
+- Completely meaningless (e.g., ".", "???", "123456")
+- Clearly not an attempt to answer
+
+If invalid, provide a SHORT, friendly clarification request (1 sentence).`;
+
+      const validationResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${lovableApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-3-flash-preview',
+          max_tokens: 150,
+          messages: [
+            { role: 'system', content: 'You validate user responses. Be lenient and friendly.' },
+            { role: 'user', content: validationPrompt },
+          ],
+          tools: [validateResponseToolSchema],
+          tool_choice: { type: 'function', function: { name: 'validate_response' } },
+        }),
+      });
+
+      if (validationResponse.ok) {
+        const validationData = await validationResponse.json();
+        const validationToolCall = validationData.choices[0].message.tool_calls?.[0];
+        
+        if (validationToolCall) {
+          const validation = JSON.parse(validationToolCall.function.arguments);
+          
+          if (!validation.isValid) {
+            // Response is invalid - ask for clarification without advancing
+            return new Response(
+              JSON.stringify({
+                needsClarification: true,
+                clarificationMessage: validation.clarificationRequest || "I didn't quite catch that. Could you try rephrasing your answer?",
+                question: lastQuestion, // Re-ask the same question
+                questionId: `clarify-${Date.now()}`,
+              }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+      }
+
+      // STEP 2: Response is valid - proceed with next question
       const questionCount = questionIndex + 1;
 
       // Check if we should complete (2 questions for demo)
