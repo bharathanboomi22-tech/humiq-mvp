@@ -217,3 +217,52 @@ export const getInterviewResultForRequest = async (interviewRequestId: string): 
 
   return (data as InterviewResult) || null;
 };
+
+export interface InterviewResultWithTalent extends InterviewResult {
+  interview_request: InterviewRequest & {
+    talent_profile?: {
+      id: string;
+      name?: string;
+      email?: string;
+      github_url?: string;
+      consolidated_profile?: any;
+    };
+    job_posting?: {
+      id: string;
+      title: string;
+      description?: string;
+    };
+  };
+}
+
+export const getInterviewResultsForCompany = async (companyId: string): Promise<InterviewResultWithTalent[]> => {
+  const { data, error } = await supabase
+    .from('interview_results')
+    .select(`
+      *,
+      interview_request:interview_requests!inner(
+        *,
+        talent_profile:talent_profiles(
+          id,
+          name,
+          email,
+          github_url,
+          consolidated_profile
+        ),
+        job_posting:job_postings(
+          id,
+          title,
+          description
+        )
+      )
+    `)
+    .eq('interview_request.company_id', companyId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching interview results for company:', error);
+    return [];
+  }
+
+  return (data || []) as InterviewResultWithTalent[];
+};

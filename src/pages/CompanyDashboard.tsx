@@ -5,6 +5,7 @@ import {
   Building2,
   Briefcase,
   Users,
+  User,
   Plus,
   Edit2,
   Globe,
@@ -19,6 +20,7 @@ import {
   CheckCircle,
   XCircle,
   CheckCircle2,
+  Target,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -29,7 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { getStoredCompanyId, getCompany, getCompanyJobs, toggleJobActive, updateCompany } from '@/lib/company';
 import { Switch } from '@/components/ui/switch';
 import { getMatchesForCompany } from '@/lib/matching';
-import { getInterviewRequestForMatch } from '@/lib/interviews';
+import { getInterviewRequestForMatch, getInterviewResultForRequest, getInterviewResultsForCompany, InterviewResult, InterviewResultWithTalent } from '@/lib/interviews';
 import { InterviewRequest } from '@/components/talent/InterviewInbox';
 import { Company, JobPosting } from '@/types/company';
 import { Match } from '@/types/matching';
@@ -46,6 +48,9 @@ const CompanyDashboard = () => {
   const [editDescription, setEditDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [interviewRequests, setInterviewRequests] = useState<Map<string, InterviewRequest>>(new Map());
+  const [interviewResults, setInterviewResults] = useState<Map<string, InterviewResult>>(new Map());
+  const [completedInterviews, setCompletedInterviews] = useState<InterviewResultWithTalent[]>([]);
+  const [selectedInterview, setSelectedInterview] = useState<InterviewResultWithTalent | null>(null);
 
   // Refresh matches function
   const refreshMatches = useCallback(async () => {
@@ -56,6 +61,8 @@ const CompanyDashboard = () => {
 
       // Load interview requests for matches
       const interviewRequestsMap = new Map<string, InterviewRequest>();
+      const interviewResultsMap = new Map<string, InterviewResult>();
+      
       for (const match of matchesData) {
         if (match.talent_profile?.id && match.job_posting?.id) {
           const interviewRequest = await getInterviewRequestForMatch(
@@ -65,10 +72,19 @@ const CompanyDashboard = () => {
           if (interviewRequest) {
             const key = `${match.talent_profile.id}-${match.job_posting.id}`;
             interviewRequestsMap.set(key, interviewRequest);
+            
+            // Load interview result for completed interviews
+            if (interviewRequest.status === 'completed') {
+              const result = await getInterviewResultForRequest(interviewRequest.id);
+              if (result) {
+                interviewResultsMap.set(key, result);
+              }
+            }
           }
         }
       }
       setInterviewRequests(interviewRequestsMap);
+      setInterviewResults(interviewResultsMap);
     } catch (error) {
       console.error('Error refreshing matches:', error);
     }
@@ -86,10 +102,11 @@ const CompanyDashboard = () => {
       setCompanyId(storedCompanyId);
 
       try {
-        const [companyData, jobsData, matchesData] = await Promise.all([
+        const [companyData, jobsData, matchesData, interviewResultsData] = await Promise.all([
           getCompany(storedCompanyId),
           getCompanyJobs(storedCompanyId, true), // Include inactive jobs
           getMatchesForCompany(storedCompanyId),
+          getInterviewResultsForCompany(storedCompanyId),
         ]);
 
         if (!companyData) {
@@ -101,6 +118,7 @@ const CompanyDashboard = () => {
         setCompany(companyData);
         setJobs(jobsData);
         setMatches(matchesData);
+        setCompletedInterviews(interviewResultsData);
 
         // Load interview requests for matches
         const interviewRequestsMap = new Map<string, InterviewRequest>();
@@ -452,8 +470,9 @@ const CompanyDashboard = () => {
                         ? `${match.talent_profile.id}-${match.job_posting.id}` 
                         : null;
                       const interviewRequest = interviewKey ? interviewRequests.get(interviewKey) : null;
+                      const interviewResult = interviewKey ? interviewResults.get(interviewKey) : null;
 
-                      const getStatusBadge = (status: string) => {
+                      const getStatusBadge = (status: string, result?: InterviewResult) => {
                         switch (status) {
                           case 'pending':
                             return (
@@ -464,9 +483,9 @@ const CompanyDashboard = () => {
                             );
                           case 'accepted':
                             return (
-                              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 text-xs gap-1">
-                                <CheckCircle className="w-3 h-3" />
-                                Accepted
+                              <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30 text-xs gap-1">
+                                <Clock className="w-3 h-3" />
+                                In Progress
                               </Badge>
                             );
                           case 'declined':
@@ -477,12 +496,21 @@ const CompanyDashboard = () => {
                               </Badge>
                             );
                           case 'completed':
-                            return (
-                              <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30 text-xs gap-1">
-                                <CheckCircle2 className="w-3 h-3" />
-                                Completed
-                              </Badge>
-                            );
+                            if (result?.passed) {
+                              return (
+                                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 text-xs gap-1">
+                                  <CheckCircle className="w-3 h-3" />
+                                  Passed
+                                </Badge>
+                              );
+                            } else {
+                              return (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30 text-xs gap-1">
+                                  <XCircle className="w-3 h-3" />
+                                  Failed
+                                </Badge>
+                              );
+                            }
                           default:
                             return null;
                         }
@@ -504,7 +532,7 @@ const CompanyDashboard = () => {
                               </p>
                               {interviewRequest && (
                                 <div className="mt-1">
-                                  {getStatusBadge(interviewRequest.status)}
+                                  {getStatusBadge(interviewRequest.status, interviewResult || undefined)}
                                 </div>
                               )}
                             </div>
@@ -532,10 +560,413 @@ const CompanyDashboard = () => {
                 )}
               </CardContent>
             </Card>
+
+            {/* Completed Interviews */}
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  Interview Results
+                  {completedInterviews.filter(i => i.passed).length > 0 && (
+                    <Badge variant="default" className="ml-1 text-xs bg-green-500">
+                      {completedInterviews.filter(i => i.passed).length} passed
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  {completedInterviews.length} {completedInterviews.length === 1 ? 'interview' : 'interviews'} completed
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {completedInterviews.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CheckCircle2 className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground mb-2">No completed interviews yet</p>
+                    <p className="text-xs text-muted-foreground">
+                      Interview results will appear here once candidates complete their interviews
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {completedInterviews.map((result) => {
+                      const talentName = result.interview_request?.talent_profile?.name || 'Anonymous Talent';
+                      const jobTitle = result.interview_request?.job_posting?.title || 'Position';
+                      const fitScore = result.company_recap?.fitScore || 0;
+                      const recommendation = result.company_recap?.recommendation || 'N/A';
+                      
+                      return (
+                        <div
+                          key={result.id}
+                          onClick={() => setSelectedInterview(result)}
+                          className={`p-4 rounded-lg border cursor-pointer transition-all hover:border-accent/50 ${
+                            result.passed 
+                              ? 'bg-green-500/5 border-green-500/30' 
+                              : 'bg-red-500/5 border-red-500/30'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-medium text-foreground">{talentName}</h4>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${
+                                    result.passed
+                                      ? 'bg-green-500/10 text-green-500 border-green-500/30'
+                                      : 'bg-red-500/10 text-red-500 border-red-500/30'
+                                  }`}
+                                >
+                                  {result.passed ? 'Passed' : 'Failed'}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground mb-2">
+                                For: {jobTitle}
+                              </p>
+                              <p className="text-sm text-foreground/80 line-clamp-2">
+                                {result.company_recap?.summary || 'No summary available'}
+                              </p>
+                            </div>
+                            <div className="text-right ml-4">
+                              <span className={`text-lg font-semibold ${
+                                fitScore >= 70 ? 'text-green-500' : fitScore >= 50 ? 'text-yellow-500' : 'text-red-500'
+                              }`}>
+                                {fitScore}%
+                              </span>
+                              <p className="text-xs text-muted-foreground">fit score</p>
+                              <Badge
+                                variant="outline"
+                                className={`mt-1 text-xs ${
+                                  recommendation === 'hire' 
+                                    ? 'border-green-500/30 text-green-500' 
+                                    : recommendation === 'maybe'
+                                    ? 'border-yellow-500/30 text-yellow-500'
+                                    : 'border-red-500/30 text-red-500'
+                                }`}
+                              >
+                                {recommendation}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
         </motion.div>
       </div>
+
+      {/* Interview Detail Modal */}
+      {selectedInterview && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+          onClick={() => setSelectedInterview(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-4xl max-h-[90vh] overflow-y-auto glass-card rounded-2xl border border-border/50"
+          >
+            {/* Header with gradient */}
+            <div className={`p-6 border-b border-border/50 ${
+              selectedInterview.passed 
+                ? 'bg-gradient-to-r from-green-500/10 to-transparent' 
+                : 'bg-gradient-to-r from-red-500/10 to-transparent'
+            }`}>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+                    selectedInterview.passed ? 'bg-green-500/20' : 'bg-red-500/20'
+                  }`}>
+                    {selectedInterview.passed ? (
+                      <CheckCircle className="w-7 h-7 text-green-500" />
+                    ) : (
+                      <XCircle className="w-7 h-7 text-red-500" />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-foreground">
+                      {selectedInterview.interview_request?.talent_profile?.name || 'Candidate'}
+                    </h2>
+                    <p className="text-muted-foreground">
+                      {selectedInterview.interview_request?.job_posting?.title || 'Position'} • Interview completed {new Date(selectedInterview.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedInterview(null)}
+                  className="rounded-full"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Scores Section */}
+            <div className="px-6 py-5 border-b border-border/50 bg-background/30">
+              <div className="flex items-center justify-between gap-6">
+                {/* Result */}
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    selectedInterview.passed 
+                      ? 'bg-green-500/20 ring-2 ring-green-500/30' 
+                      : 'bg-red-500/20 ring-2 ring-red-500/30'
+                  }`}>
+                    {selectedInterview.passed ? (
+                      <CheckCircle className="w-6 h-6 text-green-500" />
+                    ) : (
+                      <XCircle className="w-6 h-6 text-red-500" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Interview Result</p>
+                    <p className={`text-lg font-semibold ${
+                      selectedInterview.passed ? 'text-green-500' : 'text-red-500'
+                    }`}>
+                      {selectedInterview.passed ? 'Passed' : 'Failed'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="h-12 w-px bg-border/50" />
+
+                {/* Fit Score - Circular Progress Style */}
+                <div className="flex items-center gap-3">
+                  <div className="relative w-12 h-12">
+                    <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        className="text-border/30"
+                      />
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeDasharray={`${(selectedInterview.company_recap?.fitScore || 0) * 0.88} 88`}
+                        strokeLinecap="round"
+                        className={
+                          (selectedInterview.company_recap?.fitScore || 0) >= 70 
+                            ? 'text-green-500' 
+                            : (selectedInterview.company_recap?.fitScore || 0) >= 50 
+                            ? 'text-yellow-500' 
+                            : 'text-red-500'
+                        }
+                      />
+                    </svg>
+                    <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${
+                      (selectedInterview.company_recap?.fitScore || 0) >= 70 
+                        ? 'text-green-500' 
+                        : (selectedInterview.company_recap?.fitScore || 0) >= 50 
+                        ? 'text-yellow-500' 
+                        : 'text-red-500'
+                    }`}>
+                      {selectedInterview.company_recap?.fitScore || 0}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Fit Score</p>
+                    <p className="text-lg font-semibold text-foreground">
+                      {(selectedInterview.company_recap?.fitScore || 0) >= 70 ? 'Strong' : 
+                       (selectedInterview.company_recap?.fitScore || 0) >= 50 ? 'Moderate' : 'Low'} Match
+                    </p>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="h-12 w-px bg-border/50" />
+
+                {/* Recommendation */}
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    selectedInterview.company_recap?.recommendation === 'hire'
+                      ? 'bg-green-500/20 ring-2 ring-green-500/30'
+                      : selectedInterview.company_recap?.recommendation === 'maybe'
+                      ? 'bg-yellow-500/20 ring-2 ring-yellow-500/30'
+                      : 'bg-red-500/20 ring-2 ring-red-500/30'
+                  }`}>
+                    {selectedInterview.company_recap?.recommendation === 'hire' ? (
+                      <CheckCircle2 className="w-6 h-6 text-green-500" />
+                    ) : selectedInterview.company_recap?.recommendation === 'maybe' ? (
+                      <Clock className="w-6 h-6 text-yellow-500" />
+                    ) : (
+                      <X className="w-6 h-6 text-red-500" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Recommendation</p>
+                    <p className={`text-lg font-semibold capitalize ${
+                      selectedInterview.company_recap?.recommendation === 'hire'
+                        ? 'text-green-500'
+                        : selectedInterview.company_recap?.recommendation === 'maybe'
+                        ? 'text-yellow-500'
+                        : 'text-red-500'
+                    }`}>
+                      {selectedInterview.company_recap?.recommendation === 'hire' ? 'Hire' :
+                       selectedInterview.company_recap?.recommendation === 'maybe' ? 'Consider' : 'Decline'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  {/* Summary */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-accent" />
+                      Assessment Summary
+                    </h3>
+                    <div className="p-4 rounded-xl bg-background/50 border border-border/50">
+                      <p className="text-foreground leading-relaxed">
+                        {selectedInterview.company_recap?.summary || 'No summary available'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Skills Assessed */}
+                  {selectedInterview.company_recap?.skillsAssessed && selectedInterview.company_recap.skillsAssessed.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-accent" />
+                        Skills Assessed
+                      </h3>
+                      <div className="p-4 rounded-xl bg-background/50 border border-border/50">
+                        <div className="grid grid-cols-1 gap-2">
+                          {selectedInterview.company_recap.skillsAssessed.map((skill, index) => {
+                            const [skillName, level] = skill.includes(':') ? skill.split(':').map(s => s.trim()) : [skill, 'Assessed'];
+                            const isStrong = level.toLowerCase().includes('strong') || level.toLowerCase().includes('good');
+                            const isWeak = level.toLowerCase().includes('weak') || level.toLowerCase().includes('needs') || level.toLowerCase().includes('improvement');
+                            return (
+                              <div key={index} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
+                                <span className="text-foreground font-medium">{skillName}</span>
+                                <Badge 
+                                  variant="outline" 
+                                  className={`text-xs ${
+                                    isStrong ? 'border-green-500/30 text-green-500 bg-green-500/10' :
+                                    isWeak ? 'border-red-500/30 text-red-500 bg-red-500/10' :
+                                    'border-accent/30 text-accent bg-accent/10'
+                                  }`}
+                                >
+                                  {level}
+                                </Badge>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                  {/* Red Flags */}
+                  {selectedInterview.company_recap?.redFlags && selectedInterview.company_recap.redFlags.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-red-500 mb-3 flex items-center gap-2">
+                        <XCircle className="w-4 h-4" />
+                        Red Flags ({selectedInterview.company_recap.redFlags.length})
+                      </h3>
+                      <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20">
+                        <ul className="space-y-3">
+                          {selectedInterview.company_recap.redFlags.map((flag, index) => (
+                            <li key={index} className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span className="text-red-500 text-xs font-bold">{index + 1}</span>
+                              </div>
+                              <span className="text-foreground">{flag}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* No Red Flags */}
+                  {(!selectedInterview.company_recap?.redFlags || selectedInterview.company_recap.redFlags.length === 0) && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-green-500 mb-3 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        No Red Flags
+                      </h3>
+                      <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
+                        <p className="text-foreground">No concerns or red flags were identified during this interview.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Candidate Card */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <User className="w-4 h-4 text-accent" />
+                      Candidate Info
+                    </h3>
+                    <div className="p-4 rounded-xl bg-background/50 border border-border/50">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                          <User className="w-6 h-6 text-accent" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {selectedInterview.interview_request?.talent_profile?.name || 'Anonymous'}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {selectedInterview.interview_request?.talent_profile?.email || 'No email provided'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {selectedInterview.interview_request?.talent_profile?.github_url && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(selectedInterview.interview_request?.talent_profile?.github_url, '_blank')}
+                            className="flex-1 gap-2"
+                          >
+                            <Code2 className="w-4 h-4" />
+                            GitHub
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedInterview(null);
+                            navigate(`/company/talent/${selectedInterview.interview_request?.talent_profile?.id}`);
+                          }}
+                          className="flex-1 gap-2"
+                        >
+                          View Full Profile
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </main>
   );
 };

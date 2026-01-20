@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Navigation } from '@/components/Navigation';
+import { cn } from '@/lib/utils';
 import {
   getStoredTalentId,
   getTalentProfile,
