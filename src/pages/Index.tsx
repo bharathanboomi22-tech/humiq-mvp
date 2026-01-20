@@ -7,7 +7,7 @@ import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { DeepDiveSections } from '@/components/landing/DeepDiveSections';
 import { WhyDifferentSection } from '@/components/landing/WhyDifferentSection';
 import { FinalCTASection } from '@/components/landing/FinalCTASection';
-import { createWorkSession } from '@/lib/workSession';
+import { createWorkSession, completeSession } from '@/lib/workSession';
 import { toast } from 'sonner';
 
 type ViewState = 'input' | 'loading';
@@ -22,7 +22,7 @@ const Index = () => {
   // Check if we can navigate (both session ready and animation complete)
   const tryNavigate = useCallback(() => {
     if (sessionReadyRef.current && animationCompleteRef.current && sessionIdRef.current) {
-      navigate(`/work-session/live/${sessionIdRef.current}`);
+      navigate(`/evidence-pack/${sessionIdRef.current}`);
     }
   }, [navigate]);
 
@@ -46,6 +46,10 @@ const Index = () => {
       // Store session ID and GitHub URL
       sessionIdRef.current = result.sessionId;
       localStorage.setItem('humiq_github_url', data.githubUrl.trim());
+      
+      // Complete the session immediately to generate evidence pack
+      // (skip AI interview, go directly to outcome)
+      await completeSession(result.sessionId);
       
       // Mark session as ready
       sessionReadyRef.current = true;
