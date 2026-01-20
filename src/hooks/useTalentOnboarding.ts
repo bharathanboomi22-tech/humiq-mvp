@@ -57,6 +57,7 @@ export const useTalentOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
   // Load existing profile data
   useEffect(() => {
@@ -203,6 +204,7 @@ export const useTalentOnboarding = () => {
     setSaving(true);
 
     try {
+      // Mark onboarding as completed
       const { error } = await supabase
         .from('talent_profiles')
         .update({
@@ -212,6 +214,19 @@ export const useTalentOnboarding = () => {
         .eq('id', talentId);
 
       if (error) throw error;
+
+      // Check if we have a GitHub URL to analyze
+      const githubUrl = data.workLinks.find(l => l.type === 'github')?.url;
+      if (githubUrl) {
+        setAnalyzing(true);
+        setSaving(false);
+        
+        // Run GitHub analysis in background (will update profile)
+        await analyzeGitHubForOnboarding(talentId, githubUrl);
+        
+        setAnalyzing(false);
+      }
+
       return true;
     } catch (error: any) {
       console.error('Error completing onboarding:', error);
@@ -219,6 +234,7 @@ export const useTalentOnboarding = () => {
       return false;
     } finally {
       setSaving(false);
+      setAnalyzing(false);
     }
   };
 
@@ -248,5 +264,6 @@ export const useTalentOnboarding = () => {
     completeOnboarding,
     loading,
     saving,
+    analyzing,
   };
 };

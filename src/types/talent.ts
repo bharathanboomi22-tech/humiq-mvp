@@ -29,6 +29,8 @@ export interface TalentProfile {
   level?: 'junior' | 'mid' | 'senior';
   last_updated_at: string;
   created_at: string;
+  onboarding_completed?: boolean;
+  discovery_completed?: boolean;
 }
 
 export interface TalentWorkSession {

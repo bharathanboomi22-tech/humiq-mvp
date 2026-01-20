@@ -12,6 +12,7 @@ import { HowIWorkStep } from '@/components/onboarding/steps/HowIWorkStep';
 import { PrivacyStep } from '@/components/onboarding/steps/PrivacyStep';
 import { DiscoveryStep } from '@/components/onboarding/steps/DiscoveryStep';
 import { SuccessStep } from '@/components/onboarding/steps/SuccessStep';
+import { LoadingExperience } from '@/components/LoadingExperience';
 import { AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
@@ -30,6 +31,7 @@ const TalentOnboardingContent = () => {
     completeOnboarding,
     loading,
     saving,
+    analyzing,
   } = useTalentOnboarding();
 
   // Check if onboarding is already completed and redirect
@@ -60,6 +62,10 @@ const TalentOnboardingContent = () => {
     }
   };
 
+  const handleAnalysisComplete = () => {
+    navigate('/talent/dashboard');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-ambient flex items-center justify-center">
@@ -67,6 +73,15 @@ const TalentOnboardingContent = () => {
           <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto mb-4" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show loading experience while analyzing GitHub
+  if (analyzing) {
+    return (
+      <div className="min-h-screen bg-ambient">
+        <LoadingExperience onComplete={handleAnalysisComplete} />
       </div>
     );
   }

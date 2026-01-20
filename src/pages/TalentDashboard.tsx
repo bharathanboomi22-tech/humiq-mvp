@@ -20,6 +20,8 @@ import {
   Edit2,
   Save,
   X,
+  AlertTriangle,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -34,6 +36,8 @@ import {
   getTalentEvidencePacks,
   consolidateTalentProfile,
   updateTalentProfile,
+  suggestTestsForWeaknesses,
+  SuggestedTest,
 } from '@/lib/talent';
 import { TalentProfile, AVAILABLE_TESTS } from '@/types/talent';
 import { InterviewInbox } from '@/components/talent/InterviewInbox';
@@ -52,7 +56,9 @@ const TalentDashboard = () => {
   const [profile, setProfile] = useState<TalentProfile | null>(null);
   const [testHistory, setTestHistory] = useState<{ session: WorkSession; pack: EvidencePackSummary }[]>([]);
   const [interviewHistory, setInterviewHistory] = useState<InterviewResult[]>([]);
+  const [suggestedTests, setSuggestedTests] = useState<SuggestedTest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingTests, setIsLoadingTests] = useState(false);
   const [isConsolidating, setIsConsolidating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
@@ -77,6 +83,19 @@ const TalentDashboard = () => {
         setProfile(profileData);
         setTestHistory(historyData);
         setInterviewHistory(interviewData);
+
+        // Load suggested tests based on weaknesses
+        if (profileData?.consolidated_profile?.areasForGrowth?.length > 0) {
+          setIsLoadingTests(true);
+          try {
+            const tests = await suggestTestsForWeaknesses(profileData.consolidated_profile.areasForGrowth);
+            setSuggestedTests(tests);
+          } catch (error) {
+            console.error('Error loading suggested tests:', error);
+          } finally {
+            setIsLoadingTests(false);
+          }
+        }
       } catch (error) {
         console.error('Error loading dashboard:', error);
         toast.error('Failed to load dashboard');
@@ -297,8 +316,8 @@ const TalentDashboard = () => {
             </Card>
           )}
 
-          {/* Profile Summary Card */}
-          {consolidated?.summary && (
+          {/* Profile Summary Card - Show if we have any profile data */}
+          {(consolidated?.summary || consolidated?.strengths?.length > 0 || consolidated?.areasForGrowth?.length > 0) && (
             <Card className="glass-card mb-8">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center justify-between">
@@ -309,7 +328,7 @@ const TalentDashboard = () => {
                     </Badge>
                   )}
                 </CardTitle>
-                <CardDescription>{consolidated.summary}</CardDescription>
+                {consolidated?.summary && <CardDescription>{consolidated.summary}</CardDescription>}
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -331,9 +350,27 @@ const TalentDashboard = () => {
                     </div>
                   )}
 
+                  {/* Potential Weaknesses */}
+                  {consolidated?.areasForGrowth && consolidated.areasForGrowth.length > 0 && (
+                    <div>
+                      <h4 className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        Potential Weaknesses
+                      </h4>
+                      <ul className="space-y-1">
+                        {consolidated.areasForGrowth.slice(0, 4).map((weakness, i) => (
+                          <li key={i} className="text-sm text-foreground/90 flex items-start gap-2">
+                            <span className="text-amber-500">•</span>
+                            {weakness}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {/* Skills */}
                   {profile.skills && profile.skills.length > 0 && (
-                    <div>
+                    <div className="md:col-span-2">
                       <h4 className="text-sm text-muted-foreground mb-2">Validated Skills</h4>
                       <div className="flex flex-wrap gap-1">
                         {profile.skills.slice(0, 10).map((skill, i) => (
@@ -352,30 +389,101 @@ const TalentDashboard = () => {
 
           {/* Grid: Tests & Inbox */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {/* Take New Tests */}
+            {/* Strengthen Your Skills - Dynamic tests based on weaknesses */}
             <Card className="glass-card">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-accent" />
-                  Available Tests
+                  <TrendingUp className="w-5 h-5 text-accent" />
+                  Strengthen Your Skills
                 </CardTitle>
                 <CardDescription>
-                  {profile?.discovery_completed
-                    ? 'Take tests to validate your skills'
-                    : 'Complete your profile discovery to see recommended tests'}
+                  {suggestedTests.length > 0
+                    ? 'Recommended tests based on your profile analysis'
+                    : profile?.onboarding_completed
+                    ? 'Take tests to validate and improve your skills'
+                    : 'Complete your profile to see personalized recommendations'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {!profile?.discovery_completed ? (
+                {!profile?.onboarding_completed ? (
                   <div className="text-center py-8">
                     <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground mb-2">Complete discovery first</p>
+                    <p className="text-muted-foreground mb-2">Complete your profile first</p>
                     <p className="text-xs text-muted-foreground">
                       Finish your onboarding to see personalized test recommendations
                     </p>
                   </div>
+                ) : isLoadingTests ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto mb-3" />
+                    <p className="text-muted-foreground">Analyzing your profile...</p>
+                  </div>
+                ) : suggestedTests.length > 0 ? (
+                  <div className="space-y-3">
+                    {suggestedTests.map((suggested) => {
+                      const test = AVAILABLE_TESTS.find(t => t.id === suggested.testId);
+                      if (!test) return null;
+                      const Icon = iconMap[test.icon] || Server;
+                      return (
+                        <button
+                          key={suggested.testId}
+                          onClick={() => handleStartTest(test.roleTrack)}
+                          className="w-full p-4 rounded-lg bg-background/50 border border-amber-500/30 hover:border-accent/30 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                              <Icon className="w-5 h-5 text-amber-500 group-hover:text-accent" />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-medium text-foreground">{test.name}</h4>
+                              <p className="text-xs text-muted-foreground">{suggested.reason}</p>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                          </div>
+                        </button>
+                      );
+                    })}
+                    
+                    {/* Show remaining tests that weren't suggested */}
+                    {AVAILABLE_TESTS.filter(t => !suggestedTests.find(s => s.testId === t.id)).length > 0 && (
+                      <>
+                        <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
+                          Other available tests
+                        </div>
+                        {AVAILABLE_TESTS.filter(t => !suggestedTests.find(s => s.testId === t.id)).map((test) => {
+                          const Icon = iconMap[test.icon] || Server;
+                          return (
+                            <button
+                              key={test.id}
+                              onClick={() => handleStartTest(test.roleTrack)}
+                              className="w-full p-4 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-all text-left group opacity-70 hover:opacity-100"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                                  <Icon className="w-5 h-5 text-accent" />
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-medium text-foreground">{test.name}</h4>
+                                  <p className="text-xs text-muted-foreground">{test.description}</p>
+                                </div>
+                                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </>
+                    )}
+                  </div>
                 ) : (
                   <div className="space-y-3">
+                    {/* No suggested tests - show all available */}
+                    {consolidated?.areasForGrowth?.length === 0 && (
+                      <div className="text-center py-4 mb-3 rounded-lg bg-green-500/10 border border-green-500/30">
+                        <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
+                        <p className="text-sm text-green-600">No specific areas for improvement detected!</p>
+                        <p className="text-xs text-muted-foreground">Your profile looks strong. Take any test to validate your skills.</p>
+                      </div>
+                    )}
                     {AVAILABLE_TESTS.map((test) => {
                       const Icon = iconMap[test.icon] || Server;
                       return (
