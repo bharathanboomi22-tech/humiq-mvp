@@ -18,11 +18,7 @@ const userTypeEmoji: Record<string, string> = {
   'Other': '💬',
 };
 
-interface LoveLettersSectionProps {
-  onOpenInput: () => void;
-}
-
-export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
+export function LoveLettersSection() {
   const shouldReduceMotion = useReducedMotion();
   const [letters, setLetters] = useState<LoveLetter[]>([]);
   const [isPaused, setIsPaused] = useState(false);
