@@ -35,3 +35,9 @@ verify_jwt = false
 
 [functions.match-talent-to-jobs]
 verify_jwt = false
+
+[functions.discovery-conversation]
+verify_jwt = false
+
+[functions.update-profile-from-discovery]
+verify_jwt = false
