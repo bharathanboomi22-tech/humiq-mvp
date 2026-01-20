@@ -201,6 +201,83 @@ const evidencePackToolSchema = {
   },
 };
 
+// Tool schema for interview recaps - ensures consistent JSON structure
+const interviewRecapToolSchema = {
+  type: "function",
+  function: {
+    name: "generate_interview_recaps",
+    description: "Generate interview feedback for both the candidate and the hiring company",
+    parameters: {
+      type: "object",
+      properties: {
+        passed: {
+          type: "boolean",
+          description: "Whether the candidate passed the interview based on their responses",
+        },
+        talentRecap: {
+          type: "object",
+          description: "Feedback for the candidate - focused on their growth and learning",
+          properties: {
+            summary: {
+              type: "string",
+              description: "2-3 sentences summarizing their performance in an encouraging way",
+            },
+            strengths: {
+              type: "array",
+              items: { type: "string" },
+              description: "2-3 specific strengths demonstrated during the interview",
+            },
+            areasToImprove: {
+              type: "array",
+              items: { type: "string" },
+              description: "2-3 specific areas where they can improve (especially if failed)",
+            },
+            advice: {
+              type: "string",
+              description: "Actionable advice for their career development",
+            },
+            nextSteps: {
+              type: "string",
+              description: "What they should do next",
+            },
+          },
+          required: ["summary", "strengths", "areasToImprove", "advice", "nextSteps"],
+        },
+        companyRecap: {
+          type: "object",
+          description: "Assessment for the hiring company - focused on hiring decision",
+          properties: {
+            summary: {
+              type: "string",
+              description: "Brief assessment for the hiring manager",
+            },
+            fitScore: {
+              type: "number",
+              description: "Score from 0-100 indicating job fit",
+            },
+            skillsAssessed: {
+              type: "array",
+              items: { type: "string" },
+              description: "Skills evaluated with level (e.g., 'Node.js: Strong')",
+            },
+            redFlags: {
+              type: "array",
+              items: { type: "string" },
+              description: "Concerns or red flags observed (empty if none)",
+            },
+            recommendation: {
+              type: "string",
+              description: "'hire', 'maybe', or 'pass' with brief reason",
+            },
+          },
+          required: ["summary", "fitScore", "skillsAssessed", "redFlags", "recommendation"],
+        },
+      },
+      required: ["passed", "talentRecap", "companyRecap"],
+    },
+  },
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -432,37 +509,64 @@ Generate the merged Evidence Pack now.`;
       // Generate interview-specific recaps
       console.log("This is an interview, generating talent and company recaps");
 
-      const interviewRecapPrompt = `You are generating interview results for a job interview.
+      const jobTitle = session.job_context?.title || "the position";
+      const jobDescription = session.job_context?.description || "";
+      const jobRequirements = session.job_context?.requirements || "";
 
-JOB CONTEXT:
-${JSON.stringify(session.job_context, null, 2)}
+      const interviewRecapSystemPrompt = `You are an expert career coach generating interview feedback.
+
+CRITICAL RULES FOR TALENT RECAP (what the candidate sees):
+- Be encouraging and constructive, never harsh
+- Focus on SPECIFIC examples from their answers
+- If they failed: explain WHY clearly but kindly, give concrete improvement tips
+- If they passed: celebrate their strengths, suggest areas to grow further
+- Strengths should be specific things they said/did well
+- Areas to improve should be actionable and specific
+- Advice should be practical and immediately applicable
+
+CRITICAL RULES FOR COMPANY RECAP (what the hiring manager sees):
+- Be objective and assessment-focused
+- Provide clear hiring recommendation
+- List specific skills observed with levels
+- Note any concerns or red flags honestly`;
+
+      const interviewRecapPrompt = `Generate interview feedback for a candidate who just completed an interview.
+
+JOB DETAILS:
+- Position: ${jobTitle}
+- Description: ${jobDescription}
+- Requirements: ${jobRequirements}
 
 INTERVIEW TRANSCRIPT:
 ${transcript || "No transcript available"}
 
-EVIDENCE PACK SUMMARY:
-- Verdict: ${summaryJson.verdict}
+PERFORMANCE INDICATORS:
+- Overall verdict: ${summaryJson.verdict}
 - Confidence: ${summaryJson.confidence}
-- Strengths: ${(summaryJson.strengths || []).map((s: any) => s.signal).join(", ")}
-- Risks: ${(summaryJson.risks_or_unknowns || []).map((r: any) => r.signal).join(", ")}
+- Observed strengths: ${(summaryJson.strengths || []).map((s: any) => s.signal + ": " + s.evidence).join("; ") || "None identified"}
+- Concerns/risks: ${(summaryJson.risks_or_unknowns || []).map((r: any) => r.signal + ": " + r.evidence_gap).join("; ") || "None identified"}
 
-Generate TWO separate recaps:
+INSTRUCTIONS:
+1. Determine if they PASSED based on:
+   - Did they demonstrate the core skills needed for ${jobTitle}?
+   - Were their answers clear and technically sound?
+   - Would you recommend them for the next round?
 
-1. TALENT RECAP (for the candidate):
-   - summary: Brief overview of their performance (2-3 sentences)
-   - strengths: Array of 2-3 strengths observed
-   - areasToImprove: Array of 2-3 areas to work on (if failed) or empty if passed
-   - advice: Specific, actionable advice (1-2 sentences)
-   - nextSteps: What they should do next (1 sentence)
+2. Generate a TALENT RECAP (for the candidate):
+   - summary: Start with encouragement. If passed, congratulate them. If failed, be supportive.
+   - strengths: List 2-3 SPECIFIC things they did well (quote from their answers if possible)
+   - areasToImprove: List 2-3 SPECIFIC areas to work on (especially important if failed)
+   - advice: Give ONE practical tip they can use immediately
+   - nextSteps: What should they do now?
 
-2. COMPANY RECAP (for hiring decision):
-   - summary: Brief assessment for hiring (2-3 sentences)
-   - fitScore: Number 0-100 indicating job fit
-   - skillsAssessed: Array of skills evaluated and level (e.g., ["Node.js: Strong", "System Design: Needs improvement"])
-   - redFlags: Array of concerns (empty if none)
-   - recommendation: "hire", "maybe", or "pass" with brief reason
+3. Generate a COMPANY RECAP (for the hiring manager):
+   - summary: Objective assessment of the candidate
+   - fitScore: 0-100 based on job fit
+   - skillsAssessed: List skills with levels (e.g., "Problem solving: Strong")
+   - redFlags: Any concerns (empty array if none)
+   - recommendation: "hire" / "maybe" / "pass" with brief reason
 
-Determine if they PASSED (passed: true) based on the evidence pack verdict and interview quality.`;
+Generate the feedback now.`;
 
       const interviewRecapResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -473,14 +577,11 @@ Determine if they PASSED (passed: true) based on the evidence pack verdict and i
         body: JSON.stringify({
           model: "google/gemini-2.5-pro",
           messages: [
-            {
-              role: "system",
-              content: "You are an expert interviewer generating feedback for both candidates and hiring managers. Be specific, constructive, and honest.",
-            },
+            { role: "system", content: interviewRecapSystemPrompt },
             { role: "user", content: interviewRecapPrompt },
           ],
-          response_format: { type: "json_object" },
-          max_tokens: 1500,
+          tools: [interviewRecapToolSchema],
+          tool_choice: { type: "function", function: { name: "generate_interview_recaps" } },
         }),
       });
 
@@ -552,31 +653,55 @@ Determine if they PASSED (passed: true) based on the evidence pack verdict and i
         }
       } else {
         const recapData = await interviewRecapResponse.json();
+        const toolCall = recapData.choices?.[0]?.message?.tool_calls?.[0];
+        
         let recapContent;
-        try {
-          recapContent = JSON.parse(recapData.choices[0].message.content);
-        } catch (parseError) {
-          console.error("Failed to parse interview recap:", recapData.choices?.[0]?.message?.content);
-          // Fallback recaps
+        if (toolCall?.function?.arguments) {
+          try {
+            recapContent = JSON.parse(toolCall.function.arguments);
+            console.log("Successfully parsed interview recap from tool call");
+          } catch (parseError) {
+            console.error("Failed to parse tool call arguments:", toolCall.function.arguments);
+            recapContent = null;
+          }
+        } else {
+          console.error("No tool call found in response:", JSON.stringify(recapData.choices?.[0]?.message));
+          recapContent = null;
+        }
+
+        // Use parsed content or fallback
+        if (!recapContent) {
+          const defaultPassed = summaryJson.verdict === "pass";
           recapContent = {
+            passed: defaultPassed,
             talentRecap: {
-              summary: "Interview completed. Review the evidence pack for details.",
-              strengths: (summaryJson.strengths || []).slice(0, 3).map((s: any) => s.signal),
-              areasToImprove: [],
-              advice: "Continue preparing for technical interviews.",
-              nextSteps: "Await feedback from the company.",
+              summary: defaultPassed
+                ? "Great job on your interview! You demonstrated solid skills and communicated well."
+                : "Thank you for completing the interview. While there are areas to improve, this is a valuable learning experience.",
+              strengths: (summaryJson.strengths || []).slice(0, 3).map((s: any) => s.signal || "Good technical foundation"),
+              areasToImprove: defaultPassed 
+                ? ["Continue building on your existing skills"] 
+                : (summaryJson.risks_or_unknowns || []).slice(0, 3).map((r: any) => r.signal || "Technical depth"),
+              advice: defaultPassed
+                ? "Keep practicing and stay curious about new technologies."
+                : "Focus on the areas mentioned above and practice with mock interviews.",
+              nextSteps: defaultPassed
+                ? "The company will review your results and get back to you soon."
+                : "Review the feedback, practice the weak areas, and try again when ready.",
             },
             companyRecap: {
-              summary: "Interview completed. Review the evidence pack for detailed assessment.",
-              fitScore: 50,
+              summary: defaultPassed
+                ? "Candidate showed good technical competence and communication skills."
+                : "Candidate needs more preparation. Potential for growth with more experience.",
+              fitScore: defaultPassed ? 70 : 40,
               skillsAssessed: [],
               redFlags: [],
-              recommendation: "maybe",
+              recommendation: defaultPassed ? "maybe" : "pass",
             },
           };
         }
 
-        const passed = summaryJson.verdict === "pass";
+        const passed = recapContent.passed ?? (summaryJson.verdict === "pass");
         const interviewRequestId = session.job_context?.interview_request_id;
 
         if (interviewRequestId) {
@@ -588,14 +713,14 @@ Determine if they PASSED (passed: true) based on the evidence pack verdict and i
               passed,
               confidence: summaryJson.confidence || "medium",
               talent_recap: recapContent.talentRecap || {
-                summary: "Interview completed",
-                strengths: [],
+                summary: "Interview completed. Thank you for your time!",
+                strengths: ["Completed the interview"],
                 areasToImprove: [],
-                advice: "",
-                nextSteps: "",
+                advice: "Keep learning and growing.",
+                nextSteps: "Wait for company feedback.",
               },
               company_recap: recapContent.companyRecap || {
-                summary: "Interview completed",
+                summary: "Interview completed. Manual review recommended.",
                 fitScore: 50,
                 skillsAssessed: [],
                 redFlags: [],
