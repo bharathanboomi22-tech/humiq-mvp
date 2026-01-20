@@ -6,6 +6,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Demo mode: force all talents to match with all jobs
+const DEMO_MODE = true;
+
 // Simple matching algorithm
 function calculateMatchScore(
   talentProfile: any,
@@ -177,18 +180,41 @@ serve(async (req) => {
     // Calculate matches
     const matches: any[] = [];
 
-    for (const talent of talents) {
-      for (const job of jobs) {
-        const { score, breakdown } = calculateMatchScore(talent, job);
-
-        // Only create match if score is at least 20
-        if (score >= 20) {
+    if (DEMO_MODE) {
+      // Demo mode: create matches for ALL talent-job combinations
+      for (const talent of talents) {
+        for (const job of jobs) {
           matches.push({
             talent_profile_id: talent.id,
             job_posting_id: job.id,
-            match_score: score,
-            score_breakdown: breakdown,
+            match_score: 75, // Fixed score for demo
+            score_breakdown: {
+              skillsMatch: 75,
+              levelMatch: 75,
+              stackMatch: 75,
+              overallFit: 75,
+              matchedSkills: ['Demo Match'],
+              missingSkills: [],
+              notes: 'Demo mode - all talents match with all jobs',
+            },
           });
+        }
+      }
+    } else {
+      // Production mode: use actual score calculation
+      for (const talent of talents) {
+        for (const job of jobs) {
+          const { score, breakdown } = calculateMatchScore(talent, job);
+
+          // Only create match if score is at least 20
+          if (score >= 20) {
+            matches.push({
+              talent_profile_id: talent.id,
+              job_posting_id: job.id,
+              match_score: score,
+              score_breakdown: breakdown,
+            });
+          }
         }
       }
     }
@@ -209,6 +235,52 @@ serve(async (req) => {
 
       if (error) {
         console.error("Error upserting matches:", error);
+      }
+
+      // Auto-create interview requests for all matches (demo mode)
+      const interviewRequests = matches.map((match) => ({
+        company_id: jobs.find((j) => j.id === match.job_posting_id)?.company_id,
+        talent_profile_id: match.talent_profile_id,
+        job_posting_id: match.job_posting_id,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+      })).filter((ir) => ir.company_id); // Only include if company_id exists
+
+      if (interviewRequests.length > 0) {
+        // Check for existing interview requests to avoid duplicates
+        // Build OR conditions for each talent-job pair
+        const talentIds = [...new Set(interviewRequests.map((ir) => ir.talent_profile_id))];
+        const jobIds = [...new Set(interviewRequests.map((ir) => ir.job_posting_id).filter(Boolean))];
+        
+        const { data: existingRequests } = await supabase
+          .from("interview_requests")
+          .select("talent_profile_id, job_posting_id")
+          .in("talent_profile_id", talentIds)
+          .in("job_posting_id", jobIds);
+
+        const existingSet = new Set(
+          (existingRequests || []).map(
+            (er: any) => `${er.talent_profile_id}-${er.job_posting_id}`
+          )
+        );
+
+        const newRequests = interviewRequests.filter(
+          (ir) =>
+            !existingSet.has(`${ir.talent_profile_id}-${ir.job_posting_id}`)
+        );
+
+        if (newRequests.length > 0) {
+          const { error: interviewError } = await supabase
+            .from("interview_requests")
+            .insert(newRequests);
+
+          if (interviewError) {
+            console.error("Error creating interview requests:", interviewError);
+            // Don't fail the entire process if interview creation fails
+          } else {
+            console.log(`Created ${newRequests.length} interview requests`);
+          }
+        }
       }
     }
 

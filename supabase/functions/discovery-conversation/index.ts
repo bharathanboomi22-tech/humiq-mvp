@@ -13,19 +13,17 @@ CRITICAL RULES:
 - Keep questions SHORT and conversational (1-2 sentences max)
 - This is a DISCOVERY conversation, not a test - be warm and supportive
 - Focus on understanding: work style, mindset, approach to problems, key skills
-- Maximum 6-8 questions total (aim for 6)
+- Maximum 2 questions total (DEMO MODE)
 - Questions should build on previous answers
 - Use the onboarding data to personalize questions
 
-QUESTION TOPICS (cover 4-5 of these):
+QUESTION TOPICS (cover 2 of these):
 1. Work approach/style - How do they like to work?
 2. Problem-solving mindset - How do they approach challenges?
 3. Key skills/strengths - What are they best at?
 4. Collaboration style - How do they work with others?
-5. Learning/growth - How do they learn and grow?
-6. Technical preferences - What technologies/approaches do they prefer?
 
-After 6-8 questions, mark complete: true`;
+After 2 questions, mark complete: true`;
 
 const questionToolSchema = {
   type: 'function',
@@ -45,7 +43,7 @@ const questionToolSchema = {
         },
         complete: {
           type: 'boolean',
-          description: 'Whether the discovery is complete (after 6-8 questions)',
+          description: 'Whether the discovery is complete (after 2 questions)',
         },
         completionMessage: {
           type: 'string',
@@ -139,7 +137,7 @@ Keep it conversational and friendly. This is about understanding them, not testi
           intro: 'Hi! I\'m here to get to know you better and understand your work style. I\'ll ask a few questions to help determine your profile and skills.',
           question: result.question,
           questionId: result.questionId,
-          totalQuestions: 6,
+          totalQuestions: 2,
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -154,8 +152,8 @@ Keep it conversational and friendly. This is about understanding them, not testi
       const messages = conversation?.messages || [];
       const questionCount = questionIndex + 1;
 
-      // Check if we should complete (6-8 questions)
-      if (questionCount >= 6) {
+      // Check if we should complete (2 questions for demo)
+      if (questionCount >= 2) {
         return new Response(
           JSON.stringify({
             complete: true,
@@ -178,7 +176,7 @@ ${conversationHistory}
 
 Talent's last answer: ${answer}
 
-Generate the next question (question ${questionCount + 1} of ~6). Build on their previous answers. Keep it conversational.`;
+Generate the next question (question ${questionCount + 1} of 2). Build on their previous answers. Keep it conversational.`;
 
       const response = await fetch('https://api.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -215,7 +213,7 @@ Generate the next question (question ${questionCount + 1} of ~6). Build on their
         JSON.stringify({
           question: result.question,
           questionId: result.questionId,
-          complete: result.complete || questionCount >= 6,
+          complete: result.complete || questionCount >= 2,
           completionMessage: result.completionMessage,
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
