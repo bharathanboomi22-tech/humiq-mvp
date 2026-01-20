@@ -40,23 +40,34 @@ export function useAuth(): UseAuthReturn {
   });
 
   // Check if user has a company or talent profile
-  // MVP: Since user_id columns don't exist yet, we use localStorage to detect profile type
-  const detectUserType = useCallback(async (_userId: string): Promise<{
+  const detectUserType = useCallback(async (userId: string): Promise<{
     userType: UserType;
     companyId: string | null;
     talentId: string | null;
   }> => {
     try {
-      // MVP: Check localStorage for stored IDs since user_id columns don't exist in schema yet
-      const storedCompanyId = localStorage.getItem('humiq_company_id');
-      const storedTalentId = localStorage.getItem('humiq_talent_id');
+      // Check for company profile linked to the user
+      const { data: company } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-      if (storedCompanyId) {
-        return { userType: 'company', companyId: storedCompanyId, talentId: null };
+      if (company) {
+        localStorage.setItem('humiq_company_id', company.id);
+        return { userType: 'company', companyId: company.id, talentId: null };
       }
 
-      if (storedTalentId) {
-        return { userType: 'talent', companyId: null, talentId: storedTalentId };
+      // Check for talent profile linked to the user
+      const { data: talent } = await supabase
+        .from('talent_profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (talent) {
+        localStorage.setItem('humiq_talent_id', talent.id);
+        return { userType: 'talent', companyId: null, talentId: talent.id };
       }
 
       // User exists but no profile yet

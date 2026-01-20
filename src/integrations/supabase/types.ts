@@ -21,6 +21,7 @@ export type Database = {
           description: string | null
           id: string
           name: string | null
+          user_id: string | null
           website_url: string
         }
         Insert: {
@@ -29,6 +30,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string | null
+          user_id?: string | null
           website_url: string
         }
         Update: {
@@ -37,6 +39,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string | null
+          user_id?: string | null
           website_url?: string
         }
         Relationships: []
@@ -347,6 +350,7 @@ export type Database = {
           profile_visibility: string | null
           skills: Json | null
           timezone: string | null
+          user_id: string | null
           work_context: Json | null
           work_links: Json | null
         }
@@ -369,6 +373,7 @@ export type Database = {
           profile_visibility?: string | null
           skills?: Json | null
           timezone?: string | null
+          user_id?: string | null
           work_context?: Json | null
           work_links?: Json | null
         }
@@ -391,6 +396,7 @@ export type Database = {
           profile_visibility?: string | null
           skills?: Json | null
           timezone?: string | null
+          user_id?: string | null
           work_context?: Json | null
           work_links?: Json | null
         }
