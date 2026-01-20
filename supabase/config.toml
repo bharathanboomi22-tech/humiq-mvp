@@ -35,9 +35,3 @@ verify_jwt = false
 
 [functions.match-talent-to-jobs]
 verify_jwt = false
-
-[functions.discovery-session-prompt]
-verify_jwt = false
-
-[functions.complete-discovery-session]
-verify_jwt = false

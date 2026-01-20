@@ -1,36 +1,15 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import "https://deno.land/x/xhr@0.3.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const ANALYSIS_PROMPT = `You are an expert at analyzing professional conversations to create comprehensive talent profiles.
-
-Given the transcript of a discovery conversation, analyze and extract:
-
-1. **Mindset**: Their overall approach to work and challenges
-2. **Work Style**: How they prefer to work (independently, collaboratively, structured, flexible)
-3. **Strengths**: Key professional strengths demonstrated
-4. **Experiences**: Notable experiences with context and impact
-5. **Identified Skills**: Technical and soft skills mentioned or implied
-6. **Communication Style**: How they communicate (direct, thoughtful, enthusiastic, etc.)
-7. **Summary**: A brief professional summary
-
-Return JSON matching this exact structure:
-{
-  "mindset": "Description of their mindset...",
-  "workStyle": "Description of how they work...",
-  "strengths": ["strength1", "strength2", ...],
-  "experiences": [
-    { "role": "Job title/role", "context": "Company/situation", "impact": "Key achievement or contribution" }
-  ],
-  "identifiedSkills": ["skill1", "skill2", ...],
-  "communicationStyle": "Description of communication style...",
-  "summary": "A 2-3 sentence professional summary..."
-}`;
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -41,14 +20,12 @@ serve(async (req) => {
     const { sessionId } = await req.json();
 
     if (!sessionId) {
-      throw new Error("Session ID is required");
+      throw new Error("sessionId is required");
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
-    // Get the discovery session
+    // Get session with transcript
     const { data: session, error: sessionError } = await supabase
       .from("discovery_sessions")
       .select("*")
@@ -61,47 +38,76 @@ serve(async (req) => {
 
     const transcript = session.transcript || [];
 
-    // Format transcript for analysis
-    const transcriptText = transcript
-      .map((entry: { role: string; content: string }) => 
-        `${entry.role === 'ai' ? 'Interviewer' : 'Candidate'}: ${entry.content}`
+    // Build the full conversation for analysis
+    const conversationText = transcript
+      .map((m: { role: string; content: string }) => 
+        `${m.role === 'ai' ? 'Interviewer' : 'Candidate'}: ${m.content}`
       )
-      .join("\n\n");
+      .join('\n\n');
 
-    const openAIApiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!openAIApiKey) {
-      throw new Error("OpenAI API key not configured");
-    }
+    // Analyze the conversation
+    const analysisPrompt = `Analyze this discovery conversation with a tech professional and extract a structured profile.
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+Conversation:
+${conversationText}
+
+Based on this conversation, generate a JSON profile with the following structure:
+{
+  "mindset": "A 2-3 sentence description of their mindset and approach to work",
+  "workStyle": "A 2-3 sentence description of how they work and collaborate",
+  "strengths": ["strength1", "strength2", "strength3", "strength4"],
+  "experiences": [
+    {"role": "Role title", "context": "Brief context of the work", "impact": "Key achievement or impact"}
+  ],
+  "identifiedSkills": ["skill1", "skill2", "skill3", ...],
+  "communicationStyle": "A brief description of how they communicate",
+  "summary": "A 2-3 sentence overall summary of this candidate"
+}
+
+Be specific and base everything on what was actually said in the conversation. Extract 3-6 experiences and 5-10 skills. Return ONLY valid JSON, no markdown.`;
+
+    const aiResponse = await fetch("https://api.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${openAIApiKey}`,
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
-          { role: "system", content: ANALYSIS_PROMPT },
-          { role: "user", content: `Analyze this discovery conversation:\n\n${transcriptText}` },
+          { role: "system", content: "You are an expert at analyzing conversations and extracting structured insights about candidates." },
+          { role: "user", content: analysisPrompt },
         ],
-        temperature: 0.5,
-        max_tokens: 1000,
-        response_format: { type: "json_object" },
+        max_tokens: 1500,
+        temperature: 0.3,
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("OpenAI error:", error);
-      throw new Error(`OpenAI API error: ${response.status}`);
+    if (!aiResponse.ok) {
+      const error = await aiResponse.text();
+      throw new Error(`AI API error: ${error}`);
     }
 
-    const data = await response.json();
-    const discoveryProfile = JSON.parse(data.choices[0].message.content);
+    const aiData = await aiResponse.json();
+    let profileText = aiData.choices[0]?.message?.content;
 
-    // Update discovery session
-    const { error: updateError } = await supabase
+    if (!profileText) {
+      throw new Error("No response from AI");
+    }
+
+    // Clean up the response
+    profileText = profileText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+    let discoveryProfile;
+    try {
+      discoveryProfile = JSON.parse(profileText);
+    } catch (e) {
+      console.error("Failed to parse discovery profile:", profileText);
+      throw new Error("Failed to parse discovery profile");
+    }
+
+    // Update the session as completed
+    const { error: updateSessionError } = await supabase
       .from("discovery_sessions")
       .update({
         status: "completed",
@@ -110,36 +116,46 @@ serve(async (req) => {
       })
       .eq("id", sessionId);
 
-    if (updateError) {
-      console.error("Error updating session:", updateError);
+    if (updateSessionError) {
+      throw new Error(`Failed to update session: ${updateSessionError.message}`);
     }
 
-    // Update talent profile
-    const { error: profileError } = await supabase
+    // Update the talent profile with discovery data
+    const { error: updateProfileError } = await supabase
       .from("talent_profiles")
       .update({
         discovery_completed: true,
         discovery_profile: discoveryProfile,
+        skills: discoveryProfile.identifiedSkills.map((skill: string) => ({
+          name: skill,
+          level: 'intermediate',
+          verified: false,
+        })),
         last_updated_at: new Date().toISOString(),
       })
       .eq("id", session.talent_profile_id);
 
-    if (profileError) {
-      console.error("Error updating profile:", profileError);
+    if (updateProfileError) {
+      throw new Error(`Failed to update profile: ${updateProfileError.message}`);
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
         discoveryProfile,
+        success: true,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   } catch (error) {
     console.error("Error in complete-discovery-session:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   }
 });
