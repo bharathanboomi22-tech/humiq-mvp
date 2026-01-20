@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Github, Figma, FileText, FolderOpen, Link2, ArrowRight, Check } from 'lucide-react';
+import { Building2, User, ArrowRight } from 'lucide-react';
+import { CandidateInputForm } from './CandidateInputForm';
 import { LoveLetterModal } from './LoveLetterModal';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HeroSectionProps {
   onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -11,16 +14,6 @@ interface HeroSectionProps {
 export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [githubUrl, setGithubUrl] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (githubUrl.trim()) {
-      onSubmit({ githubUrl, otherLinks: '' });
-    }
-  };
-
-  const isValid = githubUrl.trim() !== '';
 
   return (
     <section className="min-h-screen relative overflow-hidden">
@@ -164,170 +157,67 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
           <div className="w-[100px]" />
         </motion.nav>
 
-        {/* Main Content - Vertical Flow */}
-        <div className="flex-1 flex flex-col items-start pt-24 lg:pt-32 max-w-[720px]">
-          
-          {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: 'easeOut' }}
-            className="mb-6"
-          >
-            <p className="text-[11px] text-muted-foreground/60 tracking-wide">
-              Early access · Shaping what comes next
-            </p>
-          </motion.div>
+        {/* Main Content - Two Column Grid */}
+        <div className="flex-1 flex items-start pt-24 lg:pt-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 w-full">
+            
+            {/* LEFT COLUMN - Editorial text (top-left aligned) */}
+            <div className="flex flex-col justify-start">
+              {/* Beta Microline */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="mb-6"
+              >
+                <p className="text-[11px] text-muted-foreground/60 tracking-wide">
+                  Early access · Shaping what comes next
+                </p>
+              </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: 0.05, ease: 'easeOut' }}
-            className="font-display text-4xl md:text-5xl lg:text-[56px] font-medium leading-[1.15] tracking-[-0.02em]"
-            style={{ color: '#FFFFFF' }}
-          >
-            The CV era is over.
-          </motion.h1>
-          
-          {/* Subheadline */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.4, delay: 0.15, ease: 'easeOut' }}
-            className="mt-5 text-lg leading-[1.6] max-w-[520px]"
-            style={{ color: 'rgba(255, 255, 255, 0.75)' }}
-          >
-            <p>AI interview invites, without applying to any jobs.</p>
-            <p className="mt-2">The first interview is AI. Humans decide from real signal.</p>
-          </motion.div>
-        </div>
-
-        {/* Horizontal Evaluation Card - Centered Below Hero Text */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.4, delay: 0.3, ease: 'easeOut' }}
-          className="w-full max-w-[1100px] mx-auto mb-24 lg:mb-32"
-        >
-          <div 
-            className="relative rounded-[20px] p-8 md:p-10"
-            style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(14px)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            {/* Card Header */}
-            <div className="mb-8">
-              <h2 className="font-display text-lg md:text-xl font-medium leading-relaxed text-foreground/90">
-                See how you actually work, improve your real work better.
-              </h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                HumIQ adapts to the role and the evidence available.
-              </p>
-            </div>
-
-            {/* Two Column Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* Headline */}
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+                className="font-display text-4xl md:text-5xl lg:text-[56px] font-medium leading-[1.15] tracking-[-0.02em]"
+                style={{ color: '#FFFFFF' }}
+              >
+                The CV era is over.
+              </motion.h1>
               
-              {/* LEFT — Input Section */}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/50 mb-4">
-                    Existing work (optional)
-                  </p>
-                  
-                  {/* Evidence Types Row - Icons Only */}
-                  <div className="flex items-center gap-4 mb-5">
-                    <div className="p-2.5 rounded-lg bg-white/[0.03]" title="GitHub">
-                      <Github className="w-4 h-4 text-foreground/40" />
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03]" title="Design">
-                      <Figma className="w-4 h-4 text-foreground/40" />
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03]" title="Docs">
-                      <FileText className="w-4 h-4 text-foreground/40" />
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03]" title="Files">
-                      <FolderOpen className="w-4 h-4 text-foreground/40" />
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03]" title="Links">
-                      <Link2 className="w-4 h-4 text-foreground/40" />
-                    </div>
-                  </div>
-
-                  {/* Input Field */}
-                  <input
-                    type="url"
-                    value={githubUrl}
-                    onChange={(e) => setGithubUrl(e.target.value)}
-                    placeholder="Paste a GitHub PR or repository"
-                    className="w-full px-4 py-4 rounded-xl bg-white/[0.03] border border-white/[0.06] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition-all duration-200"
-                  />
-                </div>
-
-                {/* CTA Button */}
-                <motion.button
-                  type="submit"
-                  disabled={!isValid || isLoading}
-                  whileHover={isValid && !isLoading ? { y: -1 } : {}}
-                  whileTap={isValid && !isLoading ? { scale: 0.98 } : {}}
-                  transition={{ duration: 0.2 }}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-medium disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200"
-                  style={{
-                    background: isValid && !isLoading 
-                      ? 'linear-gradient(135deg, #7C5CFF 0%, #A78BFA 50%, #7C5CFF 100%)'
-                      : 'rgba(124, 92, 255, 0.15)',
-                    color: isValid && !isLoading ? '#000000' : 'rgba(255, 255, 255, 0.5)',
-                    boxShadow: isValid && !isLoading 
-                      ? '0 0 24px -6px rgba(124, 92, 255, 0.4)' 
-                      : 'none',
-                  }}
-                >
-                  {isLoading ? (
-                    <span>Evaluating...</span>
-                  ) : (
-                    <>
-                      Evaluate
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </motion.button>
-              </form>
-
-              {/* RIGHT — What Happens */}
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-3">
-                  {[
-                    'Repo is fetched and analyzed automatically',
-                    'Ownership and decisions are inferred',
-                    'Limits and risks are labeled clearly',
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3 h-3 text-accent" />
-                      </div>
-                      <span className="text-sm text-foreground/80 leading-relaxed">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {/* Subheadline */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5, ease: 'easeOut' }}
+                className="mt-5 text-lg leading-[1.6] max-w-[520px]"
+                style={{ color: 'rgba(255, 255, 255, 0.75)' }}
+              >
+                <p>AI interview invites, without applying to any jobs.</p>
+                <p className="mt-2">The first interview is AI. Humans decide from real signal.</p>
+              </motion.div>
             </div>
 
-            {/* Footer Trust Line */}
-            <p className="text-[11px] text-muted-foreground/50 text-center mt-8 leading-relaxed">
-              HumIQ evaluates real work evidence. If evidence is limited, it clearly says so.
-            </p>
+            {/* RIGHT COLUMN - Product module */}
+            <div className="flex flex-col items-center justify-start lg:items-end lg:pt-8">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.35, delay: 0.8, ease: 'easeOut' }}
+                className="w-full max-w-md"
+              >
+                <ProductInputModule onSubmit={onSubmit} isLoading={isLoading} />
+              </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Mobile Love Letters Button */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5, ease: 'easeOut' }}
+          transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
           className="md:hidden pb-16 flex justify-center"
         >
           <motion.button
@@ -353,5 +243,81 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         onSuccess={() => {}}
       />
     </section>
+  );
+}
+
+/* Product Input Module */
+interface ProductInputModuleProps {
+  onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
+  isLoading?: boolean;
+}
+
+function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
+  const navigate = useNavigate();
+  const { setUserType } = useAuth();
+
+  const handleCompanyClick = () => {
+    setUserType('company');
+    navigate('/company/setup');
+  };
+
+  const handleTalentClick = () => {
+    setUserType('talent');
+    navigate('/talent/onboarding');
+  };
+
+  return (
+    <div className="w-full space-y-4">
+      {/* User Type Selection */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={handleCompanyClick}
+          className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <Building2 className="w-5 h-5 text-accent" />
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <h3 className="font-medium text-foreground text-sm">I'm Hiring</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Find matched talent</p>
+        </button>
+
+        <button
+          onClick={handleTalentClick}
+          className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <User className="w-5 h-5 text-accent" />
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <h3 className="font-medium text-foreground text-sm">I'm a Talent</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Create your profile</p>
+        </button>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-border/50" />
+        <span className="text-xs text-muted-foreground">or take an assessment</span>
+        <div className="flex-1 h-px bg-border/50" />
+      </div>
+
+      {/* Talent Assessment Form */}
+      <div className="glass-card p-6 md:p-8 relative">
+        {/* Slight elevation glow */}
+        <div 
+          className="absolute inset-0 -z-10 rounded-2xl opacity-40"
+          style={{
+            background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(124, 92, 255, 0.08), transparent)',
+          }}
+        />
+        
+        <CandidateInputForm onSubmit={onSubmit} isLoading={isLoading} />
+      </div>
+    </div>
   );
 }
