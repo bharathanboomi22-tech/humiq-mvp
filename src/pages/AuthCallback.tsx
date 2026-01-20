@@ -12,14 +12,23 @@ const AuthCallback = () => {
   const navigate = useNavigate();
   const [state, setState] = useState<CallbackState>('loading');
   const [errorMessage, setErrorMessage] = useState('');
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
   const hasRun = useRef(false);
+
+  // Handle redirect in separate effect
+  useEffect(() => {
+    if (redirectPath) {
+      const timer = setTimeout(() => {
+        navigate(redirectPath, { replace: true });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [redirectPath, navigate]);
 
   useEffect(() => {
     // Prevent double execution in React Strict Mode
     if (hasRun.current) return;
     hasRun.current = true;
-
-    let isMounted = true;
 
     // Check for error in hash first
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -37,8 +46,6 @@ const AuthCallback = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, !!session);
-        
-        if (!isMounted) return;
 
         if (event === 'SIGNED_IN' && session?.user) {
           try {
@@ -50,35 +57,27 @@ const AuthCallback = () => {
               supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
             ]);
 
-            if (!isMounted) return;
-
             setState('success');
             toast.success('Successfully signed in!');
 
             // Clear the hash from URL
             window.history.replaceState(null, '', window.location.pathname);
 
-            // Redirect based on user profile
-            setTimeout(() => {
-              if (!isMounted) return;
-              
-              if (companyResult.data) {
-                localStorage.setItem('humiq_company_id', companyResult.data.id);
-                navigate('/company/dashboard', { replace: true });
-              } else if (talentResult.data) {
-                localStorage.setItem('humiq_talent_id', talentResult.data.id);
-                navigate('/talent/dashboard', { replace: true });
-              } else {
-                navigate('/auth/role-select', { replace: true });
-              }
-            }, 1000);
+            // Set redirect path based on user profile
+            if (companyResult.data) {
+              localStorage.setItem('humiq_company_id', companyResult.data.id);
+              setRedirectPath('/company/dashboard');
+            } else if (talentResult.data) {
+              localStorage.setItem('humiq_talent_id', talentResult.data.id);
+              setRedirectPath('/talent/dashboard');
+            } else {
+              setRedirectPath('/auth/role-select');
+            }
           } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') return;
             console.error('Error during auth callback:', error);
-            if (isMounted) {
-              setErrorMessage('Error setting up your account');
-              setState('error');
-            }
+            setErrorMessage('Error setting up your account');
+            setState('error');
           }
         }
       }
@@ -86,18 +85,20 @@ const AuthCallback = () => {
 
     // Timeout fallback - if no auth event after 10s, show error
     const timeout = setTimeout(() => {
-      if (isMounted && state === 'loading') {
-        setErrorMessage('Authentication timed out. The link may have expired.');
-        setState('error');
-      }
+      setState(current => {
+        if (current === 'loading') {
+          setErrorMessage('Authentication timed out. The link may have expired.');
+          return 'error';
+        }
+        return current;
+      });
     }, 10000);
 
     return () => {
-      isMounted = false;
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [navigate, state]);
+  }, []);
 
   if (state === 'loading') {
     return (
