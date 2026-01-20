@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -91,42 +91,77 @@ export function useAuth(): UseAuthReturn {
     return { isDemo: false, userType: null, companyId: null, talentId: null };
   }, []);
 
+  // Track if initialization has run (for React Strict Mode)
+  const hasInitialized = useRef(false);
+
   // Initialize auth state
   useEffect(() => {
+    // Prevent double initialization in React Strict Mode
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
+    let isMounted = true;
+
     const initializeAuth = async () => {
       try {
         // First check for demo mode
         const demoState = checkDemoMode();
         if (demoState.isDemo) {
-          setState({
-            user: null,
-            session: null,
-            userType: demoState.userType,
-            companyId: demoState.companyId,
-            talentId: demoState.talentId,
-            isLoading: false,
-            isAuthenticated: false,
-            isDemo: true,
-          });
+          if (isMounted) {
+            setState({
+              user: null,
+              session: null,
+              userType: demoState.userType,
+              companyId: demoState.companyId,
+              talentId: demoState.talentId,
+              isLoading: false,
+              isAuthenticated: false,
+              isDemo: true,
+            });
+          }
           return;
         }
 
         // Check for real session
         const { data: { session } } = await supabase.auth.getSession();
         
+        if (!isMounted) return;
+
         if (session?.user) {
           const { userType, companyId, talentId } = await detectUserType(session.user.id);
-          setState({
-            user: session.user,
-            session,
-            userType,
-            companyId,
-            talentId,
-            isLoading: false,
-            isAuthenticated: true,
-            isDemo: false,
-          });
+          if (isMounted) {
+            setState({
+              user: session.user,
+              session,
+              userType,
+              companyId,
+              talentId,
+              isLoading: false,
+              isAuthenticated: true,
+              isDemo: false,
+            });
+          }
         } else {
+          if (isMounted) {
+            setState({
+              user: null,
+              session: null,
+              userType: null,
+              companyId: null,
+              talentId: null,
+              isLoading: false,
+              isAuthenticated: false,
+              isDemo: false,
+            });
+          }
+        }
+      } catch (error) {
+        // Ignore abort errors (component unmounted)
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        console.error('Error initializing auth:', error);
+        if (isMounted) {
           setState({
             user: null,
             session: null,
@@ -138,18 +173,6 @@ export function useAuth(): UseAuthReturn {
             isDemo: false,
           });
         }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        setState({
-          user: null,
-          session: null,
-          userType: null,
-          companyId: null,
-          talentId: null,
-          isLoading: false,
-          isAuthenticated: false,
-          isDemo: false,
-        });
       }
     };
 
@@ -158,39 +181,51 @@ export function useAuth(): UseAuthReturn {
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!isMounted) return;
+
         if (event === 'SIGNED_IN' && session?.user) {
           // Clear demo mode on real sign in
           localStorage.removeItem(DEMO_MODE_KEY);
           localStorage.removeItem(DEMO_COMPANY_KEY);
           localStorage.removeItem(DEMO_TALENT_KEY);
 
-          const { userType, companyId, talentId } = await detectUserType(session.user.id);
-          setState({
-            user: session.user,
-            session,
-            userType,
-            companyId,
-            talentId,
-            isLoading: false,
-            isAuthenticated: true,
-            isDemo: false,
-          });
+          try {
+            const { userType, companyId, talentId } = await detectUserType(session.user.id);
+            if (isMounted) {
+              setState({
+                user: session.user,
+                session,
+                userType,
+                companyId,
+                talentId,
+                isLoading: false,
+                isAuthenticated: true,
+                isDemo: false,
+              });
+            }
+          } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') return;
+            console.error('Error detecting user type on sign in:', error);
+          }
         } else if (event === 'SIGNED_OUT') {
-          setState({
-            user: null,
-            session: null,
-            userType: null,
-            companyId: null,
-            talentId: null,
-            isLoading: false,
-            isAuthenticated: false,
-            isDemo: false,
-          });
+          if (isMounted) {
+            setState({
+              user: null,
+              session: null,
+              userType: null,
+              companyId: null,
+              talentId: null,
+              isLoading: false,
+              isAuthenticated: false,
+              isDemo: false,
+            });
+          }
         }
       }
     );
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [detectUserType, checkDemoMode]);
