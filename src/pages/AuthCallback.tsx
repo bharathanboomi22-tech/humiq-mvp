@@ -51,18 +51,12 @@ const AuthCallback = () => {
 
         // Wait a bit then check user type and redirect
         setTimeout(async () => {
-          // Check again for user type
-          const { data: company } = await supabase
-            .from('companies')
-            .select('id')
-            .eq('user_id', session?.user?.id)
-            .maybeSingle();
-
-          const { data: talent } = await supabase
-            .from('talent_profiles')
-            .select('id')
-            .eq('user_id', session?.user?.id)
-            .maybeSingle();
+          // MVP: Check localStorage for stored IDs instead of user_id column
+          const storedCompanyId = localStorage.getItem('humiq_company_id');
+          const storedTalentId = localStorage.getItem('humiq_talent_id');
+          
+          const company = storedCompanyId ? { id: storedCompanyId } : null;
+          const talent = storedTalentId ? { id: storedTalentId } : null;
 
           if (company) {
             navigate('/company/dashboard');
