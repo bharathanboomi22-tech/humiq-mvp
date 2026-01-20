@@ -121,7 +121,26 @@ Extract skills, work style, mindset, and strengths. Return as JSON.`;
     }
 
     const data = await response.json();
-    const analysis = JSON.parse(data.choices[0].message.content);
+    const messageContent = data.choices?.[0]?.message?.content;
+    
+    if (!messageContent) {
+      throw new Error('No content in AI response');
+    }
+
+    let analysis;
+    try {
+      analysis = JSON.parse(messageContent);
+    } catch (parseError) {
+      console.error('Failed to parse AI response:', messageContent);
+      // Provide fallback analysis
+      analysis = {
+        skills: [],
+        workStyle: 'Not determined',
+        mindset: 'Not determined',
+        strengths: [],
+        summary: 'Profile analysis could not be completed.',
+      };
+    }
 
     // Update profile with discovery insights
     const updatedConsolidatedProfile = {
