@@ -140,9 +140,9 @@ serve(async (req) => {
   try {
     const { githubUrl, roleTrack, level, duration, jobPostingId, interviewRequestId } = await req.json();
 
-    // Validate inputs
-    if (!githubUrl || !roleTrack || !level || !duration) {
-      return new Response(JSON.stringify({ error: "Missing required fields: githubUrl, roleTrack, level, duration" }), {
+    // Validate inputs (githubUrl is optional for interviews)
+    if (!roleTrack || !level || !duration) {
+      return new Response(JSON.stringify({ error: "Missing required fields: roleTrack, level, duration" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -169,13 +169,13 @@ serve(async (req) => {
       });
     }
 
-    console.log("Creating work session:", { githubUrl, roleTrack, level, duration });
+    console.log("Creating work session:", { githubUrl, roleTrack, level, duration, jobPostingId });
 
-    // Fetch GitHub evidence (similar to analyzeCandidate flow)
+    // Fetch GitHub evidence (similar to analyzeCandidate flow) - optional for interviews
     let rawWorkEvidence = "";
     let hasGitHubData = false;
 
-    if (githubUrl.includes("github.com")) {
+    if (githubUrl && githubUrl.trim() && githubUrl.includes("github.com")) {
       try {
         console.log("Fetching GitHub evidence...");
 
@@ -316,7 +316,7 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch job posting data if jobPostingId is provided
-    let jobContext = null;
+    let jobContext: any = null;
     if (jobPostingId) {
       try {
         const { data: jobPosting, error: jobError } = await supabase
@@ -348,7 +348,7 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
     const { data: session, error: sessionError } = await supabase
       .from("work_sessions")
       .insert({
-        github_url: githubUrl,
+        github_url: githubUrl || null, // Can be null if no GitHub
         role_track: roleTrack,
         level: level,
         duration: duration,

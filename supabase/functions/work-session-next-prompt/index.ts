@@ -111,10 +111,12 @@ serve(async (req) => {
       })
       .join("\n\n");
 
-    // Summarize GitHub insights if available
+    // Summarize GitHub insights if available (optional)
     let githubSummary = "";
-    if (session.raw_work_evidence) {
+    if (session.raw_work_evidence && session.raw_work_evidence.trim()) {
       githubSummary = `\nGITHUB INSIGHTS (use to tailor questions):\n${session.raw_work_evidence.slice(0, 2000)}`;
+    } else {
+      githubSummary = `\nNOTE: No GitHub profile provided. Focus questions on the job requirements and general experience.`;
     }
 
     // Count responses in current stage
