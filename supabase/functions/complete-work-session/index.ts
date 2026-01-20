@@ -378,7 +378,28 @@ Generate the merged Evidence Pack now.`;
       });
     }
 
-    let summaryJson = JSON.parse(toolCall.function.arguments);
+    let summaryJson;
+    try {
+      summaryJson = JSON.parse(toolCall.function.arguments);
+    } catch (parseError) {
+      console.error("Failed to parse evidence pack response:", toolCall.function.arguments);
+      // Provide fallback evidence pack
+      summaryJson = {
+        roleTrack: session.role_track,
+        levelEstimate: session.level,
+        confidence: "low",
+        verdict: "fail",
+        rationale: "Failed to generate complete evidence pack due to parsing error.",
+        strengths: [],
+        risks_or_unknowns: [{ signal: "Assessment Error", evidence_gap: "Could not parse AI response" }],
+        decision_log: [],
+        execution_observations: [],
+        recommended_next_step: "Re-attempt the session",
+        highlights: ["Assessment could not be completed"],
+        signalSynthesis: [],
+        recommendation: { verdict: "fail", reasons: ["Technical error during assessment"] },
+      };
+    }
     console.log("Evidence pack generated, confidence:", summaryJson.confidence);
 
     // Merge with GitHub brief data if available (ensure we don't lose pre-computed data)
@@ -531,7 +552,29 @@ Determine if they PASSED (passed: true) based on the evidence pack verdict and i
         }
       } else {
         const recapData = await interviewRecapResponse.json();
-        const recapContent = JSON.parse(recapData.choices[0].message.content);
+        let recapContent;
+        try {
+          recapContent = JSON.parse(recapData.choices[0].message.content);
+        } catch (parseError) {
+          console.error("Failed to parse interview recap:", recapData.choices?.[0]?.message?.content);
+          // Fallback recaps
+          recapContent = {
+            talentRecap: {
+              summary: "Interview completed. Review the evidence pack for details.",
+              strengths: (summaryJson.strengths || []).slice(0, 3).map((s: any) => s.signal),
+              areasToImprove: [],
+              advice: "Continue preparing for technical interviews.",
+              nextSteps: "Await feedback from the company.",
+            },
+            companyRecap: {
+              summary: "Interview completed. Review the evidence pack for detailed assessment.",
+              fitScore: 50,
+              skillsAssessed: [],
+              redFlags: [],
+              recommendation: "maybe",
+            },
+          };
+        }
 
         const passed = summaryJson.verdict === "pass";
         const interviewRequestId = session.job_context?.interview_request_id;
