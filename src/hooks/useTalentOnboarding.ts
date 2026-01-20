@@ -146,7 +146,7 @@ export const useTalentOnboarding = () => {
               primaryRole: data.primaryRole,
               experienceRange: data.experienceRange,
             },
-            // MVP mode: no user_id column yet
+            user_id: user?.id || null, // Link to authenticated user
           })
           .select()
           .single();
