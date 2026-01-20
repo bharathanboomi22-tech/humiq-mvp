@@ -504,6 +504,7 @@ export type Database = {
           github_brief: Json | null
           github_url: string
           id: string
+          job_context: Json | null
           level: string
           raw_work_evidence: string | null
           role_track: string
@@ -518,6 +519,7 @@ export type Database = {
           github_brief?: Json | null
           github_url: string
           id?: string
+          job_context?: Json | null
           level: string
           raw_work_evidence?: string | null
           role_track: string
@@ -532,6 +534,7 @@ export type Database = {
           github_brief?: Json | null
           github_url?: string
           id?: string
+          job_context?: Json | null
           level?: string
           raw_work_evidence?: string | null
           role_track?: string
