@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '@/components/HeroSection';
+import { LoveLettersSection } from '@/components/LoveLettersSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { DeepDiveSections } from '@/components/landing/DeepDiveSections';
@@ -82,6 +83,7 @@ const Index = () => {
       {viewState === 'input' && (
         <>
           <HeroSection onSubmit={handleSubmit} />
+          <LoveLettersSection onOpenInput={() => {}} />
           <HowItWorksSection />
           <DeepDiveSections />
           <WhyDifferentSection />
