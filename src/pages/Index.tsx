@@ -1,71 +1,67 @@
 import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
 import { HeroSection } from '@/components/HeroSection';
 import { LoveLettersSection } from '@/components/LoveLettersSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
-import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
-import { DeepDiveSections } from '@/components/landing/DeepDiveSections';
-import { WhyDifferentSection } from '@/components/landing/WhyDifferentSection';
-import { FinalCTASection } from '@/components/landing/FinalCTASection';
-import { createWorkSession } from '@/lib/workSession';
-import { toast } from 'sonner';
+import { createWorkSession, completeSession } from '@/lib/workSession';
 
 type ViewState = 'input' | 'loading';
 
 const Index = () => {
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<ViewState>('input');
-  const sessionIdRef = useRef<string | null>(null);
+  
+  // Track both conditions
   const sessionReadyRef = useRef(false);
   const animationCompleteRef = useRef(false);
+  const sessionIdRef = useRef<string | null>(null);
 
-  // Check if we can navigate (both session ready and animation complete)
   const tryNavigate = useCallback(() => {
+    // Navigate directly to evidence pack when both session and animation are ready
     if (sessionReadyRef.current && animationCompleteRef.current && sessionIdRef.current) {
-      navigate(`/work-session/live/${sessionIdRef.current}`);
+      navigate(`/evidence-pack/${sessionIdRef.current}`);
     }
   }, [navigate]);
 
-  const handleSubmit = async (data: { 
-    githubUrl: string; 
-    otherLinks: string; 
-  }) => {
+  const handleSubmit = async (data: { githubUrl: string; otherLinks: string }) => {
     setViewState('loading');
     sessionReadyRef.current = false;
     animationCompleteRef.current = false;
     
+    // Store the GitHub URL for later use
+    localStorage.setItem('humiq_github_url', data.githubUrl);
+    
     try {
-      // Create work session with default parameters
-      const result = await createWorkSession({
+      // Step 1: Create work session and fetch GitHub data
+      const { sessionId } = await createWorkSession({
         githubUrl: data.githubUrl,
-        roleTrack: 'backend', // Default
-        level: 'mid', // Default
-        duration: 5, // Demo mode
+        roleTrack: 'backend',
+        level: 'mid',
+        duration: 5,
       });
       
-      // Store session ID and GitHub URL
-      sessionIdRef.current = result.sessionId;
-      localStorage.setItem('humiq_github_url', data.githubUrl.trim());
+      sessionIdRef.current = sessionId;
       
-      // Mark session as ready
+      // Step 2: Complete the session immediately to generate evidence pack
+      await completeSession(sessionId);
+      
       sessionReadyRef.current = true;
       tryNavigate();
-    } catch (error) {
-      console.error('Session creation failed:', error);
-      
-      if (error instanceof Error) {
-        if (error.message.includes('Rate limit')) {
-          toast.error('Rate limit exceeded. Please wait a moment and try again.');
-        } else if (error.message.includes('usage limit') || error.message.includes('credits')) {
-          toast.error('AI usage limit reached. Please add credits to continue.');
-        } else {
-          toast.error(error.message || 'Failed to start session. Please try again.');
-        }
-      } else {
-        toast.error('An unexpected error occurred. Please try again.');
-      }
-      
+    } catch (err) {
+      console.error('Error during evaluation:', err);
       setViewState('input');
+      
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      
+      if (message.includes('rate') || message.includes('429')) {
+        toast.error('Rate limit reached. Please try again in a moment.');
+      } else if (message.includes('credits') || message.includes('402')) {
+        toast.error('AI credits depleted. Please try again later.');
+      } else {
+        toast.error('Evaluation failed. Please try again.');
+      }
     }
   };
 
@@ -74,28 +70,24 @@ const Index = () => {
     tryNavigate();
   }, [tryNavigate]);
 
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  return (
-    <main className="min-h-screen" style={{ background: '#0B0E12' }}>
-      {viewState === 'input' && (
-        <>
-          <HeroSection onSubmit={handleSubmit} />
-          <LoveLettersSection onOpenInput={() => {}} />
-          <HowItWorksSection />
-          <DeepDiveSections />
-          <WhyDifferentSection />
-          <FinalCTASection onCTAClick={scrollToTop} />
-        </>
-      )}
-      
-      {viewState === 'loading' && (
+  // When in loading state, show the loading experience
+  if (viewState === 'loading') {
+    return (
+      <main className="min-h-screen" style={{ background: '#0B0E12' }}>
         <div className="container max-w-4xl mx-auto px-6 py-16 md:py-24">
           <LoadingExperience onComplete={handleLoadingComplete} />
         </div>
-      )}
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen" style={{ background: '#0B0E12' }}>
+      <HeroSection 
+        onSubmit={handleSubmit}
+        isLoading={false}
+      />
+      <LoveLettersSection />
     </main>
   );
 };
