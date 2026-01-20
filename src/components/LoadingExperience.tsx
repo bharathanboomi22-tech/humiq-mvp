@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, HelpCircle, Mic } from 'lucide-react';
+import { Check, HelpCircle } from 'lucide-react';
 
-type Act = 1 | 2 | 3 | 4;
+type Act = 1 | 2 | 3;
 
 interface LoadingExperienceProps {
   onComplete?: () => void;
@@ -20,7 +20,6 @@ const ACT_DURATION = {
   1: 8000,
   2: 8000,
   3: 6000,
-  4: 5000,
 };
 
 const ACT_1_COPY = [
@@ -38,12 +37,6 @@ const ACT_2_COPY = [
 const ACT_3_COPY = [
   "Forming a founder-grade recommendation…",
   "Preparing fast validation plan…",
-];
-
-const ACT_4_COPY = [
-  "Setting up your interview…",
-  "Tailoring questions to your work…",
-  "Ready to start conversation…",
 ];
 
 const EVIDENCE_CARDS: EvidenceCard[] = [
@@ -70,15 +63,13 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
   useEffect(() => {
     const timer1 = setTimeout(() => setCurrentAct(2), ACT_DURATION[1]);
     const timer2 = setTimeout(() => setCurrentAct(3), ACT_DURATION[1] + ACT_DURATION[2]);
-    const timer3 = setTimeout(() => setCurrentAct(4), ACT_DURATION[1] + ACT_DURATION[2] + ACT_DURATION[3]);
-    const timer4 = setTimeout(() => {
+    const timer3 = setTimeout(() => {
       onComplete?.();
-    }, ACT_DURATION[1] + ACT_DURATION[2] + ACT_DURATION[3] + ACT_DURATION[4]);
+    }, ACT_DURATION[1] + ACT_DURATION[2] + ACT_DURATION[3]);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
-      clearTimeout(timer4);
     };
   }, [onComplete]);
 
@@ -86,8 +77,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
     const getCopy = () => {
       if (currentAct === 1) return ACT_1_COPY;
       if (currentAct === 2) return ACT_2_COPY;
-      if (currentAct === 3) return ACT_3_COPY;
-      return ACT_4_COPY;
+      return ACT_3_COPY;
     };
     setCopyIndex(0);
     const interval = setInterval(() => {
@@ -148,15 +138,14 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
   const getCurrentCopy = () => {
     if (currentAct === 1) return ACT_1_COPY[copyIndex];
     if (currentAct === 2) return ACT_2_COPY[copyIndex];
-    if (currentAct === 3) return ACT_3_COPY[copyIndex];
-    return ACT_4_COPY[copyIndex];
+    return ACT_3_COPY[copyIndex];
   };
 
   if (prefersReducedMotion) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
         <div className="max-w-sm w-full space-y-4">
-          {['Evidence collected', 'Ownership signals reviewed', 'Judgment formed', 'Interview prepared'].map((text, i) => (
+          {['Evidence collected', 'Ownership signals reviewed', 'Judgment formed'].map((text, i) => (
             <div key={i} className="flex items-center gap-3 text-foreground/90">
               <Check className="w-4 h-4 text-accent" />
               <span className="text-sm">{text}</span>
@@ -172,7 +161,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
       <div className="w-full max-w-md">
         {/* Act indicator */}
         <div className="flex items-center justify-center gap-3 mb-12">
-          {[1, 2, 3, 4].map((act) => (
+          {[1, 2, 3].map((act) => (
             <motion.div
               key={act}
               initial={{ scale: 0.8, opacity: 0.5 }}
@@ -330,58 +319,6 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                     />
                   ))}
                 </motion.div>
-              </motion.div>
-            )}
-
-            {/* ACT 4: Interview Setup */}
-            {currentAct === 4 && (
-              <motion.div
-                key="act4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="absolute inset-0 flex flex-col items-center justify-center"
-              >
-                {/* Microphone icon with pulse animation */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="relative mb-8"
-                >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute inset-0 rounded-full bg-accent/20 blur-xl"
-                    style={{ width: '120px', height: '120px', transform: 'translate(-50%, -50%)', left: '50%', top: '50%' }}
-                  />
-                  <div className="w-20 h-20 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center">
-                    <Mic className="w-8 h-8 text-accent" />
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
-                  className="text-center"
-                >
-                  <div className="inline-block px-8 py-5 rounded-xl glass-card border-accent/30">
-                    <span className="text-xl font-medium text-foreground font-display">
-                      Starting Interview
-                    </span>
-                  </div>
-                </motion.div>
-
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.7 }}
-                  transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}
-                  className="mt-4 text-sm text-muted-foreground"
-                >
-                  Voice-powered conversation • 5 minutes
-                </motion.p>
               </motion.div>
             )}
           </AnimatePresence>
