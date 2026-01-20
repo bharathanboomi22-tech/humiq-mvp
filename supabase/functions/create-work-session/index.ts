@@ -348,13 +348,14 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
     const { data: session, error: sessionError } = await supabase
       .from("work_sessions")
       .insert({
-        github_url: githubUrl || null, // Can be null if no GitHub
+        github_url: githubUrl || "", // Required field, use empty string if not provided
         role_track: roleTrack,
         level: level,
         duration: duration,
         status: "active",
         raw_work_evidence: rawWorkEvidence || null,
         github_brief: githubBrief || null,
+        job_context: jobContext || null,
         started_at: new Date().toISOString(),
       })
       .select()
