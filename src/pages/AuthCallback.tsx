@@ -52,23 +52,19 @@ const AuthCallback = () => {
           return;
         }
 
-        const userId = session.user.id;
-
-        // Check if user has existing profiles linked to their user_id
-        const [companyResult, talentResult] = await Promise.all([
-          supabase.from('companies').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
-        ]);
+        // MVP: Check localStorage for stored IDs since user_id columns don't exist in schema yet
+        const storedCompanyId = localStorage.getItem('humiq_company_id');
+        const storedTalentId = localStorage.getItem('humiq_talent_id');
 
         setState('success');
-        toast.success('Connexion réussie !');
+        toast.success('Successfully signed in!');
 
-        // Redirect based on user profile
+        // Redirect based on stored profile IDs
         setTimeout(() => {
-          if (companyResult.data) {
+          if (storedCompanyId) {
             // User has a company profile
             navigate('/company/dashboard');
-          } else if (talentResult.data) {
+          } else if (storedTalentId) {
             // User has a talent profile
             navigate('/talent/dashboard');
           } else {

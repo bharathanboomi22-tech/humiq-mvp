@@ -40,32 +40,23 @@ export function useAuth(): UseAuthReturn {
   });
 
   // Check if user has a company or talent profile
-  const detectUserType = useCallback(async (userId: string): Promise<{
+  // MVP: Since user_id columns don't exist yet, we use localStorage to detect profile type
+  const detectUserType = useCallback(async (_userId: string): Promise<{
     userType: UserType;
     companyId: string | null;
     talentId: string | null;
   }> => {
     try {
-      // Check for company profile
-      const { data: company } = await supabase
-        .from('companies')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
+      // MVP: Check localStorage for stored IDs since user_id columns don't exist in schema yet
+      const storedCompanyId = localStorage.getItem('humiq_company_id');
+      const storedTalentId = localStorage.getItem('humiq_talent_id');
 
-      if (company) {
-        return { userType: 'company', companyId: company.id, talentId: null };
+      if (storedCompanyId) {
+        return { userType: 'company', companyId: storedCompanyId, talentId: null };
       }
 
-      // Check for talent profile
-      const { data: talent } = await supabase
-        .from('talent_profiles')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (talent) {
-        return { userType: 'talent', companyId: null, talentId: talent.id };
+      if (storedTalentId) {
+        return { userType: 'talent', companyId: null, talentId: storedTalentId };
       }
 
       // User exists but no profile yet
