@@ -191,3 +191,184 @@ export const updateTalentProfile = async (
 
   return data as TalentProfile;
 };
+
+// Fetch GitHub evidence (raw data from repos)
+export const fetchGitHubEvidence = async (githubUrl: string): Promise<string | null> => {
+  const { data, error } = await supabase.functions.invoke('fetch-github-evidence', {
+    body: { githubUrl },
+  });
+
+  if (error) {
+    console.error('Error fetching GitHub evidence:', error);
+    return null;
+  }
+
+  return data?.rawEvidence || null;
+};
+
+// Analyze GitHub profile and generate brief
+export interface GitHubBrief {
+  candidateName: string;
+  verdict: 'pass' | 'fail';
+  confidence: 'high' | 'medium' | 'low';
+  rationale: string;
+  workArtifacts: Array<{
+    id: string;
+    title: string;
+    url?: string;
+    whatItIs: string;
+    whyItMatters: string;
+    signals: string[];
+  }>;
+  signalSynthesis: Array<{
+    name: string;
+    level: 'high' | 'medium' | 'low';
+    evidence: string;
+  }>;
+  risksUnknowns: Array<{
+    id: string;
+    description: string;
+  }>;
+  validationPlan: {
+    riskToValidate: string;
+    question: string;
+    strongAnswer: string;
+  };
+  recommendation: {
+    verdict: 'pass' | 'fail';
+    reasons: string[];
+  };
+}
+
+export const analyzeGitHubProfile = async (
+  githubUrl: string,
+  rawEvidence: string
+): Promise<GitHubBrief | null> => {
+  const { data, error } = await supabase.functions.invoke('analyze-candidate', {
+    body: { githubUrl, rawWorkEvidence: rawEvidence },
+  });
+
+  if (error) {
+    console.error('Error analyzing GitHub profile:', error);
+    return null;
+  }
+
+  return data?.brief || null;
+};
+
+// Transform GitHub brief into ConsolidatedProfile format
+export const transformBriefToProfile = (brief: GitHubBrief): Partial<ConsolidatedProfile> => {
+  // Extract strengths from high-level signals
+  const strengths: string[] = [];
+  brief.signalSynthesis.forEach((signal) => {
+    if (signal.level === 'high') {
+      strengths.push(`Strong ${signal.name}: ${signal.evidence}`);
+    }
+  });
+
+  // Add strengths from work artifacts
+  brief.workArtifacts.forEach((artifact) => {
+    if (artifact.whyItMatters) {
+      strengths.push(artifact.whyItMatters);
+    }
+  });
+
+  // Extract areas for growth from risks/unknowns and low signals
+  const areasForGrowth: string[] = [];
+  brief.risksUnknowns.forEach((risk) => {
+    areasForGrowth.push(risk.description);
+  });
+
+  brief.signalSynthesis.forEach((signal) => {
+    if (signal.level === 'low') {
+      areasForGrowth.push(`${signal.name}: ${signal.evidence}`);
+    }
+  });
+
+  return {
+    summary: brief.rationale,
+    strengths: strengths.slice(0, 5), // Max 5 strengths
+    areasForGrowth: areasForGrowth.slice(0, 5), // Max 5 areas for growth
+    signals: brief.signalSynthesis.map((s) => ({
+      name: s.name as any,
+      level: s.level,
+      evidence: s.evidence,
+    })),
+    verdict: brief.verdict,
+    confidence: brief.confidence,
+    totalTestsTaken: 0,
+  };
+};
+
+// Full GitHub analysis flow for onboarding
+export const analyzeGitHubForOnboarding = async (
+  talentId: string,
+  githubUrl: string
+): Promise<TalentProfile | null> => {
+  try {
+    // Step 1: Fetch GitHub evidence
+    const rawEvidence = await fetchGitHubEvidence(githubUrl);
+    if (!rawEvidence) {
+      console.warn('No GitHub evidence found');
+      return null;
+    }
+
+    // Step 2: Analyze with AI
+    const brief = await analyzeGitHubProfile(githubUrl, rawEvidence);
+    if (!brief) {
+      console.warn('Failed to analyze GitHub profile');
+      return null;
+    }
+
+    // Step 3: Transform to profile format
+    const profileData = transformBriefToProfile(brief);
+
+    // Step 4: Update profile in database
+    const { data, error } = await supabase
+      .from('talent_profiles')
+      .update({
+        consolidated_profile: profileData,
+        name: brief.candidateName || undefined,
+        last_updated_at: new Date().toISOString(),
+      })
+      .eq('id', talentId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating profile with GitHub analysis:', error);
+      return null;
+    }
+
+    return data as TalentProfile;
+  } catch (error) {
+    console.error('Error in GitHub analysis flow:', error);
+    return null;
+  }
+};
+
+// Suggest tests based on weaknesses using AI
+export interface SuggestedTest {
+  testId: 'backend' | 'frontend' | 'fullstack';
+  testName: string;
+  reason: string;
+}
+
+export const suggestTestsForWeaknesses = async (
+  areasForGrowth: string[]
+): Promise<SuggestedTest[]> => {
+  if (!areasForGrowth || areasForGrowth.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase.functions.invoke('suggest-tests-for-weaknesses', {
+    body: { areasForGrowth },
+  });
+
+  if (error) {
+    console.error('Error suggesting tests:', error);
+    return [];
+  }
+
+  return data?.suggestedTests || [];
+};
