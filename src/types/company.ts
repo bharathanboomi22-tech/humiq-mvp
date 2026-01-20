@@ -9,6 +9,7 @@ export interface CompanyAnalyzedData {
 
 export interface Company {
   id: string;
+  name?: string;
   website_url: string;
   description?: string;
   analyzed_data: CompanyAnalyzedData;
@@ -39,6 +40,7 @@ export interface JobPosting {
 }
 
 export interface CreateCompanyInput {
+  name: string;
   websiteUrl: string;
   description?: string;
 }

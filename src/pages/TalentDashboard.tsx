@@ -36,6 +36,7 @@ import {
 } from '@/lib/talent';
 import { TalentProfile, AVAILABLE_TESTS } from '@/types/talent';
 import { InterviewInbox } from '@/components/talent/InterviewInbox';
+import { getInterviewResultsForTalent, InterviewResult } from '@/lib/interviews';
 import { WorkSession, EvidencePackSummary } from '@/types/workSession';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -49,6 +50,7 @@ const TalentDashboard = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<TalentProfile | null>(null);
   const [testHistory, setTestHistory] = useState<{ session: WorkSession; pack: EvidencePackSummary }[]>([]);
+  const [interviewHistory, setInterviewHistory] = useState<InterviewResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConsolidating, setIsConsolidating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -65,13 +67,15 @@ const TalentDashboard = () => {
       }
 
       try {
-        const [profileData, historyData] = await Promise.all([
+        const [profileData, historyData, interviewData] = await Promise.all([
           getTalentProfile(talentId),
           getTalentEvidencePacks(talentId),
+          getInterviewResultsForTalent(talentId),
         ]);
 
         setProfile(profileData);
         setTestHistory(historyData);
+        setInterviewHistory(interviewData);
       } catch (error) {
         console.error('Error loading dashboard:', error);
         toast.error('Failed to load dashboard');
@@ -401,12 +405,78 @@ const TalentDashboard = () => {
             {talentId && <InterviewInbox talentId={talentId} />}
           </div>
 
+          {/* Interview History */}
+          {interviewHistory.length > 0 && (
+            <Card className="glass-card mb-6">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-accent" />
+                  Interview History
+                </CardTitle>
+                <CardDescription>
+                  {interviewHistory.length} {interviewHistory.length === 1 ? 'interview' : 'interviews'} completed
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {interviewHistory.map((result) => {
+                    const jobTitle = result.interview_request?.job_posting?.title || 'Position';
+                    const companyName = result.interview_request?.company?.name || result.interview_request?.company?.analyzed_data?.name || 'Company';
+                    return (
+                      <div
+                        key={result.id}
+                        className="p-4 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/interview/result/${result.id}`)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={cn(
+                              'w-10 h-10 rounded-lg flex items-center justify-center',
+                              result.passed ? 'bg-green-500/10' : 'bg-red-500/10'
+                            )}>
+                              {result.passed ? (
+                                <CheckCircle className="w-5 h-5 text-green-500" />
+                              ) : (
+                                <X className="w-5 h-5 text-red-500" />
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-foreground">
+                                {jobTitle}
+                              </h4>
+                              <p className="text-xs text-muted-foreground">
+                                {companyName} • {new Date(result.created_at).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                result.passed
+                                  ? 'border-green-500/30 text-green-500 bg-green-500/10'
+                                  : 'border-red-500/30 text-red-500 bg-red-500/10'
+                              )}
+                            >
+                              {result.passed ? 'Passed' : 'Failed'}
+                            </Badge>
+                            <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Test History */}
           <Card className="glass-card">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <History className="w-5 h-5 text-accent" />
-                Test History
+                Technical Test History
               </CardTitle>
               <CardDescription>
                 {testHistory.length} {testHistory.length === 1 ? 'test' : 'tests'} completed

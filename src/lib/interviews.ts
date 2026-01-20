@@ -7,6 +7,7 @@ export const getInterviewRequests = async (talentId: string): Promise<InterviewR
     .select(`
       *,
       company:companies(
+        name,
         website_url,
         analyzed_data
       ),
@@ -44,6 +45,7 @@ export const createInterviewRequest = async (input: {
     .select(`
       *,
       company:companies(
+        name,
         website_url,
         analyzed_data
       ),
@@ -76,4 +78,142 @@ export const respondToInterviewRequest = async (
   if (error) {
     throw new Error(`Failed to respond to interview request: ${error.message}`);
   }
+};
+
+export const getInterviewRequestForMatch = async (
+  talentId: string,
+  jobPostingId: string
+): Promise<InterviewRequest | null> => {
+  const { data, error } = await supabase
+    .from('interview_requests')
+    .select(`
+      *,
+      company:companies(
+        name,
+        website_url,
+        analyzed_data
+      ),
+      job_posting:job_postings(
+        title,
+        description
+      )
+    `)
+    .eq('talent_profile_id', talentId)
+    .eq('job_posting_id', jobPostingId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching interview request for match:', error);
+    return null;
+  }
+
+  return (data as InterviewRequest) || null;
+};
+
+export interface InterviewResult {
+  id: string;
+  interview_request_id: string;
+  work_session_id: string;
+  passed: boolean;
+  confidence: 'high' | 'medium' | 'low';
+  talent_recap: {
+    summary: string;
+    strengths: string[];
+    areasToImprove: string[];
+    advice: string;
+    nextSteps: string;
+  };
+  company_recap: {
+    summary: string;
+    fitScore: number;
+    skillsAssessed: string[];
+    redFlags: string[];
+    recommendation: string;
+  };
+  created_at: string;
+  interview_request?: InterviewRequest;
+}
+
+export const getInterviewResult = async (resultId: string): Promise<InterviewResult | null> => {
+  const { data, error } = await supabase
+    .from('interview_results')
+    .select(`
+      *,
+      interview_request:interview_requests(
+        *,
+        company:companies(
+          website_url,
+          analyzed_data
+        ),
+        job_posting:job_postings(
+          title,
+          description
+        )
+      )
+    `)
+    .eq('id', resultId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching interview result:', error);
+    return null;
+  }
+
+  return data as InterviewResult;
+};
+
+export const getInterviewResultsForTalent = async (talentId: string): Promise<InterviewResult[]> => {
+  const { data, error } = await supabase
+    .from('interview_results')
+    .select(`
+      *,
+      interview_request:interview_requests!inner(
+        *,
+        company:companies(
+          website_url,
+          analyzed_data
+        ),
+        job_posting:job_postings(
+          title,
+          description
+        )
+      )
+    `)
+    .eq('interview_request.talent_profile_id', talentId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching interview results for talent:', error);
+    return [];
+  }
+
+  return (data || []) as InterviewResult[];
+};
+
+export const getInterviewResultForRequest = async (interviewRequestId: string): Promise<InterviewResult | null> => {
+  const { data, error } = await supabase
+    .from('interview_results')
+    .select(`
+      *,
+      interview_request:interview_requests(
+        *,
+        company:companies(
+          website_url,
+          analyzed_data
+        ),
+        job_posting:job_postings(
+          title,
+          description
+        )
+      )
+    `)
+    .eq('interview_request_id', interviewRequestId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching interview result for request:', error);
+    return null;
+  }
+
+  return (data as InterviewResult) || null;
 };

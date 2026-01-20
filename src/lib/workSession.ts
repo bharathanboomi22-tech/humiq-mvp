@@ -49,6 +49,8 @@ export async function createWorkSession(
         roleTrack: input.roleTrack,
         level: input.level,
         duration: input.duration,
+        jobPostingId: input.jobPostingId,
+        interviewRequestId: input.interviewRequestId,
       },
     }
   );

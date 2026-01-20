@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { getStoredTalentId } from '@/lib/talent';
+import { runMatchingForTalent } from '@/lib/matching';
 import { DiscoveryMessage } from '@/components/discovery/ChatMessage';
 
 export interface DiscoveryAnswer {
@@ -193,6 +194,15 @@ export const useDiscovery = (): UseDiscoveryReturn => {
           last_updated_at: new Date().toISOString(),
         })
         .eq('id', talentId);
+
+      // Trigger matching to create matches and interview requests
+      try {
+        await runMatchingForTalent(talentId);
+      } catch (error: any) {
+        console.error('Error triggering matching:', error);
+        // Don't fail the discovery completion if matching fails
+        toast.error('Profile updated, but matching failed. Please try refreshing.');
+      }
 
       return true;
     } catch (error: any) {

@@ -30,7 +30,7 @@ export const SuccessStep = ({ onComplete }: SuccessStepProps) => {
         Your profile has been created and you're all set! You can now take technical tests to validate your skills.
       </p>
 
-      <Button onClick={handleContinue} className="w-full" size="lg">
+      <Button onClick={handleContinue} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" size="lg">
         Go to Dashboard →
       </Button>
     </OnboardingCard>

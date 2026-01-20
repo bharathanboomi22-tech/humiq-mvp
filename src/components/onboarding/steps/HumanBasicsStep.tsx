@@ -164,7 +164,7 @@ export const HumanBasicsStep = ({ data, updateField, onNext, saving }: HumanBasi
       <Button
         onClick={onNext}
         disabled={!isValid || saving}
-        className="w-full mt-8"
+        className="w-full mt-8 bg-accent hover:bg-accent/90 text-accent-foreground"
         size="lg"
       >
         {saving ? 'Saving...' : 'Continue'}

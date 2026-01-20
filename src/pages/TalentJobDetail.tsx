@@ -53,7 +53,7 @@ const TalentJobDetail = () => {
 
         if (!jobData) {
           toast.error('Job posting not found');
-          navigate('/talent/matches');
+          navigate('/talent/dashboard');
           return;
         }
 

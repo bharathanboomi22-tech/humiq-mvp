@@ -144,7 +144,7 @@ export const WorkLinksStep = ({ data, updateField, onNext, onSkip, saving }: Wor
         <Button onClick={onSkip} variant="outline" className="flex-1">
           Skip for now
         </Button>
-        <Button onClick={onNext} disabled={saving} className="flex-1">
+        <Button onClick={onNext} disabled={saving} className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground">
           {saving ? 'Saving...' : 'Continue'}
         </Button>
       </div>

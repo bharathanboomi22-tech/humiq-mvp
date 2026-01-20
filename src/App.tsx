@@ -17,8 +17,8 @@ import CompanyMatches from "./pages/CompanyMatches";
 // Talent pages
 import TalentOnboarding from "./pages/TalentOnboarding";
 import TalentDashboard from "./pages/TalentDashboard";
-import TalentMatches from "./pages/TalentMatches";
 import TalentJobDetail from "./pages/TalentJobDetail";
+import InterviewResult from "./pages/InterviewResult";
 import CompanyTalentDetail from "./pages/CompanyTalentDetail";
 // Auth pages
 import AuthLogin from "./pages/AuthLogin";
@@ -47,8 +47,8 @@ const App = () => (
           {/* Talent Routes */}
           <Route path="/talent/onboarding" element={<TalentOnboarding />} />
           <Route path="/talent/dashboard" element={<TalentDashboard />} />
-          <Route path="/talent/matches" element={<TalentMatches />} />
           <Route path="/talent/job/:jobId" element={<TalentJobDetail />} />
+          <Route path="/interview/result/:id" element={<InterviewResult />} />
           {/* Company Detail Routes */}
           <Route path="/company/talent/:talentId" element={<CompanyTalentDetail />} />
           {/* Auth Routes */}

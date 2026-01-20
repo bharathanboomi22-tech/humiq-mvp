@@ -92,20 +92,12 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
               </>
             )}
             {effectiveVariant === 'talent' && (
-              <>
-                <NavLink 
-                  href="/talent/dashboard" 
-                  icon={User} 
-                  label="Dashboard"
-                  active={location.pathname === '/talent/dashboard'}
-                />
-                <NavLink 
-                  href="/talent/matches" 
-                  icon={Briefcase} 
-                  label="Job Matches"
-                  active={location.pathname === '/talent/matches'}
-                />
-              </>
+              <NavLink 
+                href="/talent/dashboard" 
+                icon={User} 
+                label="Dashboard"
+                active={location.pathname === '/talent/dashboard'}
+              />
             )}
           </nav>
 

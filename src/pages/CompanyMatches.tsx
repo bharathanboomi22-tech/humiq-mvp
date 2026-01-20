@@ -9,6 +9,12 @@ import {
   AlertTriangle,
   Filter,
   Bell,
+  Mail,
+  Clock,
+  XCircle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -19,9 +25,10 @@ import { Navigation } from '@/components/Navigation';
 import { getStoredCompanyId, getCompanyJobs } from '@/lib/company';
 import { getMatchesForCompany } from '@/lib/matching';
 import { Match, getMatchScoreLabel, getMatchScoreColor } from '@/types/matching';
-import { createInterviewRequest } from '@/lib/interviews';
+import { createInterviewRequest, getInterviewRequestForMatch, getInterviewResultForRequest, InterviewResult } from '@/lib/interviews';
+import { InterviewRequest } from '@/components/talent/InterviewInbox';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const CompanyMatches = () => {
   const navigate = useNavigate();
@@ -30,6 +37,9 @@ const CompanyMatches = () => {
   const [minScore, setMinScore] = useState(0);
   const [jobIds, setJobIds] = useState<string[]>([]);
   const [requestingInterview, setRequestingInterview] = useState<string | null>(null);
+  const [interviewRequests, setInterviewRequests] = useState<Map<string, InterviewRequest>>(new Map());
+  const [interviewResults, setInterviewResults] = useState<Map<string, InterviewResult>>(new Map());
+  const [expandedRecaps, setExpandedRecaps] = useState<Set<string>>(new Set());
 
   const companyId = getStoredCompanyId();
 
@@ -39,17 +49,71 @@ const CompanyMatches = () => {
 
     setRequestingInterview(talentId);
     try {
-      await createInterviewRequest({
+      const interviewRequest = await createInterviewRequest({
         companyId,
         talentId,
         jobPostingId,
       });
       toast.success('Interview request sent!');
+      
+      // Update interview requests map
+      if (jobPostingId) {
+        const key = `${talentId}-${jobPostingId}`;
+        setInterviewRequests(prev => new Map(prev).set(key, interviewRequest));
+      }
     } catch (error: any) {
       console.error('Error requesting interview:', error);
       toast.error(error.message || 'Failed to send interview request');
     } finally {
       setRequestingInterview(null);
+    }
+  };
+
+  const getInterviewStatusBadge = (status: string, interviewResult?: InterviewResult) => {
+    switch (status) {
+      case 'pending':
+        return (
+          <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/30 gap-1">
+            <Clock className="w-3 h-3" />
+            Pending
+          </Badge>
+        );
+      case 'accepted':
+        return (
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 gap-1">
+            <CheckCircle className="w-3 h-3" />
+            Accepted
+          </Badge>
+        );
+      case 'declined':
+        return (
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30 gap-1">
+            <XCircle className="w-3 h-3" />
+            Declined
+          </Badge>
+        );
+      case 'completed':
+        if (interviewResult) {
+          return interviewResult.passed ? (
+            <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 gap-1">
+              <CheckCircle2 className="w-3 h-3" />
+              Passed
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30 gap-1">
+              <XCircle className="w-3 h-3" />
+              Failed
+            </Badge>
+          );
+        }
+        return (
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30 gap-1">
+            <CheckCircle2 className="w-3 h-3" />
+            Completed
+          </Badge>
+        );
+      default:
+        return null;
     }
   };
 
@@ -77,6 +141,32 @@ const CompanyMatches = () => {
         ]);
         setMatches(matchesData);
         setJobIds(jobsData.map(j => j.id));
+
+        // Load interview requests and results for all matches
+        const interviewRequestsMap = new Map<string, InterviewRequest>();
+        const interviewResultsMap = new Map<string, InterviewResult>();
+        for (const match of matchesData) {
+          if (match.talent_profile?.id && match.job_posting?.id) {
+            const interviewRequest = await getInterviewRequestForMatch(
+              match.talent_profile.id,
+              match.job_posting.id
+            );
+            if (interviewRequest) {
+              const key = `${match.talent_profile.id}-${match.job_posting.id}`;
+              interviewRequestsMap.set(key, interviewRequest);
+              
+              // Load interview result if interview is completed
+              if (interviewRequest.status === 'completed') {
+                const result = await getInterviewResultForRequest(interviewRequest.id);
+                if (result) {
+                  interviewResultsMap.set(key, result);
+                }
+              }
+            }
+          }
+        }
+        setInterviewRequests(interviewRequestsMap);
+        setInterviewResults(interviewResultsMap);
       } catch (error) {
         console.error('Error loading matches:', error);
         toast.error('Failed to load matches');
@@ -192,6 +282,12 @@ const CompanyMatches = () => {
                 const breakdown = match.score_breakdown;
                 const scoreLabel = getMatchScoreLabel(match.match_score);
                 const scoreColor = getMatchScoreColor(match.match_score);
+                const interviewKey = talent?.id && match.job_posting?.id 
+                  ? `${talent.id}-${match.job_posting.id}` 
+                  : null;
+                const interviewRequest = interviewKey ? interviewRequests.get(interviewKey) : null;
+                const interviewResult = interviewKey ? interviewResults.get(interviewKey) : null;
+                const isRecapExpanded = interviewKey ? expandedRecaps.has(interviewKey) : false;
 
                 return (
                   <motion.div
@@ -228,6 +324,11 @@ const CompanyMatches = () => {
                               {match.match_score}%
                             </span>
                             <p className="text-sm text-muted-foreground">{scoreLabel}</p>
+                            {interviewRequest && (
+                              <div className="mt-2">
+                                {getInterviewStatusBadge(interviewRequest.status, interviewResult)}
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -276,29 +377,136 @@ const CompanyMatches = () => {
                         <div className="flex gap-2 pt-4 border-t border-border/50">
                           <Button
                             variant="outline"
-                            onClick={() => talent?.id && navigate(`/company/talent/${talent.id}`)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              talent?.id && navigate(`/company/talent/${talent.id}`);
+                            }}
                             className="flex-1"
                           >
                             View Profile
                           </Button>
-                          <Button
-                            onClick={(e) => handleRequestInterview(e, talent?.id || '', match.job_posting?.id)}
-                            disabled={!talent?.id || requestingInterview === talent.id}
-                            className="flex-1 gap-2"
-                          >
-                            {requestingInterview === talent?.id ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Sending...
-                              </>
-                            ) : (
-                              <>
-                                <Mail className="w-4 h-4" />
-                                Request Interview
-                              </>
-                            )}
-                          </Button>
+                          {interviewRequest ? (
+                            <div className="flex-1 flex items-center justify-center">
+                              {getInterviewStatusBadge(interviewRequest.status, interviewResult)}
+                            </div>
+                          ) : (
+                            <Button
+                              onClick={(e) => handleRequestInterview(e, talent?.id || '', match.job_posting?.id)}
+                              disabled={!talent?.id || requestingInterview === talent.id}
+                              className="flex-1 gap-2"
+                            >
+                              {requestingInterview === talent?.id ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                  Sending...
+                                </>
+                              ) : (
+                                <>
+                                  <Mail className="w-4 h-4" />
+                                  Request Interview
+                                </>
+                              )}
+                            </Button>
+                          )}
                         </div>
+
+                        {/* Interview Recap (if completed) */}
+                        {interviewRequest?.status === 'completed' && interviewResult && (
+                          <div className="mt-4 pt-4 border-t border-border/50">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (interviewKey) {
+                                  setExpandedRecaps(prev => {
+                                    const next = new Set(prev);
+                                    if (next.has(interviewKey)) {
+                                      next.delete(interviewKey);
+                                    } else {
+                                      next.add(interviewKey);
+                                    }
+                                    return next;
+                                  });
+                                }
+                              }}
+                              className="w-full flex items-center justify-between text-left p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    interviewResult.passed
+                                      ? 'bg-green-500/10 text-green-500 border-green-500/30'
+                                      : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30'
+                                  )}
+                                >
+                                  Interview {interviewResult.passed ? 'Passed' : 'Review'}
+                                </Badge>
+                                <span className="text-sm text-muted-foreground">View Recap</span>
+                              </div>
+                              {isRecapExpanded ? (
+                                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </button>
+                            
+                            {isRecapExpanded && (
+                              <div className="mt-3 p-4 rounded-lg bg-background/30 space-y-4">
+                                <div>
+                                  <h4 className="text-sm font-medium text-foreground mb-2">Summary</h4>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">
+                                    {interviewResult.company_recap.summary}
+                                  </p>
+                                </div>
+                                
+                                <div className="flex items-center gap-4">
+                                  <div>
+                                    <span className="text-xs text-muted-foreground">Fit Score</span>
+                                    <p className="text-lg font-semibold text-foreground">
+                                      {interviewResult.company_recap.fitScore}/100
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <span className="text-xs text-muted-foreground">Recommendation</span>
+                                    <p className="text-lg font-semibold text-foreground capitalize">
+                                      {interviewResult.company_recap.recommendation}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {interviewResult.company_recap.skillsAssessed && interviewResult.company_recap.skillsAssessed.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-foreground mb-2">Skills Assessed</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                      {interviewResult.company_recap.skillsAssessed.map((skill, i) => (
+                                        <Badge key={i} variant="outline" className="text-xs">
+                                          {skill}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {interviewResult.company_recap.redFlags && interviewResult.company_recap.redFlags.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+                                      <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                                      Points of Attention
+                                    </h4>
+                                    <ul className="space-y-1">
+                                      {interviewResult.company_recap.redFlags.map((flag, i) => (
+                                        <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                                          <span className="text-yellow-500 mt-1">•</span>
+                                          <span>{flag}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   </motion.div>

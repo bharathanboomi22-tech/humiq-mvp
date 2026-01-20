@@ -31,6 +31,21 @@ export const getTalentProfile = async (talentId: string): Promise<TalentProfile 
   return data as TalentProfile;
 };
 
+// Demo mode: get all talents
+export const getAllTalents = async (): Promise<TalentProfile[]> => {
+  const { data, error } = await supabase
+    .from('talent_profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching all talents:', error);
+    return [];
+  }
+
+  return (data || []) as TalentProfile[];
+};
+
 export const createTalentProfile = async (githubUrl: string, name?: string): Promise<TalentProfile> => {
   const { data, error } = await supabase
     .from('talent_profiles')

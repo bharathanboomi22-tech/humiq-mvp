@@ -4,9 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Building2, Clock, CheckCircle, XCircle, Mail } from 'lucide-react';
-import { getInterviewRequests, respondToInterviewRequest } from '@/lib/interviews';
+import { getInterviewRequests, respondToInterviewRequest, getInterviewResultForRequest, InterviewResult } from '@/lib/interviews';
+import { getTalentProfile } from '@/lib/talent';
+import { createWorkSession } from '@/lib/workSession';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface InterviewRequest {
   id: string;
@@ -17,6 +20,7 @@ export interface InterviewRequest {
   requested_at: string;
   responded_at: string | null;
   company?: {
+    name?: string;
     website_url: string;
     analyzed_data?: {
       name?: string;
@@ -36,6 +40,7 @@ interface InterviewInboxProps {
 export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState<InterviewRequest[]>([]);
+  const [interviewResults, setInterviewResults] = useState<Map<string, InterviewResult>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
   const [responding, setResponding] = useState<string | null>(null);
 
@@ -44,6 +49,22 @@ export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
       try {
         const data = await getInterviewRequests(talentId);
         setRequests(data);
+
+        // Load interview results for completed requests
+        const resultsMap = new Map<string, InterviewResult>();
+        for (const request of data) {
+          if (request.status === 'completed') {
+            try {
+              const result = await getInterviewResultForRequest(request.id);
+              if (result) {
+                resultsMap.set(request.id, result);
+              }
+            } catch (error) {
+              console.error('Error loading interview result:', error);
+            }
+          }
+        }
+        setInterviewResults(resultsMap);
       } catch (error) {
         console.error('Error loading interview requests:', error);
       } finally {
@@ -52,19 +73,77 @@ export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
     };
 
     loadRequests();
+
+    // Subscribe to real-time changes for interview requests
+    const channel = supabase
+      .channel(`interview-requests-${talentId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'interview_requests',
+          filter: `talent_profile_id=eq.${talentId}`,
+        },
+        async (payload) => {
+          // Reload requests when there's a change
+          try {
+            const data = await getInterviewRequests(talentId);
+            setRequests(data);
+          } catch (error) {
+            console.error('Error reloading interview requests:', error);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [talentId]);
 
   const handleRespond = async (requestId: string, status: 'accepted' | 'declined') => {
     setResponding(requestId);
     try {
+      // Find the request to get job posting info
+      const request = requests.find(r => r.id === requestId);
+      
       await respondToInterviewRequest(requestId, status);
+      
+      if (status === 'accepted' && request) {
+        // Get talent profile for GitHub URL (optional)
+        const profile = await getTalentProfile(talentId);
+        const githubUrl = profile?.github_url || 
+          (profile?.work_links as any)?.find((l: any) => l.type === 'github')?.url || '';
+        
+        // Create work session for the interview (GitHub is optional)
+        const result = await createWorkSession({
+          githubUrl: githubUrl || '', // Empty string if no GitHub
+          roleTrack: 'backend', // Default for demo
+          level: 'mid',
+          duration: 5, // Demo mode
+          jobPostingId: request.job_posting_id || undefined,
+          interviewRequestId: requestId,
+        });
+        
+        toast.success('Interview started!');
+        navigate(`/work-session/live/${result.sessionId}`);
+        return;
+      }
+      
+      // Update local state for declined
       setRequests((prev) =>
         prev.map((r) => (r.id === requestId ? { ...r, status, responded_at: new Date().toISOString() } : r))
       );
-      toast.success(status === 'accepted' ? 'Interview request accepted!' : 'Interview request declined');
+      toast.success('Interview request declined');
     } catch (error) {
       console.error('Error responding to request:', error);
-      toast.error('Failed to respond to request');
+      toast.error(error instanceof Error ? error.message : 'Failed to respond to request');
+      
+      // Revert status on error
+      setRequests((prev) =>
+        prev.map((r) => (r.id === requestId ? { ...r, status: 'pending', responded_at: null } : r))
+      );
     } finally {
       setResponding(null);
     }
@@ -131,7 +210,7 @@ export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
                     <div className="flex items-center gap-2 mb-1">
                       <Building2 className="w-4 h-4 text-accent" />
                       <h4 className="font-medium text-foreground">
-                        {request.company?.analyzed_data?.name || 'Company'}
+                        {request.company?.name || request.company?.analyzed_data?.name || 'Company'}
                       </h4>
                       <Badge variant="outline" className="text-xs border-accent/30 text-accent">
                         New
@@ -191,48 +270,68 @@ export const InterviewInbox = ({ talentId }: InterviewInboxProps) => {
               <div className="pt-4 border-t border-border/50">
                 <h5 className="text-sm font-medium text-muted-foreground mb-3">Previous Requests</h5>
                 <div className="space-y-3">
-                  {otherRequests.map((request) => (
-                    <div
-                      key={request.id}
-                      className={cn(
-                        'p-3 rounded-lg border bg-background/50',
-                        request.status === 'accepted'
-                          ? 'border-verdict-interview/30'
-                          : 'border-border/50'
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-sm font-medium text-foreground">
-                              {request.company?.analyzed_data?.name || 'Company'}
-                            </h4>
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                'text-xs',
-                                request.status === 'accepted'
-                                  ? 'border-verdict-interview/30 text-verdict-interview'
-                                  : 'border-border text-muted-foreground'
-                              )}
-                            >
-                              {request.status === 'accepted' ? 'Accepted' : 'Declined'}
-                            </Badge>
+                  {otherRequests.map((request) => {
+                    const interviewResult = interviewResults.get(request.id);
+                    const isCompleted = request.status === 'completed';
+                    const isPassed = interviewResult?.passed;
+                    
+                    return (
+                      <div
+                        key={request.id}
+                        className={cn(
+                          'p-3 rounded-lg border bg-background/50',
+                          request.status === 'accepted' && !isCompleted
+                            ? 'border-verdict-interview/30'
+                            : isCompleted && isPassed
+                            ? 'border-green-500/30'
+                            : isCompleted && !isPassed
+                            ? 'border-red-500/30'
+                            : 'border-border/50'
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-medium text-foreground">
+                                {request.company?.name || request.company?.analyzed_data?.name || 'Company'}
+                              </h4>
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  'text-xs',
+                                  isCompleted && isPassed
+                                    ? 'border-green-500/30 text-green-500 bg-green-500/10'
+                                    : isCompleted && !isPassed
+                                    ? 'border-red-500/30 text-red-500 bg-red-500/10'
+                                    : request.status === 'accepted'
+                                    ? 'border-verdict-interview/30 text-verdict-interview'
+                                    : 'border-border text-muted-foreground'
+                                )}
+                              >
+                                {isCompleted
+                                  ? isPassed
+                                    ? 'Passed'
+                                    : 'Failed'
+                                  : request.status === 'accepted'
+                                  ? 'Accepted'
+                                  : 'Declined'}
+                              </Badge>
+                            </div>
+                            {request.job_posting && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {request.job_posting.title}
+                              </p>
+                            )}
                           </div>
-                          {request.job_posting && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {request.job_posting.title}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {request.responded_at
-                            ? new Date(request.responded_at).toLocaleDateString()
-                            : new Date(request.requested_at).toLocaleDateString()}
+                          <div className="text-xs text-muted-foreground">
+                            {request.responded_at
+                              ? new Date(request.responded_at).toLocaleDateString()
+                              : new Date(request.requested_at).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

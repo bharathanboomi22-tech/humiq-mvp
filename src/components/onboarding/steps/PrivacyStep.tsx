@@ -1,8 +1,7 @@
 import { OnboardingCard } from '../OnboardingCard';
 import { OnboardingData } from '@/hooks/useTalentOnboarding';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Shield, Eye, EyeOff, MessageCircle, Pause } from 'lucide-react';
+import { Shield, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PrivacyStepProps {
@@ -65,35 +64,9 @@ export const PrivacyStep = ({ data, updateField, onNext, saving }: PrivacyStepPr
           </p>
         </div>
 
-        {/* Proof Requests */}
-        <div className="p-4 rounded-xl border border-border bg-background/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium text-foreground">Proof Requests</span>
-            </div>
-            <Switch
-              checked={data.allowProofRequests}
-              onCheckedChange={(checked) => updateField('allowProofRequests', checked)}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-            {data.allowProofRequests ? (
-              <>
-                <MessageCircle className="w-3 h-3" />
-                Allow companies to request proof of work
-              </>
-            ) : (
-              <>
-                <Pause className="w-3 h-3" />
-                Requests paused
-              </>
-            )}
-          </p>
-        </div>
       </div>
 
-      <Button onClick={onNext} disabled={saving} className="w-full mt-8" size="lg">
+      <Button onClick={onNext} disabled={saving} className="w-full mt-8 bg-accent hover:bg-accent/90 text-accent-foreground" size="lg">
         {saving ? 'Saving...' : 'Complete Setup'}
       </Button>
     </OnboardingCard>

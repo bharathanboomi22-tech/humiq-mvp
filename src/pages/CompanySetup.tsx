@@ -12,12 +12,18 @@ import { analyzeCompany, setStoredCompanyId } from '@/lib/company';
 
 const CompanySetup = () => {
   const navigate = useNavigate();
+  const [companyName, setCompanyName] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!companyName.trim()) {
+      toast.error('Please enter your company name');
+      return;
+    }
     
     if (!websiteUrl.trim()) {
       toast.error('Please enter your company website URL');
@@ -28,6 +34,7 @@ const CompanySetup = () => {
 
     try {
       const company = await analyzeCompany({
+        name: companyName.trim(),
         websiteUrl: websiteUrl.trim(),
         description: description.trim() || undefined,
       });
@@ -78,6 +85,21 @@ const CompanySetup = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
+                  <Label htmlFor="name" className="text-foreground">
+                    Company Name <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your Company Name"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="bg-background/50"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="website" className="text-foreground">
                     Company Website <span className="text-destructive">*</span>
                   </Label>
@@ -118,7 +140,7 @@ const CompanySetup = () => {
                   type="submit"
                   className="w-full gap-2"
                   size="lg"
-                  disabled={isLoading || !websiteUrl.trim()}
+                  disabled={isLoading || !companyName.trim() || !websiteUrl.trim()}
                 >
                   {isLoading ? (
                     <>

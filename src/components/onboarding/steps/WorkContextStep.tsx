@@ -124,7 +124,7 @@ export const WorkContextStep = ({ data, updateField, onNext, onSkip, saving }: W
         <Button
           onClick={onNext}
           disabled={!isValid || saving}
-          className="flex-1"
+          className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
         >
           {saving ? 'Saving...' : 'Continue'}
         </Button>

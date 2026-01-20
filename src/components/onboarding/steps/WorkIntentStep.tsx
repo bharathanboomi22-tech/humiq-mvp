@@ -72,7 +72,7 @@ export const WorkIntentStep = ({ data, updateField, onNext, saving }: WorkIntent
       <Button
         onClick={onNext}
         disabled={!isValid || saving}
-        className="w-full mt-6"
+        className="w-full mt-6 bg-accent hover:bg-accent/90 text-accent-foreground"
         size="lg"
       >
         {saving ? 'Saving...' : 'Continue'}

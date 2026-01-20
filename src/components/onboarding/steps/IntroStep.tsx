@@ -18,7 +18,7 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => {
         No resumes. No selling.
       </p>
 
-      <Button onClick={onContinue} className="w-full" size="lg">
+      <Button onClick={onContinue} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" size="lg">
         Continue
       </Button>
     </OnboardingCard>

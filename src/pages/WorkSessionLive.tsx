@@ -478,12 +478,20 @@ const WorkSessionLive = () => {
 
     setIsCompleting(true);
     try {
-      await completeSession(sessionId);
+      const result = await completeSession(sessionId);
+      
+      // Check if this is an interview and redirect accordingly
+      if (result.isInterview && result.interviewResultId) {
+        toast.success('Interview completed!');
+        navigate(`/interview/result/${result.interviewResultId}`);
+        return;
+      }
       toast.success('Session completed! Generating Evidence Pack...');
       navigate(`/evidence-pack/${sessionId}`);
     } catch (error) {
       console.error('Failed to complete session:', error);
       toast.error('Failed to complete session');
+    } finally {
       setIsCompleting(false);
     }
   };

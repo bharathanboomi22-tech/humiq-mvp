@@ -15,6 +15,10 @@ import {
   Bell,
   Save,
   X,
+  Clock,
+  CheckCircle,
+  XCircle,
+  CheckCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -25,6 +29,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { getStoredCompanyId, getCompany, getCompanyJobs, toggleJobActive, updateCompany } from '@/lib/company';
 import { Switch } from '@/components/ui/switch';
 import { getMatchesForCompany } from '@/lib/matching';
+import { getInterviewRequestForMatch } from '@/lib/interviews';
+import { InterviewRequest } from '@/components/talent/InterviewInbox';
 import { Company, JobPosting } from '@/types/company';
 import { Match } from '@/types/matching';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,6 +45,7 @@ const CompanyDashboard = () => {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editDescription, setEditDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [interviewRequests, setInterviewRequests] = useState<Map<string, InterviewRequest>>(new Map());
 
   // Refresh matches function
   const refreshMatches = useCallback(async () => {
@@ -46,6 +53,22 @@ const CompanyDashboard = () => {
     try {
       const matchesData = await getMatchesForCompany(companyId);
       setMatches(matchesData);
+
+      // Load interview requests for matches
+      const interviewRequestsMap = new Map<string, InterviewRequest>();
+      for (const match of matchesData) {
+        if (match.talent_profile?.id && match.job_posting?.id) {
+          const interviewRequest = await getInterviewRequestForMatch(
+            match.talent_profile.id,
+            match.job_posting.id
+          );
+          if (interviewRequest) {
+            const key = `${match.talent_profile.id}-${match.job_posting.id}`;
+            interviewRequestsMap.set(key, interviewRequest);
+          }
+        }
+      }
+      setInterviewRequests(interviewRequestsMap);
     } catch (error) {
       console.error('Error refreshing matches:', error);
     }
@@ -78,6 +101,26 @@ const CompanyDashboard = () => {
         setCompany(companyData);
         setJobs(jobsData);
         setMatches(matchesData);
+
+        // Load interview requests for matches
+        const interviewRequestsMap = new Map<string, InterviewRequest>();
+        for (const match of matchesData) {
+          if (match.talent_profile?.id && match.job_posting?.id) {
+            try {
+              const interviewRequest = await getInterviewRequestForMatch(
+                match.talent_profile.id,
+                match.job_posting.id
+              );
+              if (interviewRequest) {
+                const key = `${match.talent_profile.id}-${match.job_posting.id}`;
+                interviewRequestsMap.set(key, interviewRequest);
+              }
+            } catch (error) {
+              console.error('Error loading interview request:', error);
+            }
+          }
+        }
+        setInterviewRequests(interviewRequestsMap);
       } catch (error) {
         console.error('Error loading dashboard:', error);
         toast.error('Failed to load dashboard');
@@ -158,7 +201,7 @@ const CompanyDashboard = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-display font-semibold text-foreground">
-                    Company Dashboard
+                    {company.name || 'Company Dashboard'}
                   </h1>
                   <p className="text-muted-foreground flex items-center gap-1">
                     <Globe className="w-4 h-4" />
@@ -370,7 +413,7 @@ const CompanyDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Talent Matches */}
+            {/* Matched Talents */}
             <Card className="glass-card">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -404,30 +447,77 @@ const CompanyDashboard = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {matches.slice(0, 5).map((match) => (
-                      <div
-                        key={match.id}
-                        onClick={() => match.talent_profile?.id && navigate(`/company/talent/${match.talent_profile.id}`)}
-                        className="p-3 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-colors cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium text-foreground">
-                              {match.talent_profile?.name || 'Anonymous Talent'}
-                            </h4>
-                            <p className="text-xs text-muted-foreground">
-                              For: {match.job_posting?.title || 'Unknown position'}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-semibold text-accent">
-                              {match.match_score}%
-                            </span>
-                            <p className="text-xs text-muted-foreground">match</p>
+                    {matches.slice(0, 5).map((match) => {
+                      const interviewKey = match.talent_profile?.id && match.job_posting?.id 
+                        ? `${match.talent_profile.id}-${match.job_posting.id}` 
+                        : null;
+                      const interviewRequest = interviewKey ? interviewRequests.get(interviewKey) : null;
+
+                      const getStatusBadge = (status: string) => {
+                        switch (status) {
+                          case 'pending':
+                            return (
+                              <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/30 text-xs gap-1">
+                                <Clock className="w-3 h-3" />
+                                Pending
+                              </Badge>
+                            );
+                          case 'accepted':
+                            return (
+                              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 text-xs gap-1">
+                                <CheckCircle className="w-3 h-3" />
+                                Accepted
+                              </Badge>
+                            );
+                          case 'declined':
+                            return (
+                              <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30 text-xs gap-1">
+                                <XCircle className="w-3 h-3" />
+                                Declined
+                              </Badge>
+                            );
+                          case 'completed':
+                            return (
+                              <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30 text-xs gap-1">
+                                <CheckCircle2 className="w-3 h-3" />
+                                Completed
+                              </Badge>
+                            );
+                          default:
+                            return null;
+                        }
+                      };
+
+                      return (
+                        <div
+                          key={match.id}
+                          onClick={() => match.talent_profile?.id && navigate(`/company/talent/${match.talent_profile.id}`)}
+                          className="p-3 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-medium text-foreground">
+                                {match.talent_profile?.name || 'Anonymous Talent'}
+                              </h4>
+                              <p className="text-xs text-muted-foreground">
+                                For: {match.job_posting?.title || 'Unknown position'}
+                              </p>
+                              {interviewRequest && (
+                                <div className="mt-1">
+                                  {getStatusBadge(interviewRequest.status)}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className="text-lg font-semibold text-accent">
+                                {match.match_score}%
+                              </span>
+                              <p className="text-xs text-muted-foreground">match</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {matches.length > 5 && (
                       <Button
                         variant="ghost"

@@ -161,6 +161,8 @@ export interface CreateWorkSessionInput {
   roleTrack: RoleTrack;
   level: SessionLevel;
   duration: SessionDuration;
+  jobPostingId?: string;
+  interviewRequestId?: string;
 }
 
 export interface CreateWorkSessionResponse {
@@ -188,8 +190,10 @@ export interface GetNextPromptResponse {
 }
 
 export interface CompleteSessionResponse {
-  evidencePackId: string;
-  shareId: string;
+  evidencePackId?: string;
+  shareId?: string;
+  interviewResultId?: string;
+  isInterview?: boolean;
 }
 
 // Stage configuration

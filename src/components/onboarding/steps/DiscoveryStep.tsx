@@ -78,7 +78,7 @@ export const DiscoveryStep = ({ data, onNext, saving }: DiscoveryStepProps) => {
         <Button
           onClick={handleComplete}
           disabled={isSaving || saving}
-          className="w-full mt-6"
+          className="w-full mt-6 bg-accent hover:bg-accent/90 text-accent-foreground"
           size="lg"
         >
           {isSaving ? 'Saving...' : 'Continue'}

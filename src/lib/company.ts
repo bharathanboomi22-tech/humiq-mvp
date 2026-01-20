@@ -18,6 +18,7 @@ export const clearStoredCompanyId = (): void => {
 export const analyzeCompany = async (input: CreateCompanyInput): Promise<Company> => {
   const { data, error } = await supabase.functions.invoke('analyze-company', {
     body: {
+      name: input.name,
       websiteUrl: input.websiteUrl,
       description: input.description,
     },
