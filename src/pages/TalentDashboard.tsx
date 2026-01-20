@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { Navigation } from '@/components/Navigation';
 import { cn } from '@/lib/utils';
@@ -49,6 +50,21 @@ const iconMap: Record<string, React.ElementType> = {
   Server,
   Layout,
   Layers,
+};
+
+// Category to icon mapping for personalized tests
+const categoryIconMap: Record<string, React.ElementType> = {
+  backend: Server,
+  frontend: Layout,
+  fullstack: Layers,
+  security: Server,
+  performance: TrendingUp,
+  architecture: Layers,
+  data: Server,
+  devops: Server,
+  testing: CheckCircle,
+  'system-design': Layers,
+  general: Target,
 };
 
 const TalentDashboard = () => {
@@ -125,9 +141,9 @@ const TalentDashboard = () => {
     }
   };
 
-  const handleStartTest = (roleTrack: string) => {
-    // Navigate to work session with pre-filled role track
-    navigate(`/work-session/start?role=${roleTrack}`);
+  const handleStartTest = () => {
+    // Navigate to work session - all tests go to the same place for now
+    navigate(`/work-session/start`);
   };
 
   const handleEditProfile = () => {
@@ -196,7 +212,7 @@ const TalentDashboard = () => {
                 return (
                   <button
                     key={test.id}
-                    onClick={() => handleStartTest(test.roleTrack)}
+                    onClick={() => handleStartTest()}
                     className="w-full p-5 rounded-xl glass-card text-left group hover:border-accent/40 transition-all"
                   >
                     <div className="flex items-center gap-4">
@@ -228,8 +244,9 @@ const TalentDashboard = () => {
   const consolidated = profile.consolidated_profile;
 
   return (
-    <main className="min-h-screen bg-ambient">
-      <Navigation variant="talent" />
+    <TooltipProvider delayDuration={0}>
+      <main className="min-h-screen bg-ambient">
+        <Navigation variant="talent" />
       <div className="container max-w-6xl mx-auto px-6 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -287,14 +304,6 @@ const TalentDashboard = () => {
                 </p>
               </div>
             </div>
-            <Button onClick={handleConsolidate} disabled={isConsolidating} variant="outline" className="gap-2">
-              {isConsolidating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Target className="w-4 h-4" />
-              )}
-              Update Profile
-            </Button>
           </div>
 
           {/* Welcome Banner for new profiles */}
@@ -421,90 +430,70 @@ const TalentDashboard = () => {
                 ) : suggestedTests.length > 0 ? (
                   <div className="space-y-3">
                     {suggestedTests.map((suggested) => {
-                      const test = AVAILABLE_TESTS.find(t => t.id === suggested.testId);
-                      if (!test) return null;
-                      const Icon = iconMap[test.icon] || Server;
+                      const Icon = categoryIconMap[suggested.category || 'general'] || Target;
                       return (
-                        <button
-                          key={suggested.testId}
-                          onClick={() => handleStartTest(test.roleTrack)}
-                          className="w-full p-4 rounded-lg bg-background/50 border border-amber-500/30 hover:border-accent/30 transition-all text-left group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                              <Icon className="w-5 h-5 text-amber-500 group-hover:text-accent" />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-foreground">{test.name}</h4>
-                              <p className="text-xs text-muted-foreground">{suggested.reason}</p>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
-                          </div>
-                        </button>
-                      );
-                    })}
-                    
-                    {/* Show remaining tests that weren't suggested */}
-                    {AVAILABLE_TESTS.filter(t => !suggestedTests.find(s => s.testId === t.id)).length > 0 && (
-                      <>
-                        <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
-                          Other available tests
-                        </div>
-                        {AVAILABLE_TESTS.filter(t => !suggestedTests.find(s => s.testId === t.id)).map((test) => {
-                          const Icon = iconMap[test.icon] || Server;
-                          return (
-                            <button
-                              key={test.id}
-                              onClick={() => handleStartTest(test.roleTrack)}
-                              className="w-full p-4 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-all text-left group opacity-70 hover:opacity-100"
+                        <Tooltip key={suggested.id}>
+                          <TooltipTrigger asChild>
+                            <div
+                              className="w-full p-4 rounded-lg bg-background/30 border border-border/30 text-left cursor-not-allowed opacity-60"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                                  <Icon className="w-5 h-5 text-accent" />
+                                <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                                  <Icon className="w-5 h-5 text-muted-foreground" />
                                 </div>
                                 <div className="flex-1">
-                                  <h4 className="font-medium text-foreground">{test.name}</h4>
-                                  <p className="text-xs text-muted-foreground">{test.description}</p>
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-medium text-muted-foreground">{suggested.name}</h4>
+                                    {suggested.category && (
+                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 text-muted-foreground/60">
+                                        {suggested.category}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground/70">{suggested.reason}</p>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                                <Clock className="w-4 h-4 text-muted-foreground/50" />
                               </div>
-                            </button>
-                          );
-                        })}
-                      </>
-                    )}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Available soon</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* No suggested tests - show all available */}
+                    {/* No suggested tests - show message */}
                     {consolidated?.areasForGrowth?.length === 0 && (
                       <div className="text-center py-4 mb-3 rounded-lg bg-green-500/10 border border-green-500/30">
                         <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
                         <p className="text-sm text-green-600">No specific areas for improvement detected!</p>
-                        <p className="text-xs text-muted-foreground">Your profile looks strong. Take any test to validate your skills.</p>
+                        <p className="text-xs text-muted-foreground">Your profile looks strong.</p>
                       </div>
                     )}
-                    {AVAILABLE_TESTS.map((test) => {
-                      const Icon = iconMap[test.icon] || Server;
-                      return (
-                        <button
-                          key={test.id}
-                          onClick={() => handleStartTest(test.roleTrack)}
-                          className="w-full p-4 rounded-lg bg-background/50 border border-border/50 hover:border-accent/30 transition-all text-left group"
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="w-full p-4 rounded-lg bg-background/30 border border-border/30 text-left cursor-not-allowed opacity-60"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                              <Icon className="w-5 h-5 text-accent" />
+                            <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                              <Target className="w-5 h-5 text-muted-foreground" />
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-medium text-foreground">{test.name}</h4>
-                              <p className="text-xs text-muted-foreground">{test.description}</p>
+                              <h4 className="font-medium text-muted-foreground">Technical Assessment</h4>
+                              <p className="text-xs text-muted-foreground/70">Take a comprehensive technical test to validate your skills</p>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                            <Clock className="w-4 h-4 text-muted-foreground/50" />
                           </div>
-                        </button>
-                      );
-                    })}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Available soon</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 )}
               </CardContent>
@@ -647,7 +636,8 @@ const TalentDashboard = () => {
 
         </motion.div>
       </div>
-    </main>
+      </main>
+    </TooltipProvider>
   );
 };
 

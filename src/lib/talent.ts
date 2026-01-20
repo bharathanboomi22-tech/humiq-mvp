@@ -307,12 +307,15 @@ export const analyzeGitHubForOnboarding = async (
   githubUrl: string
 ): Promise<TalentProfile | null> => {
   try {
+    console.log('Starting GitHub analysis for talent:', talentId);
+    
     // Step 1: Fetch GitHub evidence
     const rawEvidence = await fetchGitHubEvidence(githubUrl);
     if (!rawEvidence) {
       console.warn('No GitHub evidence found');
       return null;
     }
+    console.log('GitHub evidence fetched, length:', rawEvidence.length);
 
     // Step 2: Analyze with AI
     const brief = await analyzeGitHubProfile(githubUrl, rawEvidence);
@@ -320,15 +323,35 @@ export const analyzeGitHubForOnboarding = async (
       console.warn('Failed to analyze GitHub profile');
       return null;
     }
+    console.log('GitHub analysis complete, verdict:', brief.verdict);
 
     // Step 3: Transform to profile format
-    const profileData = transformBriefToProfile(brief);
+    const analysisData = transformBriefToProfile(brief);
+    console.log('Transformed profile data:', { 
+      strengthsCount: analysisData.strengths?.length, 
+      areasForGrowthCount: analysisData.areasForGrowth?.length 
+    });
 
-    // Step 4: Update profile in database
+    // Step 4: Get existing profile to merge data
+    const { data: existingProfile } = await supabase
+      .from('talent_profiles')
+      .select('consolidated_profile')
+      .eq('id', talentId)
+      .single();
+
+    const existingConsolidated = (existingProfile?.consolidated_profile as Record<string, unknown>) || {};
+
+    // Merge existing data with analysis data (keep primaryRole, experienceRange etc.)
+    const mergedProfile = {
+      ...existingConsolidated,
+      ...analysisData,
+    };
+
+    // Step 5: Update profile in database with merged data
     const { data, error } = await supabase
       .from('talent_profiles')
       .update({
-        consolidated_profile: profileData as unknown as Json,
+        consolidated_profile: mergedProfile as unknown as Json,
         name: brief.candidateName || undefined,
         last_updated_at: new Date().toISOString(),
       })
@@ -341,6 +364,7 @@ export const analyzeGitHubForOnboarding = async (
       return null;
     }
 
+    console.log('Profile updated successfully');
     return data as unknown as TalentProfile;
   } catch (error) {
     console.error('Error in GitHub analysis flow:', error);
@@ -350,9 +374,10 @@ export const analyzeGitHubForOnboarding = async (
 
 // Suggest tests based on weaknesses using AI
 export interface SuggestedTest {
-  testId: 'backend' | 'frontend' | 'fullstack';
-  testName: string;
+  id: string;
+  name: string;
   reason: string;
+  category?: string;
 }
 
 export const suggestTestsForWeaknesses = async (

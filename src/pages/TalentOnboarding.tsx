@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTalentOnboarding } from '@/hooks/useTalentOnboarding';
 import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
@@ -17,6 +17,9 @@ import { AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
 
+// Minimum time to show loading experience (in ms)
+const MIN_LOADING_TIME = 8000;
+
 // Steps: Intro (0), HumanBasics (1), WorkIntent (2), WorkRole (3), WorkContext (4), WorkLinks (5), HowIWork (6), Privacy (7), Discovery (8), Success (9)
 const TOTAL_STEPS = 10;
 
@@ -32,7 +35,12 @@ const TalentOnboardingContent = () => {
     loading,
     saving,
     analyzing,
+    analysisComplete,
+    hasGitHub,
   } = useTalentOnboarding();
+
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const loadingStartTime = useRef<number | null>(null);
 
   // Check if onboarding is already completed and redirect
   useEffect(() => {
@@ -55,15 +63,40 @@ const TalentOnboardingContent = () => {
     checkOnboardingStatus();
   }, [loading, navigate]);
 
+  // Start timer when analyzing begins
+  useEffect(() => {
+    if (analyzing && !loadingStartTime.current) {
+      loadingStartTime.current = Date.now();
+      setMinTimeElapsed(false);
+      
+      // Set minimum time elapsed after MIN_LOADING_TIME
+      const timer = setTimeout(() => {
+        setMinTimeElapsed(true);
+      }, MIN_LOADING_TIME);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [analyzing]);
+
+  // Navigate to dashboard when analysis is complete AND minimum time has elapsed
+  useEffect(() => {
+    if (analysisComplete && minTimeElapsed) {
+      navigate('/talent/dashboard');
+    }
+  }, [analysisComplete, minTimeElapsed, navigate]);
+
   const handleComplete = async () => {
     const success = await completeOnboarding();
-    if (success) {
-      nextStep(); // Go to success screen
+    if (success && !hasGitHub) {
+      // No GitHub analysis needed, go to success screen
+      nextStep();
     }
+    // If hasGitHub, the LoadingExperience will show and navigate when ready
   };
 
   const handleAnalysisComplete = () => {
-    navigate('/talent/dashboard');
+    // This is called by LoadingExperience timer, but we use our own logic now
+    // The actual navigation happens in the useEffect above
   };
 
   if (loading) {
