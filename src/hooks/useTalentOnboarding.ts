@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { getStoredTalentId, setStoredTalentId } from '@/lib/talent';
 import { useAuth } from '@/hooks/useAuth';
+import type { Json } from '@/integrations/supabase/types';
 
 const DEMO_TALENT_KEY = 'humiq_demo_talent_id';
 
@@ -136,8 +137,8 @@ export const useTalentOnboarding = () => {
             timezone: data.timezone,
             languages: data.languages,
             availability_status: data.availabilityStatus,
-            work_context: data.workContext as unknown as Json,
-            work_links: data.workLinks as unknown as Json,
+            work_context: JSON.parse(JSON.stringify(data.workContext)) as Json,
+            work_links: JSON.parse(JSON.stringify(data.workLinks)) as Json,
             how_i_work: data.howIWork,
             profile_visibility: data.profileVisibility,
             allow_proof_requests: data.allowProofRequests,
@@ -145,7 +146,7 @@ export const useTalentOnboarding = () => {
               primaryRole: data.primaryRole,
               experienceRange: data.experienceRange,
             },
-            user_id: user?.id || null, // Link to authenticated user if available
+            // MVP mode: no user_id column yet
           })
           .select()
           .single();
@@ -187,12 +188,12 @@ export const useTalentOnboarding = () => {
             timezone: data.timezone,
             languages: data.languages,
             availability_status: data.availabilityStatus,
-            work_context: data.workContext as unknown as Json,
-            work_links: data.workLinks as unknown as Json,
+            work_context: JSON.parse(JSON.stringify(data.workContext)) as Json,
+            work_links: JSON.parse(JSON.stringify(data.workLinks)) as Json,
             how_i_work: data.howIWork,
             profile_visibility: data.profileVisibility,
             allow_proof_requests: data.allowProofRequests,
-            consolidated_profile: mergedConsolidated as unknown as Json,
+            consolidated_profile: mergedConsolidated as Json,
             last_updated_at: new Date().toISOString(),
           })
           .eq('id', talentId);
@@ -240,8 +241,10 @@ export const useTalentOnboarding = () => {
         setAnalyzing(true);
         setSaving(false);
         
-        // Run GitHub analysis (will update profile in database)
-        await analyzeGitHubForOnboarding(talentId, githubUrl);
+        // Run GitHub analysis via edge function (will update profile in database)
+        await supabase.functions.invoke('fetch-github-evidence', {
+          body: { githubUrl, talentProfileId: talentId }
+        });
         
         // Mark analysis as complete - keep analyzing=true so LoadingExperience stays visible
         setAnalysisComplete(true);
