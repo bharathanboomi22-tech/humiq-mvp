@@ -16,7 +16,7 @@ export const getMatchesForTalent = async (talentProfileId: string): Promise<Matc
     return [];
   }
 
-  return data as Match[];
+  return data as unknown as Match[];
 };
 
 export const getMatchesForJob = async (jobPostingId: string): Promise<Match[]> => {
@@ -34,7 +34,7 @@ export const getMatchesForJob = async (jobPostingId: string): Promise<Match[]> =
     return [];
   }
 
-  return data as Match[];
+  return data as unknown as Match[];
 };
 
 export const getMatchesForCompany = async (companyId: string): Promise<Match[]> => {
@@ -66,7 +66,7 @@ export const getMatchesForCompany = async (companyId: string): Promise<Match[]> 
     return [];
   }
 
-  return data as Match[];
+  return data as unknown as Match[];
 };
 
 export const runMatchingForTalent = async (talentProfileId: string): Promise<MatchResult> => {
