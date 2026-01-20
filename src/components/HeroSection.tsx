@@ -1,10 +1,9 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Building2, User, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { CandidateInputForm } from './CandidateInputForm';
-import { LoveLetters, LoveLettersRef } from './LoveLetters';
+import { LoveLetterModal } from './LoveLetterModal';
 import { useAuth } from '@/hooks/useAuth';
 
 interface HeroSectionProps {
@@ -14,18 +13,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
-  const loveLettersRef = useRef<LoveLettersRef>(null);
-
-  const scrollToLoveLetters = () => {
-    const element = document.getElementById('love-letters-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Expand the input after scrolling
-      setTimeout(() => {
-        loveLettersRef.current?.expand();
-      }, 500);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section className="min-h-screen relative overflow-hidden">
@@ -65,8 +53,6 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ clipPath: 'inset(0 45% 0 0)' }}
       >
-        {/* Layer A — Drift Blobs (3 large radial gradient blobs) */}
-        
         {/* Blob 1 - Upper left, cyan-teal */}
         <motion.div
           className="absolute left-[5%] top-[8%] w-[35%] h-[35%]"
@@ -127,7 +113,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         />
       </div>
 
-      {/* Content grid - two columns */}
+      {/* Content */}
       <div className="relative z-10 container mx-auto px-6 lg:px-12 min-h-screen flex flex-col">
         {/* Top Navigation */}
         <motion.nav
@@ -152,25 +138,32 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             </span>
           </div>
 
-          {/* Center - Love Letters Nav Item */}
-          <button
-            onClick={scrollToLoveLetters}
-            className="hidden md:block text-sm text-muted-foreground hover:text-foreground/80 
-              transition-all duration-200 hover:opacity-100 opacity-70"
+          {/* Center - Love Letters Button (Premium Gradient) */}
+          <motion.button
+            onClick={() => setIsModalOpen(true)}
+            className="hidden md:flex items-center px-6 py-3 rounded-full font-medium text-sm transition-all duration-200"
+            style={{
+              background: 'linear-gradient(135deg, #7C5CFF 0%, #A78BFA 50%, #7C5CFF 100%)',
+              color: '#000000',
+              boxShadow: '0 0 24px rgba(124, 92, 255, 0.2)',
+            }}
+            whileHover={{ scale: 1.03, boxShadow: '0 0 32px rgba(124, 92, 255, 0.35)' }}
+            whileTap={{ scale: 0.98 }}
           >
             💌 HumIQ Love Letters
-          </button>
+          </motion.button>
 
           {/* Right - Placeholder for future nav */}
           <div className="w-[100px]" />
         </motion.nav>
 
-        <div className="flex-1 flex items-center">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 w-full py-16 lg:py-0">
+        {/* Main Content - Two Column Grid */}
+        <div className="flex-1 flex items-start pt-24 lg:pt-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 w-full">
             
-            {/* LEFT COLUMN - Editorial text + Beta indicator */}
-            <div className="flex flex-col justify-center">
-              {/* Beta Microline - Top of content */}
+            {/* LEFT COLUMN - Editorial text (top-left aligned) */}
+            <div className="flex flex-col justify-start">
+              {/* Beta Microline */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -187,34 +180,27 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.45, ease: 'easeOut' }}
-                className="font-display text-[2rem] md:text-[2.75rem] lg:text-[3rem] font-medium leading-[1.2] tracking-[-0.02em] text-foreground"
+                className="font-display text-4xl md:text-5xl lg:text-[56px] font-medium leading-[1.15] tracking-[-0.02em]"
+                style={{ color: '#FFFFFF' }}
               >
-                Hiring — without resumes or screening.
+                The CV era is over.
               </motion.h1>
               
               {/* Subheadline */}
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.5, ease: 'easeOut' }}
-                className="mt-6 text-base md:text-lg text-foreground/70 leading-relaxed max-w-[50ch]"
+                className="mt-5 text-lg leading-[1.6] max-w-[520px]"
+                style={{ color: 'rgba(255, 255, 255, 0.75)' }}
               >
-                HumIQ evaluates real work, runs the first interview with AI, and sends companies only decision-ready candidates.
-              </motion.p>
-              
-              {/* Supporting microcopy */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.35, delay: 0.9, ease: 'easeOut' }}
-                className="mt-5 text-sm text-muted-foreground/60 tracking-wide"
-              >
-                No applications. No optimized CVs. No guesswork.
-              </motion.p>
+                <p>AI interview invites, without applying to any jobs.</p>
+                <p className="mt-2">The first interview is AI. Humans decide from real signal.</p>
+              </motion.div>
             </div>
 
             {/* RIGHT COLUMN - Product module */}
-            <div className="flex flex-col items-center justify-center lg:items-end">
+            <div className="flex flex-col items-center justify-start lg:items-end lg:pt-8">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -227,22 +213,40 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Love Letters Section - Center bottom of hero */}
+        {/* Mobile Love Letters Button */}
         <motion.div
-          id="love-letters-section"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
-          className="pb-16 lg:pb-24 flex flex-col items-center"
+          className="md:hidden pb-16 flex justify-center"
         >
-          <LoveLetters ref={loveLettersRef} showButton={true} />
+          <motion.button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center px-6 py-3 rounded-full font-medium text-sm"
+            style={{
+              background: 'linear-gradient(135deg, #7C5CFF 0%, #A78BFA 50%, #7C5CFF 100%)',
+              color: '#000000',
+              boxShadow: '0 0 24px rgba(124, 92, 255, 0.2)',
+            }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            💌 HumIQ Love Letters
+          </motion.button>
         </motion.div>
       </div>
+
+      {/* Love Letter Modal */}
+      <LoveLetterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={() => {}}
+      />
     </section>
   );
 }
 
-/* Product Input Module - refined glass card with the form */
+/* Product Input Module */
 interface ProductInputModuleProps {
   onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
   isLoading?: boolean;
