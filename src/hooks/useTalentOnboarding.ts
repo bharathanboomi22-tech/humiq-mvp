@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { getStoredTalentId, setStoredTalentId } from '@/lib/talent';
-import { useAuth } from '@/hooks/useAuth';
 import type { Json } from '@/integrations/supabase/types';
-
-const DEMO_TALENT_KEY = 'humiq_demo_talent_id';
 
 export interface WorkContextEntry {
   company: string;
@@ -53,7 +50,6 @@ const initialData: OnboardingData = {
 };
 
 export const useTalentOnboarding = () => {
-  const { user, isDemo } = useAuth();
   const [data, setData] = useState<OnboardingData>(initialData);
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -146,7 +142,6 @@ export const useTalentOnboarding = () => {
               primaryRole: data.primaryRole,
               experienceRange: data.experienceRange,
             },
-            user_id: user?.id || null, // Link to authenticated user
           })
           .select()
           .single();
@@ -155,11 +150,6 @@ export const useTalentOnboarding = () => {
         
         talentId = newProfile.id;
         setStoredTalentId(talentId);
-        
-        // If demo mode, also store in demo key
-        if (isDemo) {
-          localStorage.setItem(DEMO_TALENT_KEY, talentId);
-        }
       } else {
         // Get existing consolidated_profile to preserve analysis data
         const { data: existingProfile } = await supabase

@@ -24,10 +24,6 @@ import TalentOnboarding from "./pages/TalentOnboarding";
 import TalentDashboard from "./pages/TalentDashboard";
 import TalentJobDetail from "./pages/TalentJobDetail";
 import InterviewResult from "./pages/InterviewResult";
-// Auth pages
-import AuthLogin from "./pages/AuthLogin";
-import AuthCallback from "./pages/AuthCallback";
-import AuthRoleSelect from "./pages/AuthRoleSelect";
 
 const queryClient = new QueryClient();
 
@@ -42,12 +38,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             
-            {/* Auth Routes */}
-            <Route path="/auth/login" element={<AuthLogin />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/auth/role-select" element={<AuthRoleSelect />} />
-            
-            {/* Work Session - Protected but allows demo */}
+            {/* Work Session */}
             <Route path="/work-session/start" element={
               <ProtectedRoute>
                 <WorkSessionStart />

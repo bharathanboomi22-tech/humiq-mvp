@@ -5,6 +5,7 @@ import { Building2, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CandidateInputForm } from './CandidateInputForm';
 import { LoveLetters, LoveLettersRef } from './LoveLetters';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HeroSectionProps {
   onSubmit: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -249,13 +250,24 @@ interface ProductInputModuleProps {
 
 function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
   const navigate = useNavigate();
+  const { setUserType } = useAuth();
+
+  const handleCompanyClick = () => {
+    setUserType('company');
+    navigate('/company/setup');
+  };
+
+  const handleTalentClick = () => {
+    setUserType('talent');
+    navigate('/talent/onboarding');
+  };
 
   return (
     <div className="w-full space-y-4">
       {/* User Type Selection */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => navigate('/auth/login')}
+          onClick={handleCompanyClick}
           className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
         >
           <div className="flex items-center gap-3 mb-2">
@@ -269,7 +281,7 @@ function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
         </button>
 
         <button
-          onClick={() => navigate('/auth/login')}
+          onClick={handleTalentClick}
           className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
         >
           <div className="flex items-center gap-3 mb-2">
