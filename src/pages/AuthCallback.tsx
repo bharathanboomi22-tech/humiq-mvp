@@ -21,121 +21,83 @@ const AuthCallback = () => {
 
     let isMounted = true;
 
-    const handleCallback = async () => {
-      try {
-        // Handle the hash fragment from magic link
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    // Check for error in hash first
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashError = hashParams.get('error');
+    const hashErrorDescription = hashParams.get('error_description');
+    
+    if (hashError) {
+      console.error('Auth error from hash:', hashError, hashErrorDescription);
+      setErrorMessage(hashErrorDescription || hashError);
+      setState('error');
+      return;
+    }
+
+    // Listen for auth state change - Supabase automatically handles the hash tokens
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event, !!session);
         
-        // Check if there's an error in the hash (Supabase auth errors)
-        const hashError = hashParams.get('error');
-        const hashErrorDescription = hashParams.get('error_description');
-        
-        if (hashError) {
-          console.error('Auth error from hash:', hashError, hashErrorDescription);
-          if (isMounted) {
-            setErrorMessage(hashErrorDescription || hashError);
-            setState('error');
-          }
-          return;
-        }
-        
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
-
-        console.log('Auth callback - type:', type, 'hasAccessToken:', !!accessToken, 'hasRefreshToken:', !!refreshToken);
-
-        // If we have tokens in the hash, set the session
-        if (accessToken && refreshToken) {
-          const { data, error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (!isMounted) return;
-
-          if (sessionError) {
-            console.error('Error setting session:', sessionError);
-            setErrorMessage(sessionError.message);
-            setState('error');
-            return;
-          }
-          
-          console.log('Session set successfully:', !!data.session);
-        }
-
-        // Get the current session
-        const { data: { session }, error } = await supabase.auth.getSession();
-
         if (!isMounted) return;
 
-        console.log('getSession result:', { hasSession: !!session, error: error?.message });
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            const userId = session.user.id;
 
-        if (error) {
-          console.error('Auth callback error:', error);
-          setErrorMessage(error.message);
-          setState('error');
-          return;
-        }
+            // Check if user has existing profiles
+            const [companyResult, talentResult] = await Promise.all([
+              supabase.from('companies').select('id').eq('user_id', userId).maybeSingle(),
+              supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
+            ]);
 
-        if (!session?.user) {
-          setErrorMessage('No authentication session found. The link may have expired.');
-          setState('error');
-          return;
-        }
+            if (!isMounted) return;
 
-        const userId = session.user.id;
+            setState('success');
+            toast.success('Successfully signed in!');
 
-        // Check if user has existing profiles linked to their user_id
-        const [companyResult, talentResult] = await Promise.all([
-          supabase.from('companies').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('talent_profiles').select('id').eq('user_id', userId).maybeSingle(),
-        ]);
+            // Clear the hash from URL
+            window.history.replaceState(null, '', window.location.pathname);
 
-        if (!isMounted) return;
-
-        setState('success');
-        toast.success('Successfully signed in!');
-
-        // Redirect based on user profile
-        setTimeout(() => {
-          if (!isMounted) return;
-          
-          if (companyResult.data) {
-            // User has a company profile
-            localStorage.setItem('humiq_company_id', companyResult.data.id);
-            navigate('/company/dashboard');
-          } else if (talentResult.data) {
-            // User has a talent profile
-            localStorage.setItem('humiq_talent_id', talentResult.data.id);
-            navigate('/talent/dashboard');
-          } else {
-            // New user - go to role selection then onboarding
-            navigate('/auth/role-select');
+            // Redirect based on user profile
+            setTimeout(() => {
+              if (!isMounted) return;
+              
+              if (companyResult.data) {
+                localStorage.setItem('humiq_company_id', companyResult.data.id);
+                navigate('/company/dashboard', { replace: true });
+              } else if (talentResult.data) {
+                localStorage.setItem('humiq_talent_id', talentResult.data.id);
+                navigate('/talent/dashboard', { replace: true });
+              } else {
+                navigate('/auth/role-select', { replace: true });
+              }
+            }, 1000);
+          } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') return;
+            console.error('Error during auth callback:', error);
+            if (isMounted) {
+              setErrorMessage('Error setting up your account');
+              setState('error');
+            }
           }
-        }, 1500);
-      } catch (error) {
-        // Ignore abort errors (component unmounted)
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.log('Auth callback aborted (component unmounted)');
-          return;
-        }
-        
-        console.error('Callback error:', error);
-        if (isMounted) {
-          const message = error instanceof Error ? error.message : 'An unexpected error occurred';
-          setErrorMessage(message);
-          setState('error');
         }
       }
-    };
+    );
 
-    handleCallback();
+    // Timeout fallback - if no auth event after 10s, show error
+    const timeout = setTimeout(() => {
+      if (isMounted && state === 'loading') {
+        setErrorMessage('Authentication timed out. The link may have expired.');
+        setState('error');
+      }
+    }, 10000);
 
     return () => {
       isMounted = false;
+      subscription.unsubscribe();
+      clearTimeout(timeout);
     };
-  }, [navigate]);
+  }, [navigate, state]);
 
   if (state === 'loading') {
     return (
