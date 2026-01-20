@@ -22,6 +22,8 @@ import {
   CheckCircle,
   XCircle,
   LucideIcon,
+  UserPlus,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +31,8 @@ import { Badge } from '@/components/ui/badge';
 import { getEvidencePack } from '@/lib/workSession';
 import { EvidencePackSummary, ConfidenceLevel, WorkSession } from '@/types/workSession';
 import type { VerdictType, SignalLevel } from '@/types/brief';
+import { getStoredTalentId, setStoredTalentId, getOrCreateTalentProfile, linkSessionToProfile, consolidateTalentProfile } from '@/lib/talent';
+import { runMatchingForTalent } from '@/lib/matching';
 
 const confidenceConfig: Record<ConfidenceLevel, { label: string; class: string }> = {
   high: { label: 'High Confidence', class: 'verdict-interview' },
@@ -80,6 +84,42 @@ const EvidencePack = () => {
   const [session, setSession] = useState<WorkSession | null>(null);
   const [packShareId, setPackShareId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isAddingToProfile, setIsAddingToProfile] = useState(false);
+  const [talentProfileId, setTalentProfileId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTalentProfileId(getStoredTalentId());
+  }, []);
+
+  // Auto-create profile after pack loads (if no existing profile)
+  const autoCreateProfile = async (githubUrl: string, workSessionId: string) => {
+    const existingTalentId = getStoredTalentId();
+    if (existingTalentId) {
+      // Profile already exists, just link the session
+      try {
+        await linkSessionToProfile(existingTalentId, workSessionId);
+        await consolidateTalentProfile(existingTalentId);
+        await runMatchingForTalent(existingTalentId);
+      } catch {
+        // Session might already be linked, ignore
+      }
+      return;
+    }
+
+    try {
+      // Create profile automatically
+      const profile = await getOrCreateTalentProfile(githubUrl);
+      await linkSessionToProfile(profile.id, workSessionId);
+      setStoredTalentId(profile.id);
+      setTalentProfileId(profile.id);
+      await consolidateTalentProfile(profile.id);
+      await runMatchingForTalent(profile.id);
+      toast.success('Profile created! You can now view your matches.');
+    } catch (error) {
+      console.error('Error auto-creating profile:', error);
+      // Silent fail - user can still manually add to profile
+    }
+  };
 
   useEffect(() => {
     async function loadPack() {
@@ -100,6 +140,11 @@ const EvidencePack = () => {
         setSummary(result.summaryJson);
         setSession(result.session);
         setPackShareId(result.shareId);
+        
+        // Auto-create profile if coming from a work session (not share link)
+        if (!shareId && result.session?.github_url && sessionId) {
+          autoCreateProfile(result.session.github_url, sessionId);
+        }
       } catch (error) {
         console.error('Failed to load evidence pack:', error);
         toast.error('Evidence pack not found');
@@ -124,6 +169,39 @@ const EvidencePack = () => {
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast.error('Failed to copy link');
+    }
+  };
+
+  const handleAddToProfile = async () => {
+    if (!session || !sessionId) return;
+
+    setIsAddingToProfile(true);
+    try {
+      // Get or create talent profile using the GitHub URL from the session
+      const profile = await getOrCreateTalentProfile(session.github_url);
+      
+      // Link this work session to the profile
+      await linkSessionToProfile(profile.id, sessionId);
+      
+      // Store the talent ID locally
+      setStoredTalentId(profile.id);
+      setTalentProfileId(profile.id);
+      
+      // Consolidate the profile with all linked sessions
+      await consolidateTalentProfile(profile.id);
+      
+      // Run matching
+      await runMatchingForTalent(profile.id);
+      
+      toast.success('Added to your profile! Redirecting to dashboard...');
+      
+      // Navigate to talent dashboard
+      setTimeout(() => navigate('/talent/dashboard'), 1500);
+    } catch (error) {
+      console.error('Error adding to profile:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to add to profile');
+    } finally {
+      setIsAddingToProfile(false);
     }
   };
 
@@ -164,13 +242,40 @@ const EvidencePack = () => {
               Back to Home
             </Button>
 
-            <Button
-              onClick={handleCopyLink}
-              className="gap-2 bg-accent hover:bg-accent/90"
-            >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'Copied!' : 'Copy Share Link'}
-            </Button>
+            <div className="flex items-center gap-2">
+              {talentProfileId ? (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/talent/dashboard')}
+                  className="gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  My Dashboard
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleAddToProfile}
+                  disabled={isAddingToProfile}
+                  className="gap-2"
+                >
+                  {isAddingToProfile ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <UserPlus className="w-4 h-4" />
+                  )}
+                  {isAddingToProfile ? 'Adding...' : 'Add to My Profile'}
+                </Button>
+              )}
+              
+              <Button
+                onClick={handleCopyLink}
+                className="gap-2 bg-accent hover:bg-accent/90"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Copied!' : 'Copy Share Link'}
+              </Button>
+            </div>
           </div>
 
           <div className="text-center mb-8">

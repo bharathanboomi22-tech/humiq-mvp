@@ -1,5 +1,8 @@
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
+import { Building2, User, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CandidateInputForm } from './CandidateInputForm';
 import { LoveLetters, LoveLettersRef } from './LoveLetters';
 
@@ -245,17 +248,60 @@ interface ProductInputModuleProps {
 }
 
 function ProductInputModule({ onSubmit, isLoading }: ProductInputModuleProps) {
+  const navigate = useNavigate();
+
   return (
-    <div className="glass-card p-6 md:p-8 relative">
-      {/* Slight elevation glow */}
-      <div 
-        className="absolute inset-0 -z-10 rounded-2xl opacity-40"
-        style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(124, 92, 255, 0.08), transparent)',
-        }}
-      />
-      
-      <CandidateInputForm onSubmit={onSubmit} isLoading={isLoading} />
+    <div className="w-full space-y-4">
+      {/* User Type Selection */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => navigate('/company/setup')}
+          className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <Building2 className="w-5 h-5 text-accent" />
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <h3 className="font-medium text-foreground text-sm">I'm Hiring</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Find matched talent</p>
+        </button>
+
+        <button
+          onClick={() => navigate('/talent/onboarding')}
+          className="glass-card p-4 text-left group hover:border-accent/40 transition-all"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <User className="w-5 h-5 text-accent" />
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <h3 className="font-medium text-foreground text-sm">I'm a Talent</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">Create your profile</p>
+        </button>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-border/50" />
+        <span className="text-xs text-muted-foreground">or take an assessment</span>
+        <div className="flex-1 h-px bg-border/50" />
+      </div>
+
+      {/* Talent Assessment Form */}
+      <div className="glass-card p-6 md:p-8 relative">
+        {/* Slight elevation glow */}
+        <div 
+          className="absolute inset-0 -z-10 rounded-2xl opacity-40"
+          style={{
+            background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(124, 92, 255, 0.08), transparent)',
+          }}
+        />
+        
+        <CandidateInputForm onSubmit={onSubmit} isLoading={isLoading} />
+      </div>
     </div>
   );
 }

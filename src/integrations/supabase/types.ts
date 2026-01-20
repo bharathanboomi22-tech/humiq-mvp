@@ -14,30 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      companies: {
-        Row: {
-          analyzed_data: Json | null
-          created_at: string
-          description: string | null
-          id: string
-          website_url: string
-        }
-        Insert: {
-          analyzed_data?: Json | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          website_url: string
-        }
-        Update: {
-          analyzed_data?: Json | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          website_url?: string
-        }
-        Relationships: []
-      }
       evidence_packs: {
         Row: {
           created_at: string
@@ -73,47 +49,6 @@ export type Database = {
           },
         ]
       }
-      job_postings: {
-        Row: {
-          analyzed_data: Json | null
-          company_id: string
-          created_at: string
-          description: string
-          id: string
-          is_active: boolean
-          requirements: string | null
-          title: string
-        }
-        Insert: {
-          analyzed_data?: Json | null
-          company_id: string
-          created_at?: string
-          description: string
-          id?: string
-          is_active?: boolean
-          requirements?: string | null
-          title: string
-        }
-        Update: {
-          analyzed_data?: Json | null
-          company_id?: string
-          created_at?: string
-          description?: string
-          id?: string
-          is_active?: boolean
-          requirements?: string | null
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "job_postings_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       love_letters: {
         Row: {
           created_at: string
@@ -140,120 +75,6 @@ export type Database = {
           user_type?: string | null
         }
         Relationships: []
-      }
-      matches: {
-        Row: {
-          created_at: string
-          id: string
-          job_posting_id: string
-          match_score: number
-          score_breakdown: Json | null
-          talent_profile_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          job_posting_id: string
-          match_score: number
-          score_breakdown?: Json | null
-          talent_profile_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          job_posting_id?: string
-          match_score?: number
-          score_breakdown?: Json | null
-          talent_profile_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "matches_job_posting_id_fkey"
-            columns: ["job_posting_id"]
-            isOneToOne: false
-            referencedRelation: "job_postings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matches_talent_profile_id_fkey"
-            columns: ["talent_profile_id"]
-            isOneToOne: false
-            referencedRelation: "talent_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      talent_profiles: {
-        Row: {
-          consolidated_profile: Json | null
-          created_at: string
-          email: string | null
-          github_url: string
-          id: string
-          last_updated_at: string
-          level: string | null
-          name: string | null
-          skills: Json | null
-        }
-        Insert: {
-          consolidated_profile?: Json | null
-          created_at?: string
-          email?: string | null
-          github_url: string
-          id?: string
-          last_updated_at?: string
-          level?: string | null
-          name?: string | null
-          skills?: Json | null
-        }
-        Update: {
-          consolidated_profile?: Json | null
-          created_at?: string
-          email?: string | null
-          github_url?: string
-          id?: string
-          last_updated_at?: string
-          level?: string | null
-          name?: string | null
-          skills?: Json | null
-        }
-        Relationships: []
-      }
-      talent_work_sessions: {
-        Row: {
-          created_at: string
-          id: string
-          talent_profile_id: string
-          work_session_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          talent_profile_id: string
-          work_session_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          talent_profile_id?: string
-          work_session_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "talent_work_sessions_talent_profile_id_fkey"
-            columns: ["talent_profile_id"]
-            isOneToOne: false
-            referencedRelation: "talent_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "talent_work_sessions_work_session_id_fkey"
-            columns: ["work_session_id"]
-            isOneToOne: false
-            referencedRelation: "work_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       work_session_events: {
         Row: {
@@ -335,7 +156,6 @@ export type Database = {
           role_track: string
           started_at: string
           status: string
-          talent_profile_id: string | null
         }
         Insert: {
           created_at?: string
@@ -349,7 +169,6 @@ export type Database = {
           role_track: string
           started_at?: string
           status?: string
-          talent_profile_id?: string | null
         }
         Update: {
           created_at?: string
@@ -363,17 +182,8 @@ export type Database = {
           role_track?: string
           started_at?: string
           status?: string
-          talent_profile_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "work_sessions_talent_profile_id_fkey"
-            columns: ["talent_profile_id"]
-            isOneToOne: false
-            referencedRelation: "talent_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

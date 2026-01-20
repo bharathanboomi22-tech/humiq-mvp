@@ -21,8 +21,16 @@ const WorkSessionStart = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const roleParam = searchParams.get('role');
+  // Map roleTrack from URL param (fullstack maps to backend for now)
+  const getInitialRole = (): RoleTrack => {
+    if (roleParam === 'frontend') return 'frontend';
+    return 'backend'; // backend, fullstack, and others default to backend
+  };
+  const initialRole = getInitialRole();
+  
   const [githubUrl, setGithubUrl] = useState(searchParams.get('github') || '');
-  const [roleTrack, setRoleTrack] = useState<RoleTrack>('backend');
+  const [roleTrack, setRoleTrack] = useState<RoleTrack>(initialRole);
   const [level, setLevel] = useState<SessionLevel>('mid');
   const [duration, setDuration] = useState<SessionDuration>(5);
   const [isLoading, setIsLoading] = useState(false);
