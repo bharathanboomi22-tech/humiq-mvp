@@ -202,19 +202,17 @@ serve(async (req) => {
       }
     } else {
       // Production mode: use actual score calculation
+      // Create matches for ALL talents, even with 0% score
       for (const talent of talents) {
         for (const job of jobs) {
           const { score, breakdown } = calculateMatchScore(talent, job);
 
-          // Only create match if score is at least 20
-          if (score >= 20) {
-            matches.push({
-              talent_profile_id: talent.id,
-              job_posting_id: job.id,
-              match_score: score,
-              score_breakdown: breakdown,
-            });
-          }
+          matches.push({
+            talent_profile_id: talent.id,
+            job_posting_id: job.id,
+            match_score: score, // Can be 0
+            score_breakdown: breakdown,
+          });
         }
       }
     }
