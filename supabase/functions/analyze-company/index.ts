@@ -63,7 +63,7 @@ serve(async (req) => {
   }
 
   try {
-    const { name, websiteUrl, description } = await req.json();
+    const { name, websiteUrl, description, userId } = await req.json();
 
     if (!name) {
       return new Response(
@@ -138,6 +138,7 @@ serve(async (req) => {
         website_url: websiteUrl,
         description: description || null,
         analyzed_data: analyzedData,
+        user_id: userId || null, // Link to auth user if provided
       })
       .select()
       .single();
