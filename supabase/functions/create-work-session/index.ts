@@ -344,7 +344,7 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
       }
     }
 
-    // Insert work session with GitHub brief and job context
+    // Insert work session with GitHub brief
     const { data: session, error: sessionError } = await supabase
       .from("work_sessions")
       .insert({
@@ -355,7 +355,6 @@ Generate the candidate brief now. Be specific, cite actual repository names, and
         status: "active",
         raw_work_evidence: rawWorkEvidence || null,
         github_brief: githubBrief || null,
-        job_context: jobContext,
         started_at: new Date().toISOString(),
       })
       .select()
