@@ -83,7 +83,7 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="min-h-screen" style={{ background: '#0B0E12' }}>
+    <main className="min-h-screen blush-gradient">
       {viewState === 'input' && (
         <>
           <HeroSection onSubmit={handleSubmit} />
