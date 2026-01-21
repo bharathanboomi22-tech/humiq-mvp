@@ -17,14 +17,19 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'talent' | 'company'>('talent');
 
+  const handleTalentClick = () => {
+    setUserType('talent');
+    navigate('/talent/onboarding');
+  };
+
+  const handleCompanyClick = () => {
+    setUserType('company');
+    navigate('/company/setup');
+  };
+
   const handleStart = () => {
-    if (activeTab === 'talent') {
-      setUserType('talent');
-      navigate('/talent/onboarding');
-    } else {
-      setUserType('company');
-      navigate('/company/setup');
-    }
+    // Start button triggers the Talent flow
+    handleTalentClick();
   };
 
   return (
@@ -138,7 +143,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             {/* Right - Toggle Buttons */}
             <div className="flex items-center bg-card rounded-full p-1 shadow-sm">
               <button
-                onClick={() => setActiveTab('talent')}
+                onClick={handleTalentClick}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-400 ${
                   activeTab === 'talent'
                     ? 'bg-foreground text-background'
@@ -148,7 +153,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
                 Talent
               </button>
               <button
-                onClick={() => setActiveTab('company')}
+                onClick={handleCompanyClick}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-400 ${
                   activeTab === 'company'
                     ? 'bg-foreground text-background'
