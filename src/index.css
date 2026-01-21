@@ -2,58 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumIQ — Quiet Intelligence Theme
-   Apple x Linear dark aesthetic.
-   Intelligent, calm, analytical. */
+/* HumIQ — Airy Light Theme
+   Soft gradients, generous white space, premium minimal.
+   Apple / Linear inspired restraint. */
 
 @layer base {
   :root {
-    /* Deep midnight base — #070A10 */
-    --background: 220 33% 3%;
-    --foreground: 0 0% 100% / 0.92;
+    /* Warm near-white background — #FAFAF9 */
+    --background: 40 20% 98%;
+    --foreground: 220 20% 12%;
 
-    /* Surface layers — glass effect base */
-    --card: 0 0% 100% / 0.04;
-    --card-foreground: 0 0% 100% / 0.92;
+    /* Surface layers — clean white */
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
 
-    --popover: 220 25% 8%;
-    --popover-foreground: 0 0% 100% / 0.92;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
 
-    /* Primary — off-white, readable */
-    --primary: 0 0% 100% / 0.92;
-    --primary-foreground: 220 33% 3%;
+    /* Primary — near-black */
+    --primary: 220 20% 12%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary — subtle elevation */
-    --secondary: 0 0% 100% / 0.06;
-    --secondary-foreground: 0 0% 100% / 0.68;
+    /* Secondary — soft gray surface */
+    --secondary: 220 10% 96%;
+    --secondary-foreground: 220 15% 40%;
 
     /* Muted — secondary text */
-    --muted: 0 0% 100% / 0.08;
-    --muted-foreground: 0 0% 100% / 0.68;
+    --muted: 220 10% 94%;
+    --muted-foreground: 220 10% 50%;
 
-    /* Accent — Quiet violet #7C5CFF */
-    --accent: 252 100% 68%;
+    /* Accent — soft spectral gradient anchor (violet) */
+    --accent: 260 80% 65%;
     --accent-foreground: 0 0% 100%;
 
     /* Verdict colors — calm, distinctive */
-    --verdict-interview: 162 63% 52%; /* #33D6A6 success */
-    --verdict-caution: 32 89% 72%;    /* #F6C177 caution */
-    --verdict-pass: 351 100% 68%;     /* #FF5C7A risk */
+    --verdict-interview: 162 63% 42%;
+    --verdict-caution: 32 89% 55%;
+    --verdict-pass: 351 80% 55%;
 
-    /* Signal levels — matches verdicts */
-    --signal-high: 162 63% 52%;
-    --signal-medium: 32 89% 72%;
-    --signal-low: 0 0% 100% / 0.5;
+    /* Signal levels */
+    --signal-high: 162 63% 42%;
+    --signal-medium: 32 89% 55%;
+    --signal-low: 220 10% 60%;
 
-    --destructive: 351 100% 68%;
+    --destructive: 351 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders — rgba(255,255,255,0.08) */
-    --border: 0 0% 100% / 0.08;
-    --input: 0 0% 100% / 0.06;
-    --ring: 252 100% 68% / 0.5;
+    /* Borders — extremely subtle */
+    --border: 220 15% 90%;
+    --input: 220 15% 92%;
+    --ring: 260 80% 65% / 0.3;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
     /* Typography — Inter, system fallbacks */
     --font-display: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -72,8 +72,7 @@
   }
 
   body {
-    @apply text-foreground;
-    background: #070A10;
+    @apply bg-background text-foreground;
     line-height: 1.65;
     letter-spacing: 0.01em;
   }
@@ -83,23 +82,22 @@
     letter-spacing: -0.02em;
   }
 
-  /* Ambient background with layered gradients */
-  .bg-ambient {
+  /* Soft spectral gradient glow — used sparingly */
+  .spectral-glow {
     background: 
-      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(124, 92, 255, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse 60% 50% at 85% 5%, rgba(51, 214, 166, 0.05) 0%, transparent 45%),
-      linear-gradient(180deg, #070A10 0%, #0A0D14 50%, #070A10 100%);
+      radial-gradient(ellipse 80% 50% at 20% 20%, hsla(220, 90%, 70%, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 30%, hsla(280, 80%, 70%, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 50% 80%, hsla(350, 80%, 70%, 0.05) 0%, transparent 50%);
   }
 
-  /* Glass card styling */
+  /* Glass card styling — light version */
   .glass-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(220 15% 92%);
+    border-radius: var(--radius);
     box-shadow: 
-      0 4px 24px -4px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-    backdrop-filter: blur(12px);
+      0 1px 3px 0 rgba(0, 0, 0, 0.04),
+      0 4px 16px -4px rgba(0, 0, 0, 0.06);
   }
 
   .glass-card-hover {
@@ -111,33 +109,29 @@
 
   .glass-card-hover:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: hsl(220 15% 88%);
     box-shadow: 
-      0 8px 32px -4px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-      0 0 40px -10px rgba(124, 92, 255, 0.15);
+      0 4px 12px -2px rgba(0, 0, 0, 0.08),
+      0 8px 32px -4px rgba(0, 0, 0, 0.1);
   }
 
-  /* Verdict pills — calm, with subtle glow */
+  /* Verdict pills — light theme */
   .verdict-interview {
-    background: rgba(51, 214, 166, 0.12);
+    background: hsla(162, 63%, 42%, 0.1);
     color: hsl(var(--verdict-interview));
-    border: 1px solid rgba(51, 214, 166, 0.2);
-    box-shadow: 0 0 20px -5px rgba(51, 214, 166, 0.25);
+    border: 1px solid hsla(162, 63%, 42%, 0.2);
   }
 
   .verdict-caution {
-    background: rgba(246, 193, 119, 0.12);
+    background: hsla(32, 89%, 55%, 0.1);
     color: hsl(var(--verdict-caution));
-    border: 1px solid rgba(246, 193, 119, 0.2);
-    box-shadow: 0 0 20px -5px rgba(246, 193, 119, 0.25);
+    border: 1px solid hsla(32, 89%, 55%, 0.2);
   }
 
   .verdict-pass {
-    background: rgba(255, 92, 122, 0.12);
+    background: hsla(351, 80%, 55%, 0.1);
     color: hsl(var(--verdict-pass));
-    border: 1px solid rgba(255, 92, 122, 0.2);
-    box-shadow: 0 0 20px -5px rgba(255, 92, 122, 0.25);
+    border: 1px solid hsla(351, 80%, 55%, 0.2);
   }
 
   /* Signal levels */
@@ -153,9 +147,9 @@
     color: hsl(var(--signal-low));
   }
 
-  /* Accent glow — subtle, for key elements */
+  /* Accent glow — subtle */
   .accent-glow {
-    box-shadow: 0 0 24px -6px rgba(124, 92, 255, 0.35);
+    box-shadow: 0 0 40px -10px hsla(260, 80%, 65%, 0.2);
   }
 
   /* Section header style */
