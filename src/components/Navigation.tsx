@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Building2, User, Home, Briefcase, Users, ArrowLeft } from 'lucide-react';
+import { Building2, User, Home, Briefcase, Users, ArrowLeft, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getStoredCompanyId } from '@/lib/company';
 import { getStoredTalentId } from '@/lib/talent';
@@ -29,11 +29,11 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="border-b border-border/30 bg-background/50 backdrop-blur-sm sticky top-0 z-50"
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="bg-background/80 backdrop-blur-sm sticky top-0 z-50"
     >
       <div className="container max-w-6xl mx-auto px-6">
-        <div className="h-14 flex items-center justify-between">
+        <div className="h-16 flex items-center justify-between">
           {/* Left - Logo or Back */}
           <div className="flex items-center gap-4">
             {showBack ? (
@@ -41,7 +41,7 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(-1)}
-                className="gap-2 text-muted-foreground hover:text-foreground"
+                className="gap-2 text-muted-foreground hover:text-foreground rounded-full"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -49,19 +49,10 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
             ) : (
               <button
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 text-foreground/90 hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity duration-400"
               >
-                <span className="font-display text-lg font-medium tracking-tight">
-                  HumIQ <span className="text-foreground/50">AI</span>
-                </span>
-                <span 
-                  className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-medium rounded-full"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    color: 'rgba(255, 255, 255, 0.55)',
-                  }}
-                >
-                  Beta
+                <span className="font-display text-xl font-bold tracking-tight">
+                  HumIQ
                 </span>
               </button>
             )}
@@ -108,7 +99,7 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/talent/dashboard')}
-                className="gap-2 text-muted-foreground hover:text-foreground text-xs"
+                className="gap-2 text-muted-foreground hover:text-foreground text-xs rounded-full"
               >
                 <User className="w-3 h-3" />
                 Switch to Talent
@@ -119,7 +110,7 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/company/dashboard')}
-                className="gap-2 text-muted-foreground hover:text-foreground text-xs"
+                className="gap-2 text-muted-foreground hover:text-foreground text-xs rounded-full"
               >
                 <Building2 className="w-3 h-3" />
                 Switch to Company
@@ -129,7 +120,7 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
               variant="ghost"
               size="sm"
               onClick={() => navigate('/')}
-              className="gap-2 text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground rounded-full"
             >
               <Home className="w-4 h-4" />
             </Button>
@@ -154,10 +145,10 @@ function NavLink({ href, icon: Icon, label, active }: NavLinkProps) {
     <button
       onClick={() => navigate(href)}
       className={`
-        flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+        flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-400
         ${active 
-          ? 'bg-accent/10 text-accent' 
-          : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+          ? 'bg-foreground text-background' 
+          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
         }
       `}
     >

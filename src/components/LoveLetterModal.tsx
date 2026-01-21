@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface LoveLetterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalProps) {
@@ -36,7 +36,7 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
       setName('');
       setEmail('');
       setUserType('');
-      onSuccess();
+      onSuccess?.();
       onClose();
     }
 
@@ -52,10 +52,10 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.4 }}
             className="fixed inset-0 z-50"
             style={{ 
-              background: 'rgba(0, 0, 0, 0.6)',
+              background: 'rgba(0, 0, 0, 0.4)',
               backdropFilter: 'blur(8px)',
             }}
             onClick={onClose}
@@ -63,33 +63,28 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 20 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div 
-              className="w-full max-w-md p-6 rounded-2xl relative"
-              style={{
-                background: 'rgba(15, 20, 30, 0.95)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(20px)',
-              }}
+              className="w-full max-w-md p-6 rounded-2xl relative glass-card"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-lg transition-colors hover:bg-white/10"
+                className="absolute top-4 right-4 p-2 rounded-full transition-all duration-400 hover:bg-accent"
               >
-                <X className="w-4 h-4 text-white/60" />
+                <X className="w-4 h-4 text-muted-foreground" />
               </button>
 
-              <h3 className="text-lg font-medium text-white/90 mb-1">
+              <h3 className="text-xl font-bold text-foreground mb-1 font-display">
                 Leave a love letter to HumIQ
               </h3>
-              <p className="text-sm text-white/60 mb-5">
+              <p className="text-sm text-muted-foreground mb-6">
                 A short thought or feeling is perfect.
               </p>
 
@@ -100,9 +95,10 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                   onChange={(e) => setMessage(e.target.value.slice(0, 280))}
                   placeholder="This felt… / What surprised me was… / I liked that…"
                   className="w-full h-24 px-4 py-3 text-sm rounded-xl resize-none
-                    bg-white/[0.05] border border-white/10 text-white/90
-                    placeholder:text-white/40
-                    focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50"
+                    bg-secondary text-foreground
+                    placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-2 focus:ring-foreground/20
+                    transition-all duration-400"
                   required
                 />
 
@@ -113,33 +109,33 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name (optional)"
                   className="w-full px-4 py-3 text-sm rounded-xl
-                    bg-white/[0.05] border border-white/10 text-white/90
-                    placeholder:text-white/40
-                    focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50"
+                    bg-secondary text-foreground
+                    placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-2 focus:ring-foreground/20
+                    transition-all duration-400"
                 />
 
                 {/* Email Field */}
-                <div>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email (private, never shown)"
-                    className="w-full px-4 py-3 text-sm rounded-xl
-                      bg-white/[0.05] border border-white/10 text-white/90
-                      placeholder:text-white/40
-                      focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50"
-                  />
-                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email (private, never shown)"
+                  className="w-full px-4 py-3 text-sm rounded-xl
+                    bg-secondary text-foreground
+                    placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-2 focus:ring-foreground/20
+                    transition-all duration-400"
+                />
 
                 {/* User Type Select */}
                 <select
                   value={userType}
                   onChange={(e) => setUserType(e.target.value)}
                   className="w-full px-4 py-3 text-sm rounded-xl
-                    bg-white/[0.05] border border-white/10 text-white/90
-                    focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50
-                    [&>option]:bg-[#0D1117] [&>option]:text-white"
+                    bg-secondary text-foreground
+                    focus:outline-none focus:ring-2 focus:ring-foreground/20
+                    transition-all duration-400"
                 >
                   <option value="">Select role (optional)</option>
                   <option value="Founder">🌱 Founder</option>
@@ -154,17 +150,18 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2.5 text-sm text-white/60 hover:text-white/80 transition-colors"
+                    className="px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-all duration-400"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading || !message.trim()}
-                    className="px-5 py-2.5 text-sm font-medium rounded-xl
-                      bg-gradient-to-r from-accent to-purple-500 text-black
-                      hover:opacity-90 transition-all duration-200
-                      disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-6 py-2.5 text-sm font-medium rounded-full
+                      bg-foreground text-background
+                      hover:shadow-lg hover:-translate-y-0.5
+                      transition-all duration-400
+                      disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
                   >
                     {isLoading ? 'Sending...' : 'Send Love 💛'}
                   </button>

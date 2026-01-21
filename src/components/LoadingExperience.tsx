@@ -146,8 +146,8 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
         <div className="max-w-sm w-full space-y-4">
           {['Evidence collected', 'Ownership signals reviewed', 'Judgment formed'].map((text, i) => (
-            <div key={i} className="flex items-center gap-3 text-foreground/90">
-              <Check className="w-4 h-4 text-accent" />
+            <div key={i} className="flex items-center gap-3 text-foreground">
+              <Check className="w-4 h-4 text-foreground" />
               <span className="text-sm">{text}</span>
             </div>
           ))}
@@ -168,9 +168,9 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
               animate={{ 
                 scale: currentAct === act ? 1.2 : 1,
                 opacity: currentAct >= act ? 1 : 0.3,
-                backgroundColor: currentAct >= act ? 'hsl(252 100% 68%)' : 'rgba(255,255,255,0.08)'
+                backgroundColor: currentAct >= act ? 'hsl(0 0% 0%)' : 'hsl(340 30% 85%)'
               }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
               className="w-2 h-2 rounded-full"
             />
           ))}
@@ -186,7 +186,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center gap-3"
               >
                 {cards.map((card) => (
@@ -194,21 +194,21 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                     key={card.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
                     className="w-full max-w-xs"
                   >
-                    <div className="flex items-center justify-between px-5 py-4 rounded-lg glass-card">
-                      <span className="text-sm text-foreground/85">{card.label}</span>
+                    <div className="flex items-center justify-between px-5 py-4 rounded-2xl glass-card">
+                      <span className="text-sm text-foreground">{card.label}</span>
                       <AnimatePresence>
                         {card.reviewed && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                            transition={{ duration: 0.4, ease: 'easeOut' }}
                             className="flex items-center gap-1.5"
                           >
-                            <Check className="w-4 h-4 text-accent" />
-                            <span className="text-xs text-accent font-medium">Reviewed</span>
+                            <Check className="w-4 h-4 text-foreground" />
+                            <span className="text-xs text-foreground font-medium">Reviewed</span>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -225,7 +225,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <div className="relative w-full max-w-xs">
@@ -234,9 +234,9 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                     initial={{ rotate: 0 }}
                     animate={{ rotate: cards[0]?.weight === 'heavy' ? 4 : 0 }}
                     transition={{ duration: 1.5, ease: 'easeOut' }}
-                    className="relative h-0.5 bg-border rounded-full mb-8"
+                    className="relative h-0.5 bg-foreground/20 rounded-full mb-8"
                   >
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-accent accent-glow" />
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-foreground" />
                   </motion.div>
 
                   {/* Weighted cards */}
@@ -250,14 +250,12 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                           x: card.weight === 'heavy' ? 6 : card.weight === 'light' ? -6 : 0,
                         }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
-                        className={`flex items-center justify-between px-5 py-4 rounded-lg glass-card ${
-                          card.weight === 'heavy' ? 'border-accent/30' : ''
-                        }`}
+                        className="flex items-center justify-between px-5 py-4 rounded-2xl glass-card"
                       >
-                        <span className={`text-sm ${card.weight === 'faded' ? 'text-muted-foreground' : 'text-foreground/85'}`}>
+                        <span className={`text-sm ${card.weight === 'faded' ? 'text-muted-foreground' : 'text-foreground'}`}>
                           {card.label}
                         </span>
-                        <Check className={`w-4 h-4 ${card.weight === 'faded' ? 'text-muted-foreground/50' : 'text-accent'}`} />
+                        <Check className={`w-4 h-4 ${card.weight === 'faded' ? 'text-muted-foreground' : 'text-foreground'}`} />
                       </motion.div>
                     ))}
                   </div>
@@ -268,7 +266,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
                         className="mt-6 flex items-center justify-center gap-2 text-muted-foreground"
                       >
                         <HelpCircle className="w-4 h-4" />
@@ -287,7 +285,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <motion.div
@@ -296,8 +294,8 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                   transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
                   className="text-center"
                 >
-                  <div className="inline-block px-8 py-5 rounded-xl glass-card border-accent/30 accent-glow">
-                    <span className="text-xl font-medium text-foreground font-display">
+                  <div className="inline-block px-8 py-5 rounded-2xl glass-card shadow-lg">
+                    <span className="text-xl font-bold text-foreground font-display">
                       Analysis Complete
                     </span>
                   </div>
@@ -314,8 +312,8 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
                       key={i}
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 0.5, y: 0 }}
-                      transition={{ duration: 0.4, delay: 1.2 + i * 0.15, ease: 'easeOut' }}
-                      className="w-20 h-2 rounded-full bg-border"
+                      transition={{ duration: 0.5, delay: 1.2 + i * 0.15, ease: 'easeOut' }}
+                      className="w-20 h-2 rounded-full bg-foreground/15"
                     />
                   ))}
                 </motion.div>
@@ -332,7 +330,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
               className="text-sm text-muted-foreground"
             >
               {getCurrentCopy()}
@@ -340,7 +338,7 @@ export function LoadingExperience({ onComplete }: LoadingExperienceProps) {
           </AnimatePresence>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground/60 mt-6">
+        <p className="text-center text-xs text-muted-foreground mt-6">
           Preparing your session…
         </p>
       </div>
