@@ -20,21 +20,13 @@ export function WorkSignalsVisual({ isInView }: WorkSignalsVisualProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ 
-        duration: shouldReduceMotion ? 0 : 0.4, 
+        duration: shouldReduceMotion ? 0 : 0.5, 
         ease: 'easeOut' 
       }}
-      className="w-full max-w-[420px] p-7 rounded-[20px] backdrop-blur-[12px]"
-      style={{ 
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: '0px 40px 80px rgba(0,0,0,0.45)'
-      }}
+      className="w-full max-w-[420px] p-7 rounded-2xl glass-card"
     >
       {/* Card Header */}
-      <p 
-        className="text-[11px] tracking-[0.12em] uppercase text-center mb-5"
-        style={{ color: 'rgba(255,255,255,0.45)' }}
-      >
+      <p className="text-[11px] tracking-[0.12em] uppercase text-center mb-5 text-muted-foreground font-medium">
         WORK SIGNALS
       </p>
 
@@ -46,24 +38,14 @@ export function WorkSignalsVisual({ isInView }: WorkSignalsVisualProps) {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ 
-              duration: shouldReduceMotion ? 0 : 0.3, 
+              duration: shouldReduceMotion ? 0 : 0.4, 
               delay: shouldReduceMotion ? 0 : 0.12 * index,
               ease: 'easeOut' 
             }}
-            className="flex flex-col items-center justify-center h-24 rounded-[14px]"
-            style={{ 
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}
+            className="flex flex-col items-center justify-center h-24 rounded-xl bg-secondary transition-all duration-400 hover:-translate-y-0.5 hover:shadow-md"
           >
-            <tile.icon 
-              className="w-6 h-6 mb-2"
-              style={{ color: 'rgba(255,255,255,0.7)' }}
-            />
-            <span 
-              className="text-[13px]"
-              style={{ color: 'rgba(255,255,255,0.8)' }}
-            >
+            <tile.icon className="w-6 h-6 mb-2 text-foreground/70" />
+            <span className="text-[13px] text-foreground">
               {tile.label}
             </span>
           </motion.div>
@@ -71,10 +53,7 @@ export function WorkSignalsVisual({ isInView }: WorkSignalsVisualProps) {
       </div>
 
       {/* Footer */}
-      <p 
-        className="text-sm text-center mt-5"
-        style={{ color: 'rgba(255,255,255,0.65)' }}
-      >
+      <p className="text-sm text-center mt-5 text-muted-foreground">
         Any signal works. Even none.
       </p>
     </motion.div>

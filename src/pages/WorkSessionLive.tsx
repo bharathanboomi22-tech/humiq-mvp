@@ -534,9 +534,9 @@ const WorkSessionLive = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-ambient flex items-center justify-center">
+      <main className="min-h-screen blush-gradient flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">Loading session...</p>
         </div>
       </main>
@@ -551,7 +551,7 @@ const WorkSessionLive = () => {
   const isLastStage = currentIndex === activeStageOrder.length - 1;
 
   return (
-    <main className="min-h-screen bg-ambient flex flex-col">
+    <main className="min-h-screen blush-gradient flex flex-col">
       {/* Header */}
       <header className="border-b border-border bg-card/30 backdrop-blur-sm sticky top-0 z-10">
         <div className="container max-w-6xl mx-auto px-4 py-3">

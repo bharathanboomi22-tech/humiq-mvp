@@ -56,19 +56,19 @@ const CompanySetup = () => {
   };
 
   return (
-    <main className="min-h-screen bg-ambient">
+    <main className="min-h-screen blush-gradient">
       <div className="container max-w-2xl mx-auto px-6 py-16 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5 }}
         >
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent/10 mb-6">
-              <Building2 className="w-8 h-8 text-accent" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-foreground/5 mb-6">
+              <Building2 className="w-8 h-8 text-foreground" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
               Set Up Your Company
             </h1>
             <p className="text-muted-foreground text-lg max-w-md mx-auto">
@@ -80,7 +80,7 @@ const CompanySetup = () => {
           <Card className="glass-card">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
-                <Globe className="w-5 h-5 text-accent" />
+                <Globe className="w-5 h-5 text-foreground" />
                 Company Information
               </CardTitle>
               <CardDescription>

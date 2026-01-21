@@ -116,16 +116,12 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="w-full py-24"
-      style={{ background: '#0B0E12' }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="w-full py-24 bg-background"
     >
       {/* Section Title */}
       <div className="text-center mb-8">
-        <h3 
-          className="text-sm uppercase tracking-[0.08em]"
-          style={{ color: 'rgba(255, 255, 255, 0.6)' }}
-        >
+        <h3 className="text-sm uppercase tracking-[0.08em] text-muted-foreground font-medium">
           HumIQ Love Letters
         </h3>
       </div>
@@ -145,32 +141,18 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
           {displayLetters.map((letter, index) => (
             <motion.div
               key={`${letter.id}-${index}`}
-              className="flex-shrink-0 w-[300px] p-5 rounded-2xl"
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(10px)',
-              }}
+              className="flex-shrink-0 w-[300px] p-5 rounded-2xl glass-card"
             >
               {/* Quote Message */}
-              <p 
-                className="text-sm leading-relaxed line-clamp-3"
-                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
-              >
+              <p className="text-sm leading-relaxed line-clamp-3 text-foreground">
                 "{letter.message}"
               </p>
 
               {/* Footer */}
               {(letter.name_or_role || letter.user_type) && (
-                <div 
-                  className="flex items-center justify-between mt-4 pt-3"
-                  style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}
-                >
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-foreground/5">
                   {letter.name_or_role && (
-                    <span 
-                      className="text-xs"
-                      style={{ color: 'rgba(255, 255, 255, 0.6)' }}
-                    >
+                    <span className="text-xs text-muted-foreground">
                       {letter.name_or_role}
                     </span>
                   )}
