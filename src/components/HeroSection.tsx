@@ -33,76 +33,99 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   };
 
   return (
-    <section className="min-h-screen relative overflow-hidden blush-gradient">
-      {/* Orbital AI Animation Background */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {/* Main orb */}
+    <section 
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background: `
+          radial-gradient(ellipse 70% 50% at 50% 42%, rgba(255, 183, 214, 0.35) 0%, rgba(255, 214, 232, 0.18) 40%, transparent 70%),
+          linear-gradient(to right, #F3EEF1 0%, #FAFAFA 20%, #FAFAFA 80%, #F2EDEB 100%)
+        `,
+      }}
+    >
+      {/* Orbi AI Animation - Hero Only */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ top: '-5%' }}>
+        {/* Main Orbi - subtle center glow */}
         <motion.div
-          className="absolute w-[500px] h-[500px] md:w-[600px] md:h-[600px] rounded-full"
+          className="absolute w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(255, 182, 193, 0.15) 0%, transparent 70%)',
-            filter: 'blur(60px)',
+            background: 'radial-gradient(circle, rgba(255, 140, 190, 0.18) 0%, rgba(255, 200, 225, 0.08) 50%, transparent 70%)',
+            filter: 'blur(80px)',
           }}
-          initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          initial={shouldReduceMotion ? { opacity: 0.15 } : { opacity: 0, scale: 0.9 }}
+          animate={shouldReduceMotion ? { opacity: 0.15 } : { opacity: 1, scale: 1 }}
+          transition={{ duration: 2, ease: 'easeOut' }}
         />
         
-        {/* Floating orbs */}
+        {/* Floating Orbi elements - only if motion allowed */}
         {!shouldReduceMotion && (
           <>
+            {/* Left drift orb */}
             <motion.div
-              className="absolute w-[250px] h-[250px] md:w-[300px] md:h-[300px] rounded-full animate-float"
+              className="absolute w-[200px] h-[200px] md:w-[280px] md:h-[280px] rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 200, 220, 0.12) 0%, transparent 70%)',
-                filter: 'blur(40px)',
-                top: '20%',
-                left: '15%',
+                background: 'radial-gradient(circle, rgba(255, 200, 225, 0.12) 0%, transparent 60%)',
+                filter: 'blur(60px)',
+                top: '25%',
+                left: '12%',
               }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 0.3 }}
+              animate={{ 
+                opacity: [0, 0.8, 0.6, 0.8],
+                x: [0, 15, -10, 0],
+                y: [0, -10, 5, 0],
+              }}
+              transition={{ 
+                duration: 18, 
+                repeat: Infinity, 
+                ease: 'easeInOut',
+                delay: 0.5 
+              }}
             />
             
+            {/* Right drift orb */}
             <motion.div
-              className="absolute w-[200px] h-[200px] md:w-[250px] md:h-[250px] rounded-full animate-float"
+              className="absolute w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 192, 203, 0.1) 0%, transparent 70%)',
-                filter: 'blur(50px)',
-                bottom: '25%',
-                right: '10%',
-                animationDelay: '-8s',
+                background: 'radial-gradient(circle, rgba(255, 140, 190, 0.10) 0%, transparent 60%)',
+                filter: 'blur(70px)',
+                bottom: '30%',
+                right: '8%',
               }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 0.5 }}
+              animate={{ 
+                opacity: [0, 0.7, 0.5, 0.7],
+                x: [0, -12, 8, 0],
+                y: [0, 8, -6, 0],
+              }}
+              transition={{ 
+                duration: 22, 
+                repeat: Infinity, 
+                ease: 'easeInOut',
+                delay: 1 
+              }}
             />
 
-            {/* Orbiting element */}
+            {/* Center pulse orb */}
             <motion.div
-              className="absolute w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full animate-orbit"
+              className="absolute w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 214, 232, 0.2) 0%, transparent 60%)',
-                filter: 'blur(20px)',
+                background: 'radial-gradient(circle, rgba(255, 200, 225, 0.10) 0%, transparent 50%)',
+                filter: 'blur(100px)',
               }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 0.8 }}
+              animate={{ 
+                opacity: [0, 0.6, 0.4, 0.6],
+                scale: [1, 1.05, 0.98, 1],
+              }}
+              transition={{ 
+                duration: 16, 
+                repeat: Infinity, 
+                ease: 'easeInOut',
+                delay: 0.8 
+              }}
             />
           </>
         )}
-
-        {/* Subtle pulse animation */}
-        <motion.div
-          className="absolute w-[400px] h-[400px] rounded-full animate-pulse-soft"
-          style={{
-            background: 'radial-gradient(circle, rgba(255, 214, 232, 0.1) 0%, transparent 50%)',
-            filter: 'blur(80px)',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 1 }}
-        />
       </div>
 
       {/* Navigation Bar */}
