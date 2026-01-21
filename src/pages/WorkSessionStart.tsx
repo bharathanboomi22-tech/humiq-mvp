@@ -80,7 +80,7 @@ const WorkSessionStart = () => {
   };
 
   return (
-    <main className="min-h-screen bg-ambient">
+    <main className="min-h-screen blush-gradient">
       <div className="container max-w-2xl mx-auto px-6 py-16 md:py-24">
         {/* Header */}
         <motion.div
@@ -89,7 +89,7 @@ const WorkSessionStart = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/5 text-foreground text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Tech Work Session
           </div>

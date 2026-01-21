@@ -86,7 +86,7 @@ function DeepDiveCard({ section, index }: { section: DeepDiveSection; index: num
       <motion.div
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: 'easeOut' }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.5, ease: 'easeOut' }}
         className="container mx-auto px-6 lg:px-12"
       >
         <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center ${isEven ? '' : 'lg:direction-rtl'}`}>
@@ -95,13 +95,13 @@ function DeepDiveCard({ section, index }: { section: DeepDiveSection; index: num
             initial={{ opacity: 0, y: 15 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{
-              duration: shouldReduceMotion ? 0 : 0.4,
+              duration: shouldReduceMotion ? 0 : 0.5,
               ease: 'easeOut',
             }}
             className={isEven ? '' : 'lg:order-2 lg:text-left'}
             style={{ direction: 'ltr' }}
           >
-            <h3 className="font-display text-xl md:text-2xl font-medium text-foreground mb-6">
+            <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-6">
               {section.title}
             </h3>
             
@@ -117,14 +117,7 @@ function DeepDiveCard({ section, index }: { section: DeepDiveSection; index: num
             </div>
 
             {/* Trust cue */}
-            <div
-              className="inline-block px-4 py-2 rounded-lg text-sm"
-              style={{
-                background: 'rgba(51, 214, 166, 0.08)',
-                color: 'hsl(162 63% 52%)',
-                border: '1px solid rgba(51, 214, 166, 0.15)',
-              }}
-            >
+            <div className="inline-block px-4 py-2 rounded-full text-sm bg-foreground/5 text-foreground">
               {section.trustCue}
             </div>
           </motion.div>
@@ -144,13 +137,7 @@ function DeepDiveCard({ section, index }: { section: DeepDiveSection; index: num
 
 export function DeepDiveSections() {
   return (
-    <section className="relative" style={{ background: '#0A0D12' }}>
-      {/* Section divider */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{ background: 'rgba(255, 255, 255, 0.06)' }}
-      />
-
+    <section className="relative bg-secondary">
       {sections.map((section, index) => (
         <DeepDiveCard key={index} section={section} index={index} />
       ))}

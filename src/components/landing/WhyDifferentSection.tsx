@@ -27,24 +27,17 @@ export function WhyDifferentSection() {
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 relative"
-      style={{ background: '#070A10' }}
+      className="py-24 md:py-32 relative bg-background"
     >
-      {/* Top divider */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{ background: 'rgba(255, 255, 255, 0.06)' }}
-      />
-
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
           className="mb-16 md:mb-20 text-center"
         >
-          <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight text-foreground mb-3">
+          <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-3">
             Why HumIQ is different
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
@@ -60,8 +53,8 @@ export function WhyDifferentSection() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
-                className="text-sm uppercase tracking-wider text-muted-foreground/50 mb-6"
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="text-sm uppercase tracking-wider text-muted-foreground/60 mb-6 font-medium"
               >
                 Other platforms
               </motion.div>
@@ -72,11 +65,11 @@ export function WhyDifferentSection() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{
-                      duration: shouldReduceMotion ? 0 : 0.3,
+                      duration: shouldReduceMotion ? 0 : 0.4,
                       delay: shouldReduceMotion ? 0 : index * 0.1,
                       ease: 'easeOut',
                     }}
-                    className="text-base text-muted-foreground/60"
+                    className="text-base text-muted-foreground/70"
                   >
                     {item}
                   </motion.div>
@@ -89,8 +82,8 @@ export function WhyDifferentSection() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
-                className="text-sm uppercase tracking-wider text-foreground/70 mb-6"
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="text-sm uppercase tracking-wider text-foreground mb-6 font-medium"
               >
                 HumIQ
               </motion.div>
@@ -101,11 +94,11 @@ export function WhyDifferentSection() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{
-                      duration: shouldReduceMotion ? 0 : 0.3,
+                      duration: shouldReduceMotion ? 0 : 0.4,
                       delay: shouldReduceMotion ? 0 : index * 0.15,
                       ease: 'easeOut',
                     }}
-                    className="text-base text-foreground/90"
+                    className="text-base text-foreground font-medium"
                   >
                     {item}
                   </motion.div>
@@ -120,13 +113,13 @@ export function WhyDifferentSection() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{
-            duration: shouldReduceMotion ? 0 : 0.5,
+            duration: shouldReduceMotion ? 0 : 0.6,
             delay: shouldReduceMotion ? 0 : 0.8,
             ease: 'easeOut',
           }}
           className="mt-20 md:mt-28 text-center"
         >
-          <p className="font-display text-lg md:text-xl text-foreground/80 leading-relaxed max-w-lg mx-auto">
+          <p className="font-display text-lg md:text-xl text-foreground leading-relaxed max-w-lg mx-auto font-medium">
             Hiring doesn't fail from lack of data.
             <br />
             It fails from lack of signal.

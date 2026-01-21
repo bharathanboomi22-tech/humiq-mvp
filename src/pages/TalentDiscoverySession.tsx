@@ -180,9 +180,9 @@ const TalentDiscoverySession = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-ambient flex items-center justify-center">
+      <main className="min-h-screen blush-gradient flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">Loading discovery session...</p>
         </div>
       </main>
@@ -190,12 +190,12 @@ const TalentDiscoverySession = () => {
   }
 
   return (
-    <main className="min-h-screen bg-ambient">
+    <main className="min-h-screen blush-gradient">
       {/* Background */}
       <div 
         className="fixed inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 100% 50% at 50% 0%, rgba(56, 189, 248, 0.06), transparent 50%)',
+          background: 'radial-gradient(ellipse 100% 50% at 50% 0%, rgba(255, 182, 193, 0.15), transparent 50%)',
         }}
       />
 

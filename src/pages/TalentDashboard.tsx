@@ -175,8 +175,8 @@ const TalentDashboard = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-ambient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      <main className="min-h-screen blush-gradient flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
       </main>
     );
   }
@@ -184,17 +184,17 @@ const TalentDashboard = () => {
   // No profile yet - show onboarding with test selection
   if (!talentId || !profile) {
     return (
-      <main className="min-h-screen bg-ambient">
+      <main className="min-h-screen blush-gradient">
         <div className="container max-w-2xl mx-auto px-6 py-16 md:py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-accent/10 mb-8">
-                <User className="w-10 h-10 text-accent" />
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-foreground/5 mb-8">
+                <User className="w-10 h-10 text-foreground" />
               </div>
-              <h1 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
                 Welcome to HumIQ
               </h1>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
@@ -213,17 +213,17 @@ const TalentDashboard = () => {
                   <button
                     key={test.id}
                     onClick={() => handleStartTest()}
-                    className="w-full p-5 rounded-xl glass-card text-left group hover:border-accent/40 transition-all"
+                    className="w-full p-5 rounded-2xl glass-card text-left group transition-all duration-400 hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                        <Icon className="w-6 h-6 text-accent" />
+                      <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center group-hover:bg-accent transition-colors duration-400">
+                        <Icon className="w-6 h-6 text-foreground" />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-foreground text-lg">{test.name}</h3>
                         <p className="text-sm text-muted-foreground">{test.description}</p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors" />
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors duration-400" />
                     </div>
                   </button>
                 );
@@ -245,7 +245,7 @@ const TalentDashboard = () => {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <main className="min-h-screen bg-ambient">
+      <main className="min-h-screen blush-gradient">
         <Navigation variant="talent" />
       <div className="container max-w-6xl mx-auto px-6 py-8">
         <motion.div

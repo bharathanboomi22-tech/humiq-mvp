@@ -189,8 +189,8 @@ const CompanyDashboard = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-ambient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      <main className="min-h-screen blush-gradient flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
       </main>
     );
   }
@@ -202,7 +202,7 @@ const CompanyDashboard = () => {
   const analyzed = company.analyzed_data;
 
   return (
-    <main className="min-h-screen bg-ambient">
+    <main className="min-h-screen blush-gradient">
       <Navigation variant="company" />
       <div className="container max-w-6xl mx-auto px-6 py-8">
         <motion.div
@@ -214,8 +214,8 @@ const CompanyDashboard = () => {
           <div className="flex items-start justify-between mb-8">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-accent" />
+                <div className="w-12 h-12 rounded-xl bg-foreground/5 flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-foreground" />
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-display font-semibold text-foreground">

@@ -207,9 +207,9 @@ const EvidencePack = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-ambient flex items-center justify-center">
+      <main className="min-h-screen blush-gradient flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">Loading Evidence Pack...</p>
         </div>
       </main>
@@ -224,7 +224,7 @@ const EvidencePack = () => {
   const verdictStyle = summary.verdict ? verdictConfig[summary.verdict] : null;
 
   return (
-    <main className="min-h-screen bg-ambient">
+    <main className="min-h-screen blush-gradient">
       <div className="container max-w-4xl mx-auto px-6 py-8 md:py-12">
         {/* Header */}
         <motion.div
@@ -270,7 +270,7 @@ const EvidencePack = () => {
               
               <Button
                 onClick={handleCopyLink}
-                className="gap-2 bg-accent hover:bg-accent/90"
+                className="gap-2"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 {copied ? 'Copied!' : 'Copy Share Link'}
