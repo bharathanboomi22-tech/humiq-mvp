@@ -16,26 +16,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="min-h-screen relative overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/videos/hero-bg.mp4"
-        />
-        
-        {/* Very subtle light overlay for readability */}
-        <div 
-          className="absolute inset-0"
-          style={{ 
-            background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%)'
-          }}
-        />
-      </div>
+    <section className="min-h-screen relative overflow-hidden bg-background">
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 lg:px-12 min-h-screen flex flex-col">
