@@ -2,38 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumIQ — Soft Blush Pink Theme
-   Premium, minimal, editorial.
-   Apple / Linear inspired calm. */
+/* HumIQ — AI Career Intelligence Theme
+   Premium, futuristic, human-centered.
+   Apple × OpenAI × high-end AI lab aesthetic. */
 
 @layer base {
   :root {
-    /* Soft blush pink background */
-    --background: 340 60% 96%;
-    --foreground: 0 0% 0%;
+    /* Primary: Pure white */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
 
-    /* Card surfaces — white with subtle warmth */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    /* Secondary surfaces (cards, panels) */
+    --card: 240 5% 97%;
+    --card-foreground: 0 0% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 4%;
 
-    /* Primary — pure black */
-    --primary: 0 0% 0%;
+    /* Primary accent: Graphite black */
+    --primary: 0 0% 4%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary — soft pink surface */
-    --secondary: 340 40% 94%;
-    --secondary-foreground: 0 0% 0%;
+    /* Secondary: Mist gray surface */
+    --secondary: 240 5% 97%;
+    --secondary-foreground: 0 0% 4%;
 
-    /* Muted — secondary text rgba(0,0,0,0.65) equivalent */
-    --muted: 340 30% 92%;
-    --muted-foreground: 0 0% 35%;
+    /* Muted text colors */
+    --muted: 240 5% 96%;
+    --muted-foreground: 220 6% 40%;
 
-    /* Accent — soft pink */
-    --accent: 340 50% 90%;
-    --accent-foreground: 0 0% 0%;
+    /* Accent */
+    --accent: 240 5% 96%;
+    --accent-foreground: 0 0% 4%;
 
     /* Verdict colors — calm, distinctive */
     --verdict-interview: 162 63% 42%;
@@ -48,12 +48,17 @@
     --destructive: 351 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders — none/invisible */
-    --border: 0 0% 100% / 0;
-    --input: 340 30% 90%;
-    --ring: 0 0% 0% / 0.15;
+    /* Borders */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 60%;
 
-    --radius: 1.5rem;
+    /* Cognitive Flow gradient colors (for AI elements) */
+    --gradient-start: 217 100% 71%;
+    --gradient-mid: 270 100% 75%;
+    --gradient-end: 340 100% 78%;
+
+    --radius: 1rem;
 
     /* Typography — Inter */
     --font-display: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -82,18 +87,28 @@
     letter-spacing: -0.02em;
   }
 
-  /* Blush pink radial gradient background */
-  .blush-gradient {
-    background: radial-gradient(ellipse 120% 80% at 50% 20%, #FFD6E8 0%, #FDE7F1 60%, #FDF2F8 100%);
+  /* Cognitive Flow gradient (AI ambient glow) */
+  .cognitive-gradient {
+    background: linear-gradient(135deg, #5B8CFF 0%, #B983FF 50%, #FF8FB1 100%);
   }
 
-  /* Glass card styling — white, no borders */
+  .cognitive-glow {
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 40%,
+      rgba(91, 140, 255, 0.08) 0%,
+      rgba(185, 131, 255, 0.06) 40%,
+      rgba(255, 143, 177, 0.04) 70%,
+      transparent 100%
+    );
+  }
+
+  /* Glass card styling — premium depth */
   .glass-card {
     background: hsl(0 0% 100%);
     border-radius: var(--radius);
     box-shadow: 
-      0 2px 8px -2px rgba(0, 0, 0, 0.06),
-      0 8px 24px -4px rgba(0, 0, 0, 0.08);
+      0 4px 20px -4px rgba(0, 0, 0, 0.06),
+      0 20px 60px -12px rgba(0, 0, 0, 0.08);
   }
 
   .glass-card-hover {
