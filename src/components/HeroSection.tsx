@@ -51,12 +51,37 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   };
 
   return (
-    <section 
-      className="min-h-screen relative overflow-hidden"
-      style={{ background: '#FFFFFF' }}
-    >
-      {/* Ambient AI Glow - positioned behind content */}
-      <div className="absolute inset-0 lg:left-[30%] pointer-events-none">
+    <section className="min-h-screen relative overflow-hidden">
+      {/* Flowing Gradient Background */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            linear-gradient(135deg, 
+              hsl(200, 100%, 97%) 0%, 
+              hsl(320, 80%, 92%) 25%, 
+              hsl(280, 70%, 88%) 50%, 
+              hsl(250, 80%, 85%) 75%, 
+              hsl(220, 90%, 88%) 100%
+            )
+          `,
+        }}
+      />
+      
+      {/* Subtle overlaying gradient layers for depth */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 60% at 0% 40%, hsl(200, 100%, 97%) 0%, transparent 60%),
+            radial-gradient(ellipse 70% 50% at 100% 30%, hsl(240, 80%, 88%) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 50% 50%, hsl(300, 60%, 90%) 0%, transparent 60%)
+          `,
+        }}
+      />
+      
+      {/* Ambient AI Orb - positioned behind content */}
+      <div className="absolute inset-0 lg:left-[30%] pointer-events-none opacity-50">
         <AIOrb />
       </div>
 
