@@ -11,14 +11,20 @@ import { CompanyDecisionPanel } from './hero/CompanyDecisionPanel';
 interface HeroSectionProps {
   onSubmit?: (data: { githubUrl: string; otherLinks: string }) => void;
   isLoading?: boolean;
+  onViewChange?: (view: 'talent' | 'company') => void;
 }
 
-export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
+export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const navigate = useNavigate();
   const { setUserType } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'talent' | 'company'>('talent');
+
+  const handleTabSwitch = (tab: 'talent' | 'company') => {
+    setActiveTab(tab);
+    onViewChange?.(tab);
+  };
 
   const handleTalentClick = () => {
     setUserType('talent');
@@ -28,10 +34,6 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const handleCompanyClick = () => {
     setUserType('company');
     navigate('/company/setup');
-  };
-
-  const handleTabSwitch = (tab: 'talent' | 'company') => {
-    setActiveTab(tab);
   };
 
   // Animation variants for staggered text reveal
