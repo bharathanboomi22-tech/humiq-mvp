@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 
 interface LoveLetter {
@@ -22,12 +22,162 @@ interface LoveLettersSectionProps {
   onOpenInput: () => void;
 }
 
+// Row configuration for parallax effect
+const rowConfigs = [
+  { speed: 0.4, direction: 1 },   // Row 1: slow, left-to-right
+  { speed: 0.7, direction: -1 },  // Row 2: medium, right-to-left
+  { speed: 0.5, direction: 1 },   // Row 3: moderate, left-to-right
+];
+
+interface ScrollingRowProps {
+  letters: LoveLetter[];
+  speed: number;
+  direction: number;
+  isPaused: boolean;
+  rowIndex: number;
+}
+
+function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: ScrollingRowProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+  const scrollPosRef = useRef(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion || letters.length === 0) return;
+
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+
+    // Set initial position for reverse direction
+    if (direction === -1) {
+      scrollPosRef.current = scroll.scrollWidth / 2;
+    }
+
+    const animate = () => {
+      if (!isPaused && scroll) {
+        scrollPosRef.current += speed * direction;
+        
+        const halfWidth = scroll.scrollWidth / 2;
+        if (direction === 1 && scrollPosRef.current >= halfWidth) {
+          scrollPosRef.current = 0;
+        } else if (direction === -1 && scrollPosRef.current <= 0) {
+          scrollPosRef.current = halfWidth;
+        }
+        
+        scroll.scrollLeft = scrollPosRef.current;
+      }
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused, letters.length, shouldReduceMotion, speed, direction]);
+
+  // Duplicate letters for infinite scroll effect
+  const displayLetters = [...letters, ...letters];
+
+  return (
+    <div
+      ref={scrollRef}
+      className="overflow-x-hidden"
+      style={{ 
+        maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+        WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+      }}
+    >
+      <div className="flex gap-4 px-4 w-max">
+        {displayLetters.map((letter, index) => (
+          <motion.div
+            key={`${letter.id}-${rowIndex}-${index}`}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: Math.min(index * 0.03, 0.2), duration: 0.4 }}
+            whileHover={{ 
+              y: -3,
+              scale: 1.02,
+              transition: { duration: 0.2 } 
+            }}
+            className="group relative flex-shrink-0 w-[280px] sm:w-[300px] p-5 rounded-xl overflow-hidden cursor-default"
+            style={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.9)',
+            }}
+          >
+            {/* Hover gradient overlay */}
+            <div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.06) 0%, rgba(185, 131, 255, 0.04) 50%, rgba(255, 143, 177, 0.03) 100%)',
+              }}
+            />
+            
+            {/* Top gradient accent line */}
+            <div 
+              className="absolute top-0 left-4 right-4 h-px opacity-30 group-hover:opacity-60 transition-opacity duration-300"
+              style={{
+                background: 'linear-gradient(90deg, transparent, #5B8CFF, #B983FF, transparent)',
+              }}
+            />
+
+            {/* Content */}
+            <div className="relative">
+              {/* AI Signal Orb + Message */}
+              <div className="flex items-start gap-2.5 mb-2">
+                <div 
+                  className="flex-shrink-0 w-2 h-2 mt-1.5 rounded-full animate-pulse"
+                  style={{
+                    background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
+                    boxShadow: '0 0 6px rgba(91, 140, 255, 0.5)',
+                  }}
+                />
+                <p className="text-sm leading-relaxed text-foreground/85 line-clamp-3">
+                  "{letter.message}"
+                </p>
+              </div>
+
+              {/* Footer */}
+              {(letter.name_or_role || letter.user_type) && (
+                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-foreground/5">
+                  {letter.name_or_role && (
+                    <span className="text-xs text-muted-foreground font-medium">
+                      {letter.name_or_role}
+                    </span>
+                  )}
+                  {letter.user_type && (
+                    <span 
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        background: 'rgba(91, 140, 255, 0.08)',
+                      }}
+                      title={letter.user_type}
+                    >
+                      {userTypeEmoji[letter.user_type] || '💬'}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const [letters, setLetters] = useState<LoveLetter[]>([]);
   const [isPaused, setIsPaused] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
 
   // Fetch letters on mount
   useEffect(() => {
@@ -54,9 +204,6 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
 
     return () => {
       supabase.removeChannel(channel);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
     };
   }, []);
 
@@ -65,50 +212,22 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       .from('love_letters')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(30);
+      .limit(45); // More letters for 3 rows
 
     if (!error && data) {
       setLetters(data);
     }
   };
 
-  // Auto-scroll animation
-  useEffect(() => {
-    if (shouldReduceMotion || letters.length === 0) return;
-
-    const scroll = scrollRef.current;
-    if (!scroll) return;
-
-    let scrollPos = 0;
-    const speed = 0.5;
-
-    const animate = () => {
-      if (!isPaused && scroll) {
-        scrollPos += speed;
-        
-        const halfWidth = scroll.scrollWidth / 2;
-        if (scrollPos >= halfWidth) {
-          scrollPos = 0;
-        }
-        
-        scroll.scrollLeft = scrollPos;
-      }
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isPaused, letters.length, shouldReduceMotion]);
-
   if (letters.length === 0) return null;
 
-  // Duplicate letters for infinite scroll effect
-  const displayLetters = [...letters, ...letters];
+  // Split letters into 3 rows
+  const rowSize = Math.ceil(letters.length / 3);
+  const rows = [
+    letters.slice(0, rowSize),
+    letters.slice(rowSize, rowSize * 2),
+    letters.slice(rowSize * 2),
+  ];
 
   return (
     <motion.section
@@ -116,35 +235,37 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="relative w-full py-24 overflow-hidden"
+      className="relative w-full py-20 md:py-28 overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
       {/* Ambient Intelligence Background */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Large blue radial glow - top right */}
         <div 
-          className="absolute -top-32 -right-32 w-[800px] h-[800px] rounded-full opacity-[0.08]"
+          className="absolute -top-40 -right-40 w-[900px] h-[900px] rounded-full opacity-[0.07]"
           style={{
-            background: 'radial-gradient(circle, #5B8CFF 0%, transparent 70%)',
+            background: 'radial-gradient(circle, hsl(220, 100%, 70%) 0%, transparent 65%)',
           }}
         />
         {/* Lavender glow - center left */}
         <div 
-          className="absolute top-1/2 -left-48 w-[600px] h-[600px] rounded-full opacity-[0.06] -translate-y-1/2"
+          className="absolute top-1/2 -left-60 w-[700px] h-[700px] rounded-full opacity-[0.05] -translate-y-1/2"
           style={{
-            background: 'radial-gradient(circle, #B983FF 0%, transparent 70%)',
+            background: 'radial-gradient(circle, hsl(270, 70%, 70%) 0%, transparent 65%)',
           }}
         />
-        {/* Subtle pink accent - bottom */}
+        {/* Subtle pink accent - bottom center */}
         <div 
-          className="absolute -bottom-24 right-1/3 w-[500px] h-[500px] rounded-full opacity-[0.05]"
+          className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-[0.04]"
           style={{
-            background: 'radial-gradient(circle, #FF8FB1 0%, transparent 70%)',
+            background: 'radial-gradient(circle, hsl(340, 80%, 75%) 0%, transparent 65%)',
           }}
         />
       </div>
 
       {/* Section Title */}
-      <div className="relative text-center mb-12">
+      <div className="relative text-center mb-10 md:mb-14 px-6">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -157,7 +278,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
             className="w-2 h-2 rounded-full animate-pulse"
             style={{
               background: 'linear-gradient(135deg, #5B8CFF, #B983FF, #FF8FB1)',
-              boxShadow: '0 0 12px rgba(91, 140, 255, 0.5)',
+              boxShadow: '0 0 10px rgba(91, 140, 255, 0.5)',
             }}
           />
           <h3 className="text-sm uppercase tracking-[0.12em] text-muted-foreground font-medium">
@@ -169,101 +290,24 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-3 text-foreground/60 text-sm max-w-md mx-auto"
+          className="mt-3 text-foreground/55 text-sm max-w-md mx-auto"
         >
           Human reflections left behind after meeting intelligence
         </motion.p>
       </div>
 
-      {/* Scrolling Cards Container */}
-      <div
-        ref={scrollRef}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        className="relative overflow-x-hidden"
-        style={{ 
-          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-        }}
-      >
-        <div className="flex gap-5 px-8 w-max">
-          {displayLetters.map((letter, index) => (
-            <motion.div
-              key={`${letter.id}-${index}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: Math.min(index * 0.05, 0.3), duration: 0.5 }}
-              whileHover={{ 
-                y: -4, 
-                transition: { duration: 0.2 } 
-              }}
-              className="group relative flex-shrink-0 w-[320px] p-6 rounded-2xl overflow-hidden"
-              style={{
-                background: 'rgba(255, 255, 255, 0.75)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.8)',
-              }}
-            >
-              {/* Subtle gradient accent on hover */}
-              <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.05) 0%, rgba(185, 131, 255, 0.05) 50%, rgba(255, 143, 177, 0.03) 100%)',
-                }}
-              />
-              
-              {/* Top gradient line accent */}
-              <div 
-                className="absolute top-0 left-6 right-6 h-px opacity-40 group-hover:opacity-70 transition-opacity duration-300"
-                style={{
-                  background: 'linear-gradient(90deg, transparent, #5B8CFF, #B983FF, transparent)',
-                }}
-              />
-
-              {/* Content */}
-              <div className="relative">
-                {/* AI Signal Orb */}
-                <div className="flex items-start gap-3 mb-3">
-                  <div 
-                    className="flex-shrink-0 w-2.5 h-2.5 mt-1.5 rounded-full"
-                    style={{
-                      background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
-                      boxShadow: '0 0 8px rgba(91, 140, 255, 0.4)',
-                    }}
-                  />
-                  <p className="text-sm leading-relaxed text-foreground/90 line-clamp-4">
-                    "{letter.message}"
-                  </p>
-                </div>
-
-                {/* Footer */}
-                {(letter.name_or_role || letter.user_type) && (
-                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-foreground/5">
-                    {letter.name_or_role && (
-                      <span className="text-xs text-muted-foreground font-medium">
-                        {letter.name_or_role}
-                      </span>
-                    )}
-                    {letter.user_type && (
-                      <span 
-                        className="text-sm px-2 py-0.5 rounded-full"
-                        style={{
-                          background: 'rgba(91, 140, 255, 0.08)',
-                        }}
-                        title={letter.user_type}
-                      >
-                        {userTypeEmoji[letter.user_type] || '💬'}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      {/* 3 Scrolling Rows with Parallax Effect */}
+      <div className="space-y-4 md:space-y-5">
+        {rows.map((rowLetters, rowIndex) => (
+          <ScrollingRow
+            key={rowIndex}
+            letters={rowLetters}
+            speed={rowConfigs[rowIndex].speed}
+            direction={rowConfigs[rowIndex].direction}
+            isPaused={isPaused}
+            rowIndex={rowIndex}
+          />
+        ))}
       </div>
     </motion.section>
   );
