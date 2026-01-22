@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-400 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default: 
-          "bg-foreground text-background rounded-full shadow-[0_2px_8px_rgba(11,11,13,0.12)] hover:shadow-[0_4px_16px_rgba(11,11,13,0.16),0_0_0_4px_rgba(11,11,13,0.04)] hover:-translate-y-0.5 active:scale-[0.97]",
+          "bg-gradient-to-br from-[#5B8CFF] via-[#8F7CFF] via-[#B983FF] to-[#FF8FB1] text-white rounded-full shadow-[0_4px_20px_rgba(91,140,255,0.35),0_2px_8px_rgba(185,131,255,0.25)] hover:shadow-[0_8px_32px_rgba(91,140,255,0.45),0_4px_16px_rgba(185,131,255,0.35)] hover:-translate-y-0.5 active:scale-[0.97] active:shadow-[0_2px_12px_rgba(91,140,255,0.3)]",
         destructive: 
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full",
         outline: 
