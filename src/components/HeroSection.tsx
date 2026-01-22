@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useReducedMotion, Variants } from 'framer-motion';
+import { motion, useReducedMotion, Variants, AnimatePresence } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { LoveLetterModal } from './LoveLetterModal';
 import { useAuth } from '@/hooks/useAuth';
 import { AIDialogueCard } from './hero/AIDialogueCard';
 import { AIOrb } from './hero/AIOrb';
+import { CompanyDecisionPanel } from './hero/CompanyDecisionPanel';
 
 interface HeroSectionProps {
   onSubmit?: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -29,6 +30,10 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
     navigate('/company/setup');
   };
 
+  const handleTabSwitch = (tab: 'talent' | 'company') => {
+    setActiveTab(tab);
+  };
+
   // Animation variants for staggered text reveal
   const headlineVariants: Variants = {
     hidden: { opacity: 0 },
@@ -50,21 +55,42 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
     },
   };
 
+  const contentVariants: Variants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    },
+    exit: { 
+      opacity: 0, 
+      x: 20,
+      transition: { duration: 0.3, ease: 'easeIn' },
+    },
+  };
+
   return (
     <section className="min-h-screen relative overflow-hidden">
       {/* Flowing Gradient Background */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `
-            linear-gradient(135deg, 
-              hsl(200, 100%, 97%) 0%, 
-              hsl(320, 80%, 92%) 25%, 
-              hsl(280, 70%, 88%) 50%, 
-              hsl(250, 80%, 85%) 75%, 
-              hsl(220, 90%, 88%) 100%
-            )
-          `,
+          background: activeTab === 'talent' 
+            ? `linear-gradient(135deg, 
+                hsl(200, 100%, 97%) 0%, 
+                hsl(320, 80%, 92%) 25%, 
+                hsl(280, 70%, 88%) 50%, 
+                hsl(250, 80%, 85%) 75%, 
+                hsl(220, 90%, 88%) 100%
+              )`
+            : `linear-gradient(135deg, 
+                hsl(220, 90%, 97%) 0%, 
+                hsl(240, 80%, 94%) 25%, 
+                hsl(260, 70%, 92%) 50%, 
+                hsl(220, 80%, 90%) 75%, 
+                hsl(200, 90%, 95%) 100%
+              )`,
+          transition: 'background 0.6s ease-in-out',
         }}
       />
       
@@ -155,7 +181,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)' }}
             >
               <button
-                onClick={handleTalentClick}
+                onClick={() => handleTabSwitch('talent')}
                 className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
                 style={{
                   background: activeTab === 'talent' ? '#0B0B0D' : 'transparent',
@@ -165,7 +191,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
                 Talent
               </button>
               <button
-                onClick={handleCompanyClick}
+                onClick={() => handleTabSwitch('company')}
                 className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
                 style={{
                   background: activeTab === 'company' ? '#0B0B0D' : 'transparent',
@@ -183,97 +209,237 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       <div className="relative z-10 container max-w-6xl mx-auto px-6 flex items-center min-h-[calc(100vh-100px)]">
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-0">
           
-          {/* Mobile: AI Dialogue Card first */}
-          <div className="lg:hidden order-1">
-            <AIDialogueCard />
-          </div>
+          <AnimatePresence mode="wait">
+            {activeTab === 'talent' ? (
+              <>
+                {/* Mobile: AI Dialogue Card first */}
+                <motion.div 
+                  key="talent-mobile-card"
+                  className="lg:hidden order-1"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <AIDialogueCard />
+                </motion.div>
 
-          {/* Left Column - Narrative Content */}
-          <motion.div
-            className="text-center lg:text-left order-2 lg:order-1"
-            variants={headlineVariants}
-            initial={shouldReduceMotion ? "visible" : "hidden"}
-            animate="visible"
-          >
-            {/* Headline */}
-            <motion.h1 
-              className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
-              style={{ color: '#0B0B0D' }}
-              variants={lineVariants}
-            >
-              CVs are history.
-              <br />
-              Decisions are the future.
-            </motion.h1>
+                {/* Left Column - Talent Narrative Content */}
+                <motion.div
+                  key="talent-content"
+                  className="text-center lg:text-left order-2 lg:order-1"
+                  variants={headlineVariants}
+                  initial={shouldReduceMotion ? "visible" : "hidden"}
+                  animate="visible"
+                  exit="exit"
+                >
+                  {/* Headline */}
+                  <motion.h1 
+                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
+                    style={{ color: '#0B0B0D' }}
+                    variants={lineVariants}
+                  >
+                    CVs are history.
+                    <br />
+                    Decisions are the future.
+                  </motion.h1>
 
-            {/* Subheadline */}
-            <motion.p
-              className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
-              style={{ color: '#4A4A4A' }}
-              variants={lineVariants}
-            >
-              HumIQ AI understands how you think, decide, and solve — through real conversations and real work.
-            </motion.p>
+                  {/* Subheadline */}
+                  <motion.p
+                    className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
+                    style={{ color: '#4A4A4A' }}
+                    variants={lineVariants}
+                  >
+                    HumIQ AI understands how you think, decide, and solve — through real conversations and real work.
+                  </motion.p>
 
-            {/* CTAs */}
-            <motion.div
-              className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
-              variants={lineVariants}
-            >
-              {/* Primary CTA - Active Intelligence Gradient with Enhanced Glow */}
-              <motion.button
-                onClick={handleTalentClick}
-                className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
-                style={{ 
-                  background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
-                  boxShadow: '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
-                }}
-                whileHover={shouldReduceMotion ? {} : { 
-                  scale: 1.03,
-                  boxShadow: '0 0 30px rgba(91, 140, 255, 0.5), 0 0 60px rgba(185, 131, 255, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
-                }}
-                whileTap={{ scale: 0.97 }}
-                animate={shouldReduceMotion ? {} : {
-                  boxShadow: [
-                    '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
-                    '0 0 28px rgba(91, 140, 255, 0.5), 0 0 50px rgba(185, 131, 255, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
-                    '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
-                  ],
-                }}
-                transition={{
-                  boxShadow: {
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  },
-                }}
-              >
-                Start with real work →
-              </motion.button>
+                  {/* CTAs */}
+                  <motion.div
+                    className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
+                    variants={lineVariants}
+                  >
+                    {/* Primary CTA - Active Intelligence Gradient with Enhanced Glow */}
+                    <motion.button
+                      onClick={handleTalentClick}
+                      className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
+                        boxShadow: '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                      }}
+                      whileHover={shouldReduceMotion ? {} : { 
+                        scale: 1.03,
+                        boxShadow: '0 0 30px rgba(91, 140, 255, 0.5), 0 0 60px rgba(185, 131, 255, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
+                      }}
+                      whileTap={{ scale: 0.97 }}
+                      animate={shouldReduceMotion ? {} : {
+                        boxShadow: [
+                          '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 0 28px rgba(91, 140, 255, 0.5), 0 0 50px rgba(185, 131, 255, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                        ],
+                      }}
+                      transition={{
+                        boxShadow: {
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        },
+                      }}
+                    >
+                      Start with real work →
+                    </motion.button>
 
-              {/* Secondary CTA */}
-              <motion.button
-                onClick={() => {
-                  const section = document.getElementById('how-it-works');
-                  section?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="relative px-4 py-2 text-base font-medium group"
-                style={{ color: '#0B0B0D' }}
-                whileHover={{ scale: 1.01 }}
-              >
-                See how HumIQ thinks
-                <span 
-                  className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
-                  style={{ background: '#0B0B0D' }}
-                />
-              </motion.button>
-            </motion.div>
-          </motion.div>
+                    {/* Secondary CTA */}
+                    <motion.button
+                      onClick={() => {
+                        const section = document.getElementById('how-it-works');
+                        section?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="relative px-4 py-2 text-base font-medium group"
+                      style={{ color: '#0B0B0D' }}
+                      whileHover={{ scale: 1.01 }}
+                    >
+                      See how HumIQ thinks
+                      <span 
+                        className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
+                        style={{ background: '#0B0B0D' }}
+                      />
+                    </motion.button>
+                  </motion.div>
+                </motion.div>
 
-          {/* Right Column - AI Dialogue Card (Desktop) */}
-          <div className="hidden lg:block order-2">
-            <AIDialogueCard />
-          </div>
+                {/* Right Column - AI Dialogue Card (Desktop) */}
+                <motion.div 
+                  key="talent-desktop-card"
+                  className="hidden lg:block order-2"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <AIDialogueCard />
+                </motion.div>
+              </>
+            ) : (
+              <>
+                {/* Mobile: Company Decision Panel first */}
+                <motion.div 
+                  key="company-mobile-card"
+                  className="lg:hidden order-1"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <CompanyDecisionPanel />
+                </motion.div>
+
+                {/* Left Column - Company Narrative Content */}
+                <motion.div
+                  key="company-content"
+                  className="text-center lg:text-left order-2 lg:order-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {/* Headline */}
+                  <motion.h1 
+                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
+                    style={{ color: '#0B0B0D' }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                  >
+                    Decisions,
+                    <br />
+                    not resumes.
+                  </motion.h1>
+
+                  {/* Subheadline */}
+                  <motion.p
+                    className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
+                    style={{ color: '#4A4A4A' }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
+                    No job posts. No CVs. AI runs the first interviews.
+                    <br />
+                    You get decision-ready talent in hours, not weeks.
+                  </motion.p>
+
+                  {/* CTAs */}
+                  <motion.div
+                    className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                    {/* Primary CTA - Bold Company Gradient */}
+                    <motion.button
+                      onClick={handleCompanyClick}
+                      className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 50%, #8B5CF6 100%)',
+                        boxShadow: '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                      }}
+                      whileHover={shouldReduceMotion ? {} : { 
+                        scale: 1.03,
+                        boxShadow: '0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(139, 92, 246, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
+                      }}
+                      whileTap={{ scale: 0.97 }}
+                      animate={shouldReduceMotion ? {} : {
+                        boxShadow: [
+                          '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 0 28px rgba(59, 130, 246, 0.5), 0 0 50px rgba(139, 92, 246, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                        ],
+                      }}
+                      transition={{
+                        boxShadow: {
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        },
+                      }}
+                    >
+                      Start Hiring Instantly
+                    </motion.button>
+
+                    {/* Secondary CTA */}
+                    <motion.button
+                      onClick={() => {
+                        const section = document.getElementById('how-it-works');
+                        section?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="relative px-4 py-2 text-base font-medium group"
+                      style={{ color: '#0B0B0D' }}
+                      whileHover={{ scale: 1.01 }}
+                    >
+                      See how it works
+                      <span 
+                        className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
+                        style={{ background: '#0B0B0D' }}
+                      />
+                    </motion.button>
+                  </motion.div>
+                </motion.div>
+
+                {/* Right Column - Company Decision Panel (Desktop) */}
+                <motion.div 
+                  key="company-desktop-card"
+                  className="hidden lg:block order-2"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <CompanyDecisionPanel />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
