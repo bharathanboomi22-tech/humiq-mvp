@@ -71,30 +71,28 @@ export function AIDialogueCard() {
       return;
     }
 
-    if (currentMessageIndex >= MESSAGES.length) {
-      // All messages complete
-      setTimeout(() => {
+    if (currentMessageIndex >= MESSAGES.length && completedMessages.length === MESSAGES.length) {
+      // All messages complete - show CTA
+      if (!showCTA) {
         setShowCTA(true);
         setShowCursor(false);
-      }, 300);
+      }
       return;
     }
 
     const currentMessage = MESSAGES[currentMessageIndex];
-    const currentLine = currentMessage.lines[currentLineIndex];
+    const currentLine = currentMessage?.lines[currentLineIndex];
 
-    if (!currentLine) return;
-
-    // Initial delay
-    if (currentMessageIndex === 0 && currentLineIndex === 0 && currentCharIndex === 0) {
+    // Initial delay - auto-start typing on mount
+    if (currentMessageIndex === 0 && currentLineIndex === 0 && currentCharIndex === 0 && !isTyping) {
       const timeout = setTimeout(() => {
         setIsTyping(true);
       }, INITIAL_DELAY);
       return () => clearTimeout(timeout);
     }
 
-    if (!isTyping && currentMessageIndex === 0) return;
-    if (currentMessageIndex > 0) setIsTyping(true);
+    // Skip if not typing yet for the first message
+    if (!isTyping || !currentLine) return;
 
     if (currentCharIndex < currentLine.length) {
       // Type next character
@@ -113,9 +111,17 @@ export function AIDialogueCard() {
       // Message complete, move to next message
       const timeout = setTimeout(() => {
         setCompletedMessages(prev => [...prev, currentMessage.id]);
-        setCurrentMessageIndex(prev => prev + 1);
-        setCurrentLineIndex(0);
-        setCurrentCharIndex(0);
+        if (currentMessageIndex < MESSAGES.length - 1) {
+          setCurrentMessageIndex(prev => prev + 1);
+          setCurrentLineIndex(0);
+          setCurrentCharIndex(0);
+        } else {
+          // All messages done
+          setTimeout(() => {
+            setShowCTA(true);
+            setShowCursor(false);
+          }, 300);
+        }
       }, MESSAGE_PAUSE);
       return () => clearTimeout(timeout);
     }
@@ -192,21 +198,21 @@ export function AIDialogueCard() {
 
         {/* Messages */}
         <div className="space-y-4">
-          {MESSAGES.map((message, index) => {
+          {MESSAGES.map((message) => {
             const displayText = getDisplayText(message);
-            const isVisible = completedMessages.includes(message.id) || 
-                            (MESSAGES[currentMessageIndex]?.id === message.id && isTyping) ||
-                            skipped;
+            const isCurrentMessage = MESSAGES[currentMessageIndex]?.id === message.id;
+            const isCompleted = completedMessages.includes(message.id);
+            const shouldShow = isCompleted || (isCurrentMessage && isTyping) || skipped;
 
-            if (!isVisible && !skipped) return null;
+            if (!shouldShow) return null;
 
             return (
               <motion.div
                 key={message.id}
                 className="flex items-start gap-3"
-                initial={{ opacity: 0, x: -4 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
               >
                 <AIMessageOrb 
                   state={getOrbState(message.id)} 
