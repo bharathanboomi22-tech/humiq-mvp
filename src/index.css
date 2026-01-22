@@ -4,16 +4,16 @@
 
 /* HumIQ — AI Career Intelligence Theme
    Premium, futuristic, human-centered.
-   Apple × OpenAI × high-end AI lab aesthetic. */
+   ASI-grade intelligence aesthetic with cognitive gradients. */
 
 @layer base {
   :root {
-    /* Primary: Pure white */
+    /* Primary: Pure white base */
     --background: 0 0% 100%;
     --foreground: 0 0% 4%;
 
-    /* Secondary surfaces (cards, panels) */
-    --card: 240 5% 97%;
+    /* Glass card surfaces */
+    --card: 0 0% 100% / 0.75;
     --card-foreground: 0 0% 4%;
 
     --popover: 0 0% 100%;
@@ -23,17 +23,17 @@
     --primary: 0 0% 4%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Mist gray surface */
-    --secondary: 240 5% 97%;
+    /* Secondary: Glass surface */
+    --secondary: 0 0% 100% / 0.55;
     --secondary-foreground: 0 0% 4%;
 
     /* Muted text colors */
-    --muted: 240 5% 96%;
+    --muted: 220 14% 96%;
     --muted-foreground: 220 6% 40%;
 
-    /* Accent */
-    --accent: 240 5% 96%;
-    --accent-foreground: 0 0% 4%;
+    /* Accent - Cognitive Blue */
+    --accent: 217 100% 68%;
+    --accent-foreground: 0 0% 100%;
 
     /* Verdict colors — calm, distinctive */
     --verdict-interview: 162 63% 42%;
@@ -48,15 +48,16 @@
     --destructive: 351 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders */
-    --border: 220 13% 91%;
+    /* Borders - subtle glass edges */
+    --border: 220 13% 93%;
     --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --ring: 217 100% 68%;
 
     /* Cognitive Flow gradient colors (for AI elements) */
-    --gradient-start: 217 100% 71%;
-    --gradient-mid: 270 100% 75%;
-    --gradient-end: 340 100% 78%;
+    --cognitive-blue: 217 100% 68%;
+    --cognitive-lavender: 270 100% 75%;
+    --cognitive-pink: 340 100% 78%;
+    --cognitive-warm: 36 100% 82%;
 
     --radius: 1rem;
 
@@ -77,9 +78,47 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: hsl(var(--background));
     line-height: 1.7;
     letter-spacing: 0.01em;
+    position: relative;
+  }
+
+  /* Cognitive Gradient Canvas - global ambient intelligence */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: 
+      /* Top-right blue glow */
+      radial-gradient(
+        ellipse 800px 600px at 85% 10%,
+        rgba(91, 140, 255, 0.10) 0%,
+        transparent 70%
+      ),
+      /* Mid-left lavender glow */
+      radial-gradient(
+        ellipse 700px 700px at 10% 50%,
+        rgba(185, 131, 255, 0.08) 0%,
+        transparent 70%
+      ),
+      /* Bottom-right pink glow */
+      radial-gradient(
+        ellipse 600px 500px at 80% 85%,
+        rgba(255, 143, 177, 0.07) 0%,
+        transparent 70%
+      ),
+      /* Subtle linear wash */
+      linear-gradient(
+        135deg,
+        rgba(91, 140, 255, 0.03) 0%,
+        rgba(185, 131, 255, 0.02) 50%,
+        transparent 100%
+      ),
+      hsl(var(--background));
   }
 
   .font-display {
@@ -87,11 +126,12 @@
     letter-spacing: -0.02em;
   }
 
-  /* Cognitive Flow gradient (AI ambient glow) */
+  /* Cognitive Flow gradient (AI orb fills) */
   .cognitive-gradient {
-    background: linear-gradient(135deg, #5B8CFF 0%, #B983FF 50%, #FF8FB1 100%);
+    background: linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 33%, #B983FF 66%, #FF8FB1 100%);
   }
 
+  /* Ambient cognitive glow for sections */
   .cognitive-glow {
     background: radial-gradient(
       ellipse 80% 60% at 50% 40%,
@@ -102,13 +142,16 @@
     );
   }
 
-  /* Glass card styling — premium depth */
+  /* Glass card styling — premium AI surface */
   .glass-card {
-    background: hsl(0 0% 100%);
-    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
     box-shadow: 
-      0 4px 20px -4px rgba(0, 0, 0, 0.06),
-      0 20px 60px -12px rgba(0, 0, 0, 0.08);
+      0 4px 24px -4px rgba(0, 0, 0, 0.06),
+      0 20px 60px -12px rgba(0, 0, 0, 0.10);
   }
 
   .glass-card-hover {
@@ -120,26 +163,74 @@
   .glass-card-hover:hover {
     transform: translateY(-2px);
     box-shadow: 
-      0 4px 12px -2px rgba(0, 0, 0, 0.08),
-      0 12px 32px -4px rgba(0, 0, 0, 0.12);
+      0 8px 32px -4px rgba(0, 0, 0, 0.08),
+      0 24px 64px -8px rgba(0, 0, 0, 0.14);
+  }
+
+  /* AI Icon container - cognitive accent */
+  .ai-icon-container {
+    @apply inline-flex items-center justify-center rounded-xl;
+    background: rgba(91, 140, 255, 0.10);
+    color: #5B8CFF;
   }
 
   /* Pill button styles */
   .pill-button {
-    @apply rounded-full px-6 py-3 font-medium transition-all duration-400;
+    @apply rounded-full px-7 py-3.5 font-medium transition-all duration-400;
+    font-size: 15px;
   }
 
   .pill-button-primary {
     @apply pill-button bg-foreground text-background;
+    box-shadow: 0 2px 8px rgba(11, 11, 13, 0.12);
   }
 
   .pill-button-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 
+      0 4px 16px rgba(11, 11, 13, 0.16),
+      0 0 0 4px rgba(11, 11, 13, 0.04);
+  }
+
+  .pill-button-primary:active {
+    transform: scale(0.97);
   }
 
   .pill-button-secondary {
-    @apply pill-button bg-accent text-foreground;
+    @apply pill-button;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    color: hsl(var(--foreground));
+  }
+
+  .pill-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: #E6E7EB;
+  }
+
+  /* Text link with animated underline */
+  .text-link {
+    @apply relative inline-block text-foreground font-medium;
+    transition: color 200ms ease;
+  }
+
+  .text-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 300ms ease;
+  }
+
+  .text-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 
   /* Verdict pills */
@@ -175,6 +266,16 @@
   .section-header {
     @apply text-sm uppercase tracking-[0.12em] text-muted-foreground mb-8;
     font-weight: 500;
+  }
+
+  /* Premium section spacing */
+  .section-spacing {
+    @apply py-16 md:py-24;
+  }
+
+  /* Content container */
+  .content-container {
+    @apply max-w-[1120px] mx-auto px-6;
   }
 }
 

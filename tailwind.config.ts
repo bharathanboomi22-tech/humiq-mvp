@@ -61,10 +61,11 @@ export default {
           medium: "hsl(var(--signal-medium))",
           low: "hsl(var(--signal-low))",
         },
-        blush: {
-          light: "#FDE7F1",
-          DEFAULT: "#FFD6E8",
-          dark: "#FFC0CB",
+        cognitive: {
+          blue: "#5B8CFF",
+          lavender: "#B983FF",
+          pink: "#FF8FB1",
+          warm: "#FFD6A5",
         },
       },
       borderRadius: {
