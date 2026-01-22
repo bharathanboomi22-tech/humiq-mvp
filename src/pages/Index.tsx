@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '@/components/HeroSection';
 import { LoveLettersSection } from '@/components/LoveLettersSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
-import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
-import { DeepDiveSections } from '@/components/landing/DeepDiveSections';
-import { WhyDifferentSection } from '@/components/landing/WhyDifferentSection';
 import { FinalCTASection } from '@/components/landing/FinalCTASection';
 import { createWorkSession, completeSession } from '@/lib/workSession';
 import { toast } from 'sonner';
@@ -88,9 +85,6 @@ const Index = () => {
         <>
           <HeroSection onSubmit={handleSubmit} />
           <LoveLettersSection onOpenInput={() => {}} />
-          <HowItWorksSection />
-          <DeepDiveSections />
-          <WhyDifferentSection />
           <FinalCTASection onCTAClick={scrollToTop} />
         </>
       )}

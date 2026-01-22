@@ -80,8 +80,23 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         }}
       />
       
-      {/* Ambient AI Orb - positioned behind content */}
-      <div className="absolute inset-0 lg:left-[30%] pointer-events-none opacity-50">
+      {/* Enhanced AI Orb with stronger visibility */}
+      <div className="absolute inset-0 lg:left-[30%] pointer-events-none">
+        {/* Radial glow behind orb for contrast */}
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] lg:w-[700px] lg:h-[700px]"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
+          }}
+        />
+        {/* Outer glow ring */}
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] lg:w-[550px] lg:h-[550px] rounded-full opacity-40"
+          style={{
+            background: 'radial-gradient(circle, transparent 50%, rgba(91, 140, 255, 0.15) 70%, transparent 90%)',
+            animation: 'pulse 4s ease-in-out infinite',
+          }}
+        />
         <AIOrb />
       </div>
 
@@ -90,7 +105,8 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         initial={shouldReduceMotion ? {} : { opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-20 w-full"
+        className="relative z-20 w-full backdrop-blur-sm"
+        style={{ background: 'rgba(255,255,255,0.4)' }}
       >
         <div className="container max-w-6xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
@@ -117,8 +133,9 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               <span 
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 group-hover:shadow-md"
                 style={{ 
-                  background: '#F7F7F8',
+                  background: 'rgba(255,255,255,0.7)',
                   color: '#0B0B0D',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
                 <Heart className="w-4 h-4" />
@@ -135,7 +152,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             {/* Right - Toggle Buttons */}
             <div 
               className="flex items-center rounded-full p-1"
-              style={{ background: '#F7F7F8' }}
+              style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)' }}
             >
               <button
                 onClick={handleTalentClick}
@@ -192,7 +209,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
             {/* Subheadline */}
             <motion.p
               className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
-              style={{ color: '#5F6368' }}
+              style={{ color: '#4A4A4A' }}
               variants={lineVariants}
             >
               HumIQ AI understands how you think, decide, and solve — through real conversations and real work.
@@ -203,19 +220,33 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
               variants={lineVariants}
             >
-              {/* Primary CTA */}
+              {/* Primary CTA - Active Intelligence Gradient with Enhanced Glow */}
               <motion.button
                 onClick={handleTalentClick}
-                className="px-7 py-3.5 rounded-full text-base font-medium transition-all duration-300"
+                className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
                 style={{ 
-                  background: '#0B0B0D',
-                  color: '#FFFFFF',
+                  background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
+                  boxShadow: '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
                 }}
                 whileHover={shouldReduceMotion ? {} : { 
-                  scale: 1.02,
-                  boxShadow: '0 8px 24px -8px rgba(11, 11, 13, 0.35)',
+                  scale: 1.03,
+                  boxShadow: '0 0 30px rgba(91, 140, 255, 0.5), 0 0 60px rgba(185, 131, 255, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
                 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.97 }}
+                animate={shouldReduceMotion ? {} : {
+                  boxShadow: [
+                    '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                    '0 0 28px rgba(91, 140, 255, 0.5), 0 0 50px rgba(185, 131, 255, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
+                    '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                  ],
+                }}
+                transition={{
+                  boxShadow: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  },
+                }}
               >
                 Start with real work →
               </motion.button>
@@ -255,10 +286,11 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       >
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium shadow-sm"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium shadow-md"
           style={{ 
-            background: '#F7F7F8',
+            background: 'rgba(255,255,255,0.85)',
             color: '#0B0B0D',
+            backdropFilter: 'blur(8px)',
           }}
         >
           <Heart className="w-4 h-4" />
