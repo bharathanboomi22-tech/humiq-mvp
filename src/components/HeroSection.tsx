@@ -4,7 +4,7 @@ import { motion, useReducedMotion, Variants } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { LoveLetterModal } from './LoveLetterModal';
 import { useAuth } from '@/hooks/useAuth';
-import { AICareerCard } from './hero/AICareerCard';
+import { AIDialogueCard } from './hero/AIDialogueCard';
 import { AIOrb } from './hero/AIOrb';
 
 interface HeroSectionProps {
@@ -55,8 +55,8 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       className="min-h-screen relative overflow-hidden"
       style={{ background: '#FFFFFF' }}
     >
-      {/* AI Orb - positioned on right side for desktop */}
-      <div className="absolute inset-0 lg:left-[30%]">
+      {/* Ambient AI Glow - positioned behind content */}
+      <div className="absolute inset-0 lg:left-[30%] pointer-events-none">
         <AIOrb />
       </div>
 
@@ -141,9 +141,9 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
       <div className="relative z-10 container max-w-6xl mx-auto px-6 flex items-center min-h-[calc(100vh-100px)]">
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-0">
           
-          {/* Mobile: AI Card first */}
+          {/* Mobile: AI Dialogue Card first */}
           <div className="lg:hidden order-1">
-            <AICareerCard />
+            <AIDialogueCard />
           </div>
 
           {/* Left Column - Narrative Content */}
@@ -155,7 +155,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
           >
             {/* Headline */}
             <motion.h1 
-              className="font-display text-4xl sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em] mb-6"
+              className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
               style={{ color: '#0B0B0D' }}
               variants={lineVariants}
             >
@@ -166,20 +166,11 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
 
             {/* Subheadline */}
             <motion.p
-              className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-5 leading-relaxed"
+              className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
               style={{ color: '#5F6368' }}
               variants={lineVariants}
             >
-              HumIQ learns how you think, decide, and execute — using real work, not resumes.
-            </motion.p>
-
-            {/* Micro-proof */}
-            <motion.p
-              className="text-sm mb-8"
-              style={{ color: '#5F6368', opacity: 0.8 }}
-              variants={lineVariants}
-            >
-              Used by teams that hire for ownership, not keywords.
+              HumIQ AI understands how you think, decide, and solve — through real conversations and real work.
             </motion.p>
 
             {/* CTAs */}
@@ -201,7 +192,7 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Start with Real Work →
+                Start with real work →
               </motion.button>
 
               {/* Secondary CTA */}
@@ -216,16 +207,16 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
               >
                 See how HumIQ thinks
                 <span 
-                  className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+                  className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
                   style={{ background: '#0B0B0D' }}
                 />
               </motion.button>
             </motion.div>
           </motion.div>
 
-          {/* Right Column - AI Card (Desktop) */}
+          {/* Right Column - AI Dialogue Card (Desktop) */}
           <div className="hidden lg:block order-2">
-            <AICareerCard />
+            <AIDialogueCard />
           </div>
         </div>
       </div>
