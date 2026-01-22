@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { LoveLetterModal } from './LoveLetterModal';
 import { useAuth } from '@/hooks/useAuth';
+import { AICareerCard } from './hero/AICareerCard';
 
 interface HeroSectionProps {
   onSubmit?: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -25,11 +26,6 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
   const handleCompanyClick = () => {
     setUserType('company');
     navigate('/company/setup');
-  };
-
-  const handleStart = () => {
-    // Start button triggers the Talent flow
-    handleTalentClick();
   };
 
   return (
@@ -190,44 +186,49 @@ export function HeroSection({ onSubmit, isLoading }: HeroSectionProps) {
         </div>
       </motion.header>
 
-      {/* Hero Content - Centered */}
-      <div className="relative z-10 container mx-auto px-6 flex flex-col items-center justify-center min-h-[calc(100vh-120px)]">
-        <motion.div
-          className="text-center max-w-4xl mx-auto"
-          initial={shouldReduceMotion ? {} : { opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-        >
-          {/* Headline */}
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight mb-8 md:mb-10">
-            CVs are history.
-            <br />
-            Decisions are the future.
-          </h1>
-
-          {/* Subheadline */}
-          <motion.p
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 md:mb-12"
-            initial={shouldReduceMotion ? {} : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
-            Where the next wave of AI hiring happens with HumIQ.
-          </motion.p>
-
-          {/* CTA Button */}
-          <motion.button
-            onClick={handleStart}
-            className="pill-button-primary text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4"
-            whileHover={shouldReduceMotion ? {} : { y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+      {/* Hero Content - Two Column Layout */}
+      <div className="relative z-10 container max-w-6xl mx-auto px-6 flex items-center min-h-[calc(100vh-120px)]">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-8 items-center py-12 lg:py-0">
+          {/* Left Column - Static Content (60%) */}
+          <motion.div
+            className="lg:col-span-3 text-center lg:text-left"
+            initial={shouldReduceMotion ? {} : { opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
           >
-            Start
-          </motion.button>
-        </motion.div>
+            {/* Headline */}
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] xl:text-6xl font-bold text-foreground leading-[1.1] tracking-tight mb-6">
+              CVs are history.
+              <br />
+              Decisions are the future.
+            </h1>
+
+            {/* Subheadline */}
+            <motion.p
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-6"
+              initial={shouldReduceMotion ? {} : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              HumIQ evaluates how people think, decide, and execute — using real work, not resumes.
+            </motion.p>
+
+            {/* Micro-proof */}
+            <motion.p
+              className="text-xs sm:text-sm text-muted-foreground/70"
+              initial={shouldReduceMotion ? {} : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              Used by teams that hire for ownership, not keywords.
+            </motion.p>
+          </motion.div>
+
+          {/* Right Column - AI Career Card (40%) */}
+          <div className="lg:col-span-2">
+            <AICareerCard />
+          </div>
+        </div>
       </div>
 
       {/* Mobile Love Letters Button */}
