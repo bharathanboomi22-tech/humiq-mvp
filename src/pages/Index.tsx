@@ -5,15 +5,18 @@ import { LoveLettersSection } from '@/components/LoveLettersSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
 import { FinalCTASection } from '@/components/landing/FinalCTASection';
 import { HowItWorksTalent } from '@/components/landing/HowItWorksTalent';
+import { HowItWorksCompany } from '@/components/landing/HowItWorksCompany';
 import { FloatingNav } from '@/components/FloatingNav';
 import { createWorkSession, completeSession } from '@/lib/workSession';
 import { toast } from 'sonner';
 
 type ViewState = 'input' | 'loading';
+type PersonaView = 'talent' | 'company';
 
 const Index = () => {
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<ViewState>('input');
+  const [personaView, setPersonaView] = useState<PersonaView>('talent');
   const sessionIdRef = useRef<string | null>(null);
   const sessionReadyRef = useRef(false);
   const animationCompleteRef = useRef(false);
@@ -86,9 +89,13 @@ const Index = () => {
       <FloatingNav />
       {viewState === 'input' && (
         <>
-          <HeroSection onSubmit={handleSubmit} />
+          <HeroSection onSubmit={handleSubmit} onViewChange={setPersonaView} />
           <LoveLettersSection onOpenInput={() => {}} />
-          <HowItWorksTalent />
+          {personaView === 'talent' ? (
+            <HowItWorksTalent />
+          ) : (
+            <HowItWorksCompany />
+          )}
           <FinalCTASection onCTAClick={scrollToTop} />
         </>
       )}

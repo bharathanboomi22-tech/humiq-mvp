@@ -1,0 +1,1 @@
+export { CompanyStepIcon } from './CompanyStepIcon';
