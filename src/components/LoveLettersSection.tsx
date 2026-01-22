@@ -104,7 +104,7 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
               scale: 1.02,
               transition: { duration: 0.2 } 
             }}
-            className="group relative flex-shrink-0 w-[280px] sm:w-[300px] p-5 rounded-xl overflow-hidden cursor-default"
+            className="group relative flex-shrink-0 w-[320px] sm:w-[360px] p-5 rounded-xl overflow-hidden cursor-default"
             style={{
               background: 'rgba(255, 255, 255, 0.8)',
               backdropFilter: 'blur(16px)',
@@ -140,7 +140,7 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
                     boxShadow: '0 0 6px rgba(91, 140, 255, 0.5)',
                   }}
                 />
-                <p className="text-sm leading-relaxed text-foreground/85 line-clamp-3">
+                <p className="text-sm leading-relaxed text-foreground/85">
                   "{letter.message}"
                 </p>
               </div>
@@ -212,7 +212,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       .from('love_letters')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(45); // More letters for 3 rows
+      .limit(60); // More letters for 3 rows (unique per row)
 
     if (!error && data) {
       setLetters(data);
@@ -221,12 +221,14 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
 
   if (letters.length === 0) return null;
 
-  // Split letters into 3 rows
-  const rowSize = Math.ceil(letters.length / 3);
+  // Split letters into 3 rows - ensuring NO duplicates across rows
+  // Each row gets unique letters, shuffled for variety
+  const shuffled = [...letters].sort(() => Math.random() - 0.5);
+  const rowSize = Math.ceil(shuffled.length / 3);
   const rows = [
-    letters.slice(0, rowSize),
-    letters.slice(rowSize, rowSize * 2),
-    letters.slice(rowSize * 2),
+    shuffled.slice(0, rowSize),
+    shuffled.slice(rowSize, rowSize * 2),
+    shuffled.slice(rowSize * 2),
   ];
 
   return (

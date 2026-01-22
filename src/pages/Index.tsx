@@ -4,6 +4,8 @@ import { HeroSection } from '@/components/HeroSection';
 import { LoveLettersSection } from '@/components/LoveLettersSection';
 import { LoadingExperience } from '@/components/LoadingExperience';
 import { FinalCTASection } from '@/components/landing/FinalCTASection';
+import { HowItWorksTalent } from '@/components/landing/HowItWorksTalent';
+import { FloatingNav } from '@/components/FloatingNav';
 import { createWorkSession, completeSession } from '@/lib/workSession';
 import { toast } from 'sonner';
 
@@ -81,10 +83,12 @@ const Index = () => {
 
   return (
     <main className="min-h-screen blush-gradient">
+      <FloatingNav />
       {viewState === 'input' && (
         <>
           <HeroSection onSubmit={handleSubmit} />
           <LoveLettersSection onOpenInput={() => {}} />
+          <HowItWorksTalent />
           <FinalCTASection onCTAClick={scrollToTop} />
         </>
       )}
