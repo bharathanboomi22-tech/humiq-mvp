@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface LoveLetterModalProps {
   isOpen: boolean;
@@ -14,6 +17,8 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [userType, setUserType] = useState('');
+  const [readyToPay, setReadyToPay] = useState(false);
+  const [monthlyAmount, setMonthlyAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,6 +41,8 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
       setName('');
       setEmail('');
       setUserType('');
+      setReadyToPay(false);
+      setMonthlyAmount('');
       onSuccess?.();
       onClose();
     }
@@ -70,7 +77,7 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div 
-              className="w-full max-w-md p-6 rounded-2xl relative glass-card"
+              className="w-full max-w-md p-6 rounded-2xl relative glass-card max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
@@ -144,6 +151,52 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                   <option value="Talent">✨ Talent</option>
                   <option value="Other">💬 Other</option>
                 </select>
+
+                {/* Divider */}
+                <div className="border-t border-foreground/10 pt-4">
+                  <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
+                    Payment Interest
+                  </p>
+
+                  {/* Ready to Pay Toggle */}
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50">
+                    <Label htmlFor="ready-to-pay" className="text-sm text-foreground cursor-pointer">
+                      Are you ready to pay?
+                    </Label>
+                    <Switch
+                      id="ready-to-pay"
+                      checked={readyToPay}
+                      onCheckedChange={setReadyToPay}
+                    />
+                  </div>
+
+                  {/* Monthly Amount - Only show if ready to pay */}
+                  <AnimatePresence>
+                    {readyToPay && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-3 overflow-hidden"
+                      >
+                        <Label htmlFor="monthly-amount" className="text-sm text-muted-foreground mb-2 block">
+                          How much are you ready to pay monthly? ($)
+                        </Label>
+                        <Input
+                          id="monthly-amount"
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={monthlyAmount}
+                          onChange={(e) => setMonthlyAmount(e.target.value)}
+                          placeholder="e.g., 29"
+                          className="bg-secondary"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-3 pt-2">

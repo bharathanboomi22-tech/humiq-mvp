@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import WorkSessionStart from "./pages/WorkSessionStart";
 import WorkSessionLive from "./pages/WorkSessionLive";
 import EvidencePack from "./pages/EvidencePack";
+import LoveLetter from "./pages/LoveLetter";
 // Company pages
 import CompanySetup from "./pages/CompanySetup";
 import CompanyDashboard from "./pages/CompanyDashboard";
@@ -35,8 +36,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public Routes */}
+          {/* Public Routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/love-letter" element={<LoveLetter />} />
             
             {/* Work Session */}
             <Route path="/work-session/start" element={
