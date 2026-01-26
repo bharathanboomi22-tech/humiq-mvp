@@ -54,7 +54,7 @@ export const OnboardingLayout = ({
                 {/* AI Orb Logo */}
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#5B8CFF] via-[#B983FF] to-[#FF8FB1]" />
                 <span className="font-display text-lg font-bold text-foreground">
-                  HumIQ
+                  HumiQ
                 </span>
               </button>
             )}

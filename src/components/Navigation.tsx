@@ -52,7 +52,7 @@ export function Navigation({ variant = 'default', showBack = false }: Navigation
                 className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity duration-400"
               >
                 <span className="font-display text-xl font-bold tracking-tight">
-                  HumIQ
+                  HumiQ
                 </span>
               </button>
             )}

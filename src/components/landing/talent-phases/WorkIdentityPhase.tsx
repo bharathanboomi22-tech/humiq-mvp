@@ -62,7 +62,7 @@ export function WorkIdentityPhase() {
           </h3>
           <div className="space-y-4 text-muted-foreground">
             <p className="text-base leading-relaxed">
-              From real signals and real decisions, HumIQ forms a Work Identity.
+              From real signals and real decisions, HumiQ forms a Work Identity.
             </p>
             <p className="text-base leading-relaxed">
               Not a profile. Not a score.

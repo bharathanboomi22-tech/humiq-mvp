@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface LoveLetterModalProps {
   isOpen: boolean;
@@ -17,13 +17,16 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [userType, setUserType] = useState('');
-  const [readyToPay, setReadyToPay] = useState(false);
+  const [readyToPay, setReadyToPay] = useState<string>('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const isReadyToPay = readyToPay === 'yes';
+  const canSubmit = message.trim() && isReadyToPay;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || message.length > 280) return;
+    if (!message.trim() || message.length > 280 || !isReadyToPay) return;
 
     setIsLoading(true);
 
@@ -41,7 +44,7 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
       setName('');
       setEmail('');
       setUserType('');
-      setReadyToPay(false);
+      setReadyToPay('');
       setMonthlyAmount('');
       onSuccess?.();
       onClose();
@@ -89,7 +92,7 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
               </button>
 
               <h3 className="text-xl font-bold text-foreground mb-1 font-display">
-                Leave a love letter to HumIQ
+                Leave a love letter to HumiQ
               </h3>
               <p className="text-sm text-muted-foreground mb-6">
                 A short thought or feeling is perfect.
@@ -158,21 +161,34 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                     Payment Interest
                   </p>
 
-                  {/* Ready to Pay Toggle */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50">
-                    <Label htmlFor="ready-to-pay" className="text-sm text-foreground cursor-pointer">
-                      Are you ready to pay?
+                  {/* Ready to Pay Radio Group */}
+                  <div className="p-3 rounded-xl bg-secondary/50 space-y-3">
+                    <Label className="text-sm text-foreground">
+                      Are you ready to pay if product is live?
                     </Label>
-                    <Switch
-                      id="ready-to-pay"
-                      checked={readyToPay}
-                      onCheckedChange={setReadyToPay}
-                    />
+                    <RadioGroup
+                      value={readyToPay}
+                      onValueChange={setReadyToPay}
+                      className="flex gap-6"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id="ready-yes" />
+                        <Label htmlFor="ready-yes" className="text-sm text-foreground cursor-pointer">
+                          Yes
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id="ready-no" />
+                        <Label htmlFor="ready-no" className="text-sm text-foreground cursor-pointer">
+                          No
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
 
                   {/* Monthly Amount - Only show if ready to pay */}
                   <AnimatePresence>
-                    {readyToPay && (
+                    {isReadyToPay && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
@@ -209,14 +225,14 @@ export function LoveLetterModal({ isOpen, onClose, onSuccess }: LoveLetterModalP
                   </button>
                   <button
                     type="submit"
-                    disabled={isLoading || !message.trim()}
+                    disabled={isLoading || !canSubmit}
                     className="px-6 py-2.5 text-sm font-medium rounded-full
                       bg-foreground text-background
                       hover:shadow-lg hover:-translate-y-0.5
                       transition-all duration-400
                       disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
                   >
-                    {isLoading ? 'Sending...' : 'Send Love 💛'}
+                    {isLoading ? 'Sending...' : 'Send Love Letter 💛'}
                   </button>
                 </div>
               </form>

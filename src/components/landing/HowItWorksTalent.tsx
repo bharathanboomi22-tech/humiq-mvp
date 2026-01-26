@@ -39,7 +39,7 @@ export function HowItWorksTalent() {
           className="text-center mb-16 md:mb-24"
         >
           <h2 className="text-3xl md:text-4xl lg:text-[44px] font-bold leading-tight text-foreground mb-4 font-display">
-            How HumIQ understands how you work
+            How HumiQ understands how you work
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
             A different way to be seen — without resumes, applications, or selling yourself.

@@ -58,7 +58,7 @@ export const PrivacyStep = ({ data, updateField, onNext, saving }: PrivacyStepPr
           </div>
           <p className="text-xs text-muted-foreground mt-2">
             {data.profileVisibility === 'public'
-              ? 'Visible to companies on HumIQ'
+              ? 'Visible to companies on HumiQ'
               : 'Visible only when you share'
             }
           </p>

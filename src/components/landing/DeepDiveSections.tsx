@@ -20,7 +20,7 @@ const sections: DeepDiveSection[] = [
     title: 'Talent shares how they work',
     body: [
       'Talent can share real work evidence — code, products, designs, writing, or past projects.',
-      'If nothing exists, HumIQ adapts automatically.',
+      'If nothing exists, HumiQ adapts automatically.',
       'No resume formatting. No keyword optimization.',
       'Signal comes from how someone works, not how they present.',
     ],
@@ -30,7 +30,7 @@ const sections: DeepDiveSection[] = [
   {
     title: 'The first interview happens automatically',
     body: [
-      "When there's a relevant opportunity, HumIQ sends an AI-led interview invite directly to the candidate's inbox.",
+      "When there's a relevant opportunity, HumiQ sends an AI-led interview invite directly to the candidate's inbox.",
       'No recruiter review. No scheduling loops.',
       'Every candidate starts from the same place.',
     ],
@@ -40,7 +40,7 @@ const sections: DeepDiveSection[] = [
   {
     title: 'A real work conversation — not a test',
     body: [
-      'HumIQ conducts an adaptive AI-led video interview.',
+      'HumiQ conducts an adaptive AI-led video interview.',
       'It explores how someone reasons under constraints, handles tradeoffs, and explains decisions.',
       'This replaces screening calls and first-round interviews — without scripts or trick questions.',
     ],
@@ -50,7 +50,7 @@ const sections: DeepDiveSection[] = [
   {
     title: 'Companies receive a hiring decision',
     body: [
-      'HumIQ sends a decision-ready summary — not raw data.',
+      'HumiQ sends a decision-ready summary — not raw data.',
       'Each report includes:',
       '• A clear recommendation',
       '• Why it exists',
@@ -58,7 +58,7 @@ const sections: DeepDiveSection[] = [
       '• What to validate next',
       'No scores. No dashboards.',
     ],
-    trustCue: 'If the signal is weak, HumIQ says so.',
+    trustCue: 'If the signal is weak, HumiQ says so.',
     visual: (isInView) => <DecisionBriefVisual isInView={isInView} />,
   },
   {

@@ -38,10 +38,10 @@ export function WhyDifferentSection() {
           className="mb-16 md:mb-20 text-center"
         >
           <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-3">
-            Why HumIQ is different
+            Why HumiQ is different
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
-            Most platforms optimize hiring. HumIQ removes noise from it.
+            Most platforms optimize hiring. HumiQ removes noise from it.
           </p>
         </motion.div>
 
@@ -77,7 +77,7 @@ export function WhyDifferentSection() {
               </div>
             </div>
 
-            {/* HumIQ Column */}
+            {/* HumiQ Column */}
             <div>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -85,7 +85,7 @@ export function WhyDifferentSection() {
                 transition={{ duration: 0.4, ease: 'easeOut' }}
                 className="text-sm uppercase tracking-wider text-foreground mb-6 font-medium"
               >
-                HumIQ
+                HumiQ
               </motion.div>
               <div className="space-y-4">
                 {humiqFeatures.map((item, index) => (

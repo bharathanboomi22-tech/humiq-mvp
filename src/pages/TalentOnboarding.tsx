@@ -233,7 +233,7 @@ const TalentOnboardingContent = () => {
               className="bg-white rounded-2xl p-8 max-w-lg shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-display font-semibold mb-4">How HumIQ Works</h2>
+              <h2 className="text-2xl font-display font-semibold mb-4">How HumiQ Works</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
                   <strong className="text-foreground">1. We start with you</strong> — not a resume. 

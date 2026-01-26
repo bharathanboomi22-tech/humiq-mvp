@@ -107,7 +107,7 @@ export function DecisionsPhase() {
           </h3>
           <div className="space-y-4 text-muted-foreground">
             <p className="text-base leading-relaxed">
-              HumIQ asks thoughtful, adaptive questions — not to test you, but to understand your judgment.
+              HumiQ asks thoughtful, adaptive questions — not to test you, but to understand your judgment.
             </p>
             <p className="text-base leading-relaxed">
               You'll walk through why you made certain choices, what tradeoffs you considered, and how constraints shaped your decisions.

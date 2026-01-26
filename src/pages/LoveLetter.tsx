@@ -93,7 +93,7 @@ export default function LoveLetter() {
               onClick={() => navigate('/')}
               className="font-display text-xl font-bold tracking-tight text-foreground"
             >
-              HumIQ
+              HumiQ
             </button>
 
             <Button
@@ -128,14 +128,14 @@ export default function LoveLetter() {
               }}
             />
             <span className="text-sm uppercase tracking-[0.12em] text-muted-foreground font-medium">
-              HumIQ Love Letters
+              HumiQ Love Letters
             </span>
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-3">
             Human reflections after meeting intelligence
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Thoughts, feelings, and moments shared by people who experienced HumIQ.
+            Thoughts, feelings, and moments shared by people who experienced HumiQ.
           </p>
         </motion.div>
 

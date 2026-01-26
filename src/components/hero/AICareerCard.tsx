@@ -124,7 +124,7 @@ export function AICareerCard() {
               className="text-xs font-semibold tracking-wide"
               style={{ color: '#0B0B0D' }}
             >
-              HumIQ AI
+              HumiQ AI
             </span>
             <span 
               className="text-[11px]"

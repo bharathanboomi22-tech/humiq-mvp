@@ -24,7 +24,7 @@ export function IntroStep({ onContinue }: IntroStepProps) {
         transition={{ delay: 0.2 }}
         className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4"
       >
-        Welcome to HumIQ
+        Welcome to HumiQ
       </motion.h1>
 
       <motion.p
