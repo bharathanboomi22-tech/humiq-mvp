@@ -147,7 +147,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                 className="font-display text-xl font-bold tracking-tight"
                 style={{ color: '#0B0B0D' }}
               >
-                HumIQ
+                HumiQ
               </span>
             </button>
 
@@ -271,7 +271,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                     style={{ color: '#4A4A4A' }}
                     variants={lineVariants}
                   >
-                    HumIQ AI understands how you think, decide, and solve — through real conversations and real work.
+                    HumiQ AI understands how you think, decide, and solve — through real conversations and real work.
                   </motion.p>
 
                   {/* CTAs */}
@@ -320,7 +320,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                       style={{ color: '#0B0B0D' }}
                       whileHover={{ scale: 1.01 }}
                     >
-                      See how HumIQ thinks
+                      See how HumiQ thinks
                       <span 
                         className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
                         style={{ background: '#0B0B0D' }}

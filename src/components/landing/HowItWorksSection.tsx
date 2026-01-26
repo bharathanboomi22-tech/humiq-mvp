@@ -49,7 +49,7 @@ export function HowItWorksSection() {
                 Talent can share real work evidence - code, products, designs, writing, or past projects.
               </p>
               <p className="text-base leading-[1.75] text-muted-foreground">
-                If nothing exists, HumIQ adapts automatically.
+                If nothing exists, HumiQ adapts automatically.
               </p>
             </div>
 

@@ -119,7 +119,7 @@ export function CandidateBriefView({ brief, onBack }: CandidateBriefViewProps) {
         className="pt-16 pb-8 border-t border-border"
       >
         <p className="text-xs text-muted-foreground tracking-widest uppercase">
-          HumIQ
+          HumiQ
         </p>
       </motion.footer>
     </motion.div>

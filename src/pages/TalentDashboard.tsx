@@ -195,7 +195,7 @@ const TalentDashboard = () => {
                 <User className="w-10 h-10 text-foreground" />
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                Welcome to HumIQ
+                Welcome to HumiQ
               </h1>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
                 Take a technical assessment to build your talent profile and get matched with opportunities.

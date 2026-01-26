@@ -74,7 +74,7 @@ export function SignalPhase() {
               Share anything that reflects how you work — a project, a doc, a design, or a problem you've solved.
             </p>
             <p className="text-base leading-relaxed">
-              If nothing exists yet, HumIQ creates a starting point with you.
+              If nothing exists yet, HumiQ creates a starting point with you.
             </p>
           </div>
           {/* Reassurance */}

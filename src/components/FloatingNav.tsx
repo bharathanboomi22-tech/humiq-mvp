@@ -75,7 +75,7 @@ export function FloatingNav() {
                 }}
               />
               <span className="font-display text-base font-bold tracking-tight">
-                HumIQ
+                HumiQ
               </span>
             </button>
 

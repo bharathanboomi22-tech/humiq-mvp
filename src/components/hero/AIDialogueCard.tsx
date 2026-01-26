@@ -185,7 +185,7 @@ export function AIDialogueCard() {
               className="text-sm font-semibold"
               style={{ color: '#0B0B0D' }}
             >
-              HumIQ AI
+              HumiQ AI
             </p>
             <p 
               className="text-xs"

@@ -279,7 +279,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
             }}
           />
           <h3 className="text-sm uppercase tracking-[0.12em] text-muted-foreground font-medium">
-            HumIQ Love Letters
+            HumiQ Love Letters
           </h3>
         </motion.div>
         <motion.p

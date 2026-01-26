@@ -29,7 +29,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           See how candidates actually work — before you hire them.
         </h2>
         <p className="text-sm text-muted-foreground">
-          HumIQ adapts to the role and the evidence available.
+          HumiQ adapts to the role and the evidence available.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           </div>
           
           <p className="text-xs text-muted-foreground/60 text-center">
-            If candidates have real work they can share, HumIQ reads it directly.
+            If candidates have real work they can share, HumiQ reads it directly.
           </p>
 
           {/* GitHub Input */}
@@ -95,7 +95,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           </div>
           
           <p className="text-xs text-muted-foreground/60 text-center leading-relaxed">
-            When work can't be shared, HumIQ runs a guided work session<br />
+            When work can't be shared, HumiQ runs a guided work session<br />
             to observe problem framing, decisions, and execution.
           </p>
           
@@ -104,10 +104,10 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
           </p>
         </div>
 
-        {/* HumIQ Intelligence Signal */}
+        {/* HumiQ Intelligence Signal */}
         <div className="space-y-2 pt-2">
           <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground/50 text-center">
-            HumIQ AI observes
+            HumiQ AI observes
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <span className="text-xs text-foreground/40">• Decisions</span>
@@ -143,7 +143,7 @@ export function CandidateInputForm({ onSubmit, isLoading }: CandidateInputFormPr
 
       {/* Footnote Trust Signal */}
       <p className="text-[10px] text-muted-foreground/40 text-center leading-relaxed pt-1">
-        HumIQ evaluates real work signals. If evidence is limited or unavailable,<br />
+        HumiQ evaluates real work signals. If evidence is limited or unavailable,<br />
         it will clearly say so and rely on live demonstration instead.
       </p>
     </div>

@@ -38,7 +38,7 @@ export function InboxMomentVisual({ isInView }: InboxMomentVisualProps) {
           <div className="flex-1 min-w-0">
             {/* Subject Line */}
             <p className="text-[15px] font-medium mb-1 text-foreground">
-              HumIQ interview invitation
+              HumiQ interview invitation
             </p>
             
             {/* Subtext */}

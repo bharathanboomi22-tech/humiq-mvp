@@ -60,7 +60,7 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
             transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
             className="text-base md:text-lg text-muted-foreground leading-relaxed mb-4"
           >
-            HumIQ runs the first interview, forms a judgment, and tells you what matters — before you invest human time.
+            HumiQ runs the first interview, forms a judgment, and tells you what matters — before you invest human time.
           </motion.p>
 
           <motion.p
