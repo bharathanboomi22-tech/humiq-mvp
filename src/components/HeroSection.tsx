@@ -151,23 +151,42 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               </span>
             </button>
 
-            {/* Center - Love Letters Button */}
+            {/* Center - Love Letters Button with Glow Animation */}
             <motion.button
-              onClick={() => setIsModalOpen(true)}
-              className="hidden md:flex flex-col items-center gap-0.5 group"
-              whileHover={{ scale: 1.02 }}
+              onClick={() => navigate('/love-letter')}
+              className="hidden md:flex flex-col items-center gap-0.5 group relative"
+              whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
+              animate={{
+                boxShadow: [
+                  '0 0 20px rgba(255, 143, 177, 0.3), 0 0 40px rgba(185, 131, 255, 0.2)',
+                  '0 0 30px rgba(255, 143, 177, 0.5), 0 0 60px rgba(185, 131, 255, 0.3)',
+                  '0 0 20px rgba(255, 143, 177, 0.3), 0 0 40px rgba(185, 131, 255, 0.2)',
+                ],
+              }}
+              style={{ borderRadius: '9999px' }}
             >
               <span 
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 group-hover:shadow-md"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 relative overflow-hidden"
                 style={{ 
-                  background: 'rgba(255,255,255,0.7)',
-                  color: '#0B0B0D',
-                  backdropFilter: 'blur(8px)',
+                  background: 'linear-gradient(135deg, #FF8FB1 0%, #B983FF 50%, #5B8CFF 100%)',
+                  color: '#FFFFFF',
                 }}
               >
-                <Heart className="w-4 h-4" />
-                Send Love Letters
+                {/* Shimmer effect */}
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  animate={{
+                    x: ['-100%', '100%'],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                />
+                <Heart className="w-4 h-4 relative z-10" />
+                <span className="relative z-10">Love Letters</span>
               </span>
               <span 
                 className="text-[11px]"

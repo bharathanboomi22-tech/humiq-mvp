@@ -82,6 +82,25 @@ export function FloatingNav() {
             {/* Divider */}
             <div className="w-px h-5 bg-foreground/10" />
 
+            {/* Love Letter Button */}
+            <Button
+              size="sm"
+              onClick={() => navigate('/love-letter')}
+              className="relative h-8 px-4 text-sm font-medium text-white rounded-full overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
+                boxShadow: '0 2px 12px rgba(91, 140, 255, 0.35)',
+              }}
+            >
+              <motion.div
+                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                style={{
+                  background: 'linear-gradient(135deg, #6B9CFF 0%, #9F8CFF 35%, #C993FF 65%, #FFA0C1 100%)',
+                }}
+              />
+              <span className="relative z-10">Love Letters</span>
+            </Button>
+
             {/* CTA Button */}
             <Button
               size="sm"

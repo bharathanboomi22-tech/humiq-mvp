@@ -22,11 +22,10 @@ interface LoveLettersSectionProps {
   onOpenInput: () => void;
 }
 
-// Row configuration for parallax effect
+// Row configuration for parallax effect - 2 rows only
 const rowConfigs = [
   { speed: 0.4, direction: 1 },   // Row 1: slow, left-to-right
-  { speed: 0.7, direction: -1 },  // Row 2: medium, right-to-left
-  { speed: 0.5, direction: 1 },   // Row 3: moderate, left-to-right
+  { speed: 0.6, direction: -1 },  // Row 2: medium, right-to-left
 ];
 
 interface ScrollingRowProps {
@@ -91,7 +90,7 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
         WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
       }}
     >
-      <div className="flex gap-4 px-4 w-max">
+      <div className="flex gap-5 px-4 w-max">
         {displayLetters.map((letter, index) => (
           <motion.div
             key={`${letter.id}-${rowIndex}-${index}`}
@@ -100,72 +99,70 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
             viewport={{ once: true }}
             transition={{ delay: Math.min(index * 0.03, 0.2), duration: 0.4 }}
             whileHover={{ 
-              y: -3,
+              y: -4,
               scale: 1.02,
               transition: { duration: 0.2 } 
             }}
-            className="group relative flex-shrink-0 w-[320px] sm:w-[360px] p-5 rounded-xl overflow-hidden cursor-default"
+            className="group relative flex-shrink-0 w-[320px] sm:w-[360px] p-[1.5px] rounded-xl overflow-hidden cursor-default"
             style={{
-              background: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.9)',
+              background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
             }}
           >
-            {/* Hover gradient overlay */}
-            <div 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            {/* Inner card content */}
+            <div
+              className="relative h-full p-5 rounded-[10px]"
               style={{
-                background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.06) 0%, rgba(185, 131, 255, 0.04) 50%, rgba(255, 143, 177, 0.03) 100%)',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
               }}
-            />
-            
-            {/* Top gradient accent line */}
-            <div 
-              className="absolute top-0 left-4 right-4 h-px opacity-30 group-hover:opacity-60 transition-opacity duration-300"
-              style={{
-                background: 'linear-gradient(90deg, transparent, #5B8CFF, #B983FF, transparent)',
-              }}
-            />
+            >
+              {/* Hover gradient overlay */}
+              <div 
+                className="absolute inset-0 rounded-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.08) 0%, rgba(185, 131, 255, 0.06) 50%, rgba(255, 143, 177, 0.04) 100%)',
+                }}
+              />
 
-            {/* Content */}
-            <div className="relative">
-              {/* AI Signal Orb + Message */}
-              <div className="flex items-start gap-2.5 mb-2">
-                <div 
-                  className="flex-shrink-0 w-2 h-2 mt-1.5 rounded-full animate-pulse"
-                  style={{
-                    background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
-                    boxShadow: '0 0 6px rgba(91, 140, 255, 0.5)',
-                  }}
-                />
-                <p className="text-sm leading-relaxed text-foreground/85">
-                  "{letter.message}"
-                </p>
-              </div>
-
-              {/* Footer */}
-              {(letter.name_or_role || letter.user_type) && (
-                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-foreground/5">
-                  {letter.name_or_role && (
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {letter.name_or_role}
-                    </span>
-                  )}
-                  {letter.user_type && (
-                    <span 
-                      className="text-xs px-2 py-0.5 rounded-full"
-                      style={{
-                        background: 'rgba(91, 140, 255, 0.08)',
-                      }}
-                      title={letter.user_type}
-                    >
-                      {userTypeEmoji[letter.user_type] || '💬'}
-                    </span>
-                  )}
+              {/* Content */}
+              <div className="relative">
+                {/* AI Signal Orb + Message */}
+                <div className="flex items-start gap-2.5 mb-2">
+                  <div 
+                    className="flex-shrink-0 w-2 h-2 mt-1.5 rounded-full animate-pulse"
+                    style={{
+                      background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
+                      boxShadow: '0 0 6px rgba(91, 140, 255, 0.5)',
+                    }}
+                  />
+                  <p className="text-sm leading-relaxed text-foreground/85">
+                    "{letter.message}"
+                  </p>
                 </div>
-              )}
+
+                {/* Footer */}
+                {(letter.name_or_role || letter.user_type) && (
+                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-foreground/5">
+                    {letter.name_or_role && (
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {letter.name_or_role}
+                      </span>
+                    )}
+                    {letter.user_type && (
+                      <span 
+                        className="text-xs px-2 py-0.5 rounded-full"
+                        style={{
+                          background: 'rgba(91, 140, 255, 0.08)',
+                        }}
+                        title={letter.user_type}
+                      >
+                        {userTypeEmoji[letter.user_type] || '💬'}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
@@ -212,7 +209,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       .from('love_letters')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(60); // More letters for 3 rows (unique per row)
+      .limit(40); // Enough for 2 rows
 
     if (!error && data) {
       setLetters(data);
@@ -221,14 +218,12 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
 
   if (letters.length === 0) return null;
 
-  // Split letters into 3 rows - ensuring NO duplicates across rows
-  // Each row gets unique letters, shuffled for variety
+  // Split letters into 2 rows - ensuring NO duplicates across rows
   const shuffled = [...letters].sort(() => Math.random() - 0.5);
-  const rowSize = Math.ceil(shuffled.length / 3);
+  const rowSize = Math.ceil(shuffled.length / 2);
   const rows = [
     shuffled.slice(0, rowSize),
-    shuffled.slice(rowSize, rowSize * 2),
-    shuffled.slice(rowSize * 2),
+    shuffled.slice(rowSize),
   ];
 
   return (
@@ -298,14 +293,14 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
         </motion.p>
       </div>
 
-      {/* 3 Scrolling Rows with Parallax Effect */}
-      <div className="space-y-4 md:space-y-5">
+      {/* 2 Scrolling Rows with Parallax Effect */}
+      <div className="space-y-5 md:space-y-6">
         {rows.map((rowLetters, rowIndex) => (
           <ScrollingRow
             key={rowIndex}
             letters={rowLetters}
-            speed={rowConfigs[rowIndex].speed}
-            direction={rowConfigs[rowIndex].direction}
+            speed={rowConfigs[rowIndex]?.speed ?? 0.5}
+            direction={rowConfigs[rowIndex]?.direction ?? 1}
             isPaused={isPaused}
             rowIndex={rowIndex}
           />
