@@ -33,7 +33,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
 
   const handleCompanyClick = () => {
     setUserType('company');
-    navigate('/company/setup');
+    navigate('/company/onboarding');
   };
 
   // Animation variants for staggered text reveal
