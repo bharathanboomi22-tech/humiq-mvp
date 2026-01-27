@@ -105,23 +105,23 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
             }}
             className="group relative flex-shrink-0 w-[320px] sm:w-[360px] p-[1.5px] rounded-xl overflow-hidden cursor-default"
             style={{
-              background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
+              background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
             }}
           >
-            {/* Inner card content */}
+            {/* Inner card content - white with subtle gradient wash */}
             <div
               className="relative h-full p-5 rounded-[10px]"
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 70%, rgba(143,242,255,0.08) 100%)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
               }}
             >
-              {/* Hover gradient overlay */}
+              {/* Hover intelligence glow overlay */}
               <div 
                 className="absolute inset-0 rounded-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.08) 0%, rgba(185, 131, 255, 0.06) 50%, rgba(255, 143, 177, 0.04) 100%)',
+                  background: 'linear-gradient(135deg, rgba(143, 242, 255, 0.12) 0%, rgba(146, 246, 240, 0.08) 50%, rgba(103, 237, 250, 0.06) 100%)',
                 }}
               />
 
@@ -132,8 +132,8 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
                   <div 
                     className="flex-shrink-0 w-2 h-2 mt-1.5 rounded-full animate-pulse"
                     style={{
-                      background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
-                      boxShadow: '0 0 6px rgba(91, 140, 255, 0.5)',
+                      background: 'linear-gradient(135deg, #8ff2ff, #67edfa)',
+                      boxShadow: '0 0 6px rgba(143, 242, 255, 0.6)',
                     }}
                   />
                   <p className="text-sm leading-relaxed text-foreground/85">
@@ -153,7 +153,7 @@ function ScrollingRow({ letters, speed, direction, isPaused, rowIndex }: Scrolli
                       <span 
                         className="text-xs px-2 py-0.5 rounded-full"
                         style={{
-                          background: 'rgba(91, 140, 255, 0.08)',
+                          background: 'rgba(143, 242, 255, 0.15)',
                         }}
                         title={letter.user_type}
                       >
@@ -236,27 +236,27 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Ambient Intelligence Background */}
+      {/* Ambient Cognitive Field Background */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Large blue radial glow - top right */}
+        {/* Cognitive teal glow - top right */}
         <div 
-          className="absolute -top-40 -right-40 w-[900px] h-[900px] rounded-full opacity-[0.07]"
+          className="absolute -top-40 -right-40 w-[900px] h-[900px] rounded-full opacity-[0.12]"
           style={{
-            background: 'radial-gradient(circle, hsl(220, 100%, 70%) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(143, 242, 255, 0.8) 0%, transparent 65%)',
           }}
         />
-        {/* Lavender glow - center left */}
+        {/* Aqua glow - center left */}
         <div 
-          className="absolute top-1/2 -left-60 w-[700px] h-[700px] rounded-full opacity-[0.05] -translate-y-1/2"
+          className="absolute top-1/2 -left-60 w-[700px] h-[700px] rounded-full opacity-[0.08] -translate-y-1/2"
           style={{
-            background: 'radial-gradient(circle, hsl(270, 70%, 70%) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(146, 246, 240, 0.8) 0%, transparent 65%)',
           }}
         />
-        {/* Subtle pink accent - bottom center */}
+        {/* Subtle cyan accent - bottom center */}
         <div 
-          className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-[0.04]"
+          className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-[0.06]"
           style={{
-            background: 'radial-gradient(circle, hsl(340, 80%, 75%) 0%, transparent 65%)',
+            background: 'radial-gradient(circle, rgba(103, 237, 250, 0.8) 0%, transparent 65%)',
           }}
         />
       </div>
@@ -274,8 +274,8 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
           <div 
             className="w-2 h-2 rounded-full animate-pulse"
             style={{
-              background: 'linear-gradient(135deg, #5B8CFF, #B983FF, #FF8FB1)',
-              boxShadow: '0 0 10px rgba(91, 140, 255, 0.5)',
+              background: 'linear-gradient(135deg, #8ff2ff, #92f6f0, #67edfa)',
+              boxShadow: '0 0 10px rgba(143, 242, 255, 0.6)',
             }}
           />
           <h3 className="text-sm uppercase tracking-[0.12em] text-muted-foreground font-medium">

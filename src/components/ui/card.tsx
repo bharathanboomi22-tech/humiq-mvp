@@ -7,12 +7,16 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     ref={ref} 
     className={cn(
       "rounded-[20px] text-card-foreground",
-      "bg-white/70 backdrop-blur-xl",
-      "border border-white/60",
-      "shadow-[0_4px_24px_-4px_rgba(0,0,0,0.06),0_20px_60px_-12px_rgba(0,0,0,0.10)]",
+      "backdrop-blur-xl",
+      "border border-white/70",
+      "shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04),0_12px_40px_-8px_rgba(0,0,0,0.06)]",
       "transition-all duration-400",
+      "hover:shadow-[0_8px_32px_-4px_rgba(143,242,255,0.12),0_20px_50px_-8px_rgba(0,0,0,0.08)]",
       className
-    )} 
+    )}
+    style={{
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.75) 70%, rgba(146,246,240,0.08) 100%)',
+    }}
     {...props} 
   />
 ));

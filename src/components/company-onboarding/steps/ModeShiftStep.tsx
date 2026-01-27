@@ -27,8 +27,19 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
           ease: "easeInOut",
         }}
       >
-        <div className="w-24 h-24 rounded-full cognitive-gradient opacity-90" />
-        <div className="absolute inset-0 w-24 h-24 rounded-full cognitive-gradient blur-xl opacity-40" />
+        <div 
+          className="w-24 h-24 rounded-full opacity-90"
+          style={{
+            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+            boxShadow: '0 0 40px rgba(143, 242, 255, 0.4)',
+          }}
+        />
+        <div 
+          className="absolute inset-0 w-24 h-24 rounded-full blur-xl opacity-40"
+          style={{
+            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+          }}
+        />
       </motion.div>
 
       {/* Title */}
@@ -72,7 +83,11 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
         <Button
           onClick={onContinue}
           size="lg"
-          className="gap-3 px-8 py-6 text-base rounded-full bg-gradient-to-r from-[#5B8CFF] via-[#8F7CFF] to-[#B983FF] hover:opacity-90 text-white shadow-lg shadow-[#5B8CFF]/20"
+          className="gap-3 px-8 py-6 text-base rounded-full text-foreground"
+          style={{
+            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+            boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4)',
+          }}
         >
           Continue
           <ArrowRight className="w-4 h-4" />

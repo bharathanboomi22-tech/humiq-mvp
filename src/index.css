@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumIQ — AI Career Intelligence Theme
-   Premium, futuristic, human-centered.
-   ASI-grade intelligence aesthetic with cognitive gradients. */
+/* HumiQ — AI Career Intelligence Theme
+   Intelligence-first design with Cognitive Field gradient system.
+   Calm, luminous, alive — not a traditional SaaS UI. */
 
 @layer base {
   :root {
@@ -19,9 +19,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 4%;
 
-    /* Primary accent: Graphite black */
-    --primary: 0 0% 4%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary accent: Cognitive Teal */
+    --primary: 180 90% 70%;
+    --primary-foreground: 0 0% 4%;
 
     /* Secondary: Glass surface */
     --secondary: 0 0% 100% / 0.55;
@@ -31,9 +31,9 @@
     --muted: 220 14% 96%;
     --muted-foreground: 220 6% 40%;
 
-    /* Accent - Cognitive Blue */
-    --accent: 217 100% 68%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Cognitive Teal */
+    --accent: 180 85% 68%;
+    --accent-foreground: 0 0% 4%;
 
     /* Verdict colors — calm, distinctive */
     --verdict-interview: 162 63% 42%;
@@ -51,13 +51,12 @@
     /* Borders - subtle glass edges */
     --border: 220 13% 93%;
     --input: 220 13% 91%;
-    --ring: 217 100% 68%;
+    --ring: 180 85% 68%;
 
-    /* Cognitive Flow gradient colors (for AI elements) */
-    --cognitive-blue: 217 100% 68%;
-    --cognitive-lavender: 270 100% 75%;
-    --cognitive-pink: 340 100% 78%;
-    --cognitive-warm: 36 100% 82%;
+    /* Cognitive Field gradient colors (teal-aqua spectrum) */
+    --cognitive-teal: 170 86% 76%;
+    --cognitive-aqua: 185 93% 78%;
+    --cognitive-cyan: 190 92% 74%;
 
     --radius: 1rem;
 
@@ -85,7 +84,7 @@
     position: relative;
   }
 
-  /* Cognitive Gradient Canvas - global ambient intelligence */
+  /* Cognitive Field Canvas - global ambient intelligence */
   body::before {
     content: '';
     position: fixed;
@@ -93,32 +92,15 @@
     z-index: -1;
     pointer-events: none;
     background: 
-      /* Top-right blue glow */
-      radial-gradient(
-        ellipse 800px 600px at 85% 10%,
-        rgba(91, 140, 255, 0.10) 0%,
-        transparent 70%
-      ),
-      /* Mid-left lavender glow */
-      radial-gradient(
-        ellipse 700px 700px at 10% 50%,
-        rgba(185, 131, 255, 0.08) 0%,
-        transparent 70%
-      ),
-      /* Bottom-right pink glow */
-      radial-gradient(
-        ellipse 600px 500px at 80% 85%,
-        rgba(255, 143, 177, 0.07) 0%,
-        transparent 70%
-      ),
-      /* Subtle linear wash */
+      /* Cognitive Field gradient - soft teal intelligence wash */
       linear-gradient(
         135deg,
-        rgba(91, 140, 255, 0.03) 0%,
-        rgba(185, 131, 255, 0.02) 50%,
-        transparent 100%
-      ),
-      hsl(var(--background));
+        rgba(255, 255, 255, 1) 0%,
+        rgba(146, 246, 240, 0.15) 35%,
+        rgba(143, 242, 255, 0.18) 55%,
+        rgba(103, 237, 250, 0.22) 75%,
+        rgba(255, 255, 255, 1) 100%
+      );
   }
 
   .font-display {
@@ -126,70 +108,108 @@
     letter-spacing: -0.02em;
   }
 
-  /* Cognitive Flow gradient (AI orb fills) */
+  /* Cognitive Field gradient (primary brand gradient) */
   .cognitive-gradient {
-    background: linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 33%, #B983FF 66%, #FF8FB1 100%);
+    background: linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%);
+  }
+
+  /* Cognitive Field with white anchors */
+  .cognitive-field {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(146, 246, 240, 0.225) 35%,
+      rgba(143, 242, 255, 0.29) 55%,
+      rgba(103, 237, 250, 0.405) 75%,
+      rgba(255, 255, 255, 1) 100%
+    );
   }
 
   /* Ambient cognitive glow for sections */
   .cognitive-glow {
     background: radial-gradient(
       ellipse 80% 60% at 50% 40%,
-      rgba(91, 140, 255, 0.08) 0%,
-      rgba(185, 131, 255, 0.06) 40%,
-      rgba(255, 143, 177, 0.04) 70%,
+      rgba(143, 242, 255, 0.15) 0%,
+      rgba(146, 246, 240, 0.10) 40%,
+      rgba(103, 237, 250, 0.06) 70%,
       transparent 100%
     );
   }
 
-  /* Glass card styling — premium AI surface */
+  /* Intelligence field glow - stronger presence */
+  .intelligence-field {
+    background: radial-gradient(
+      ellipse 100% 80% at 50% 50%,
+      rgba(143, 242, 255, 0.25) 0%,
+      rgba(146, 246, 240, 0.18) 30%,
+      rgba(103, 237, 250, 0.10) 60%,
+      transparent 100%
+    );
+  }
+
+  /* Glass card styling — premium AI surface with subtle gradient wash */
   .glass-card {
-    background: rgba(255, 255, 255, 0.70);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.75) 50%,
+      rgba(146, 246, 240, 0.08) 100%
+    );
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow: 
-      0 4px 24px -4px rgba(0, 0, 0, 0.06),
-      0 20px 60px -12px rgba(0, 0, 0, 0.10);
+      0 4px 24px -4px rgba(0, 0, 0, 0.04),
+      0 12px 40px -8px rgba(0, 0, 0, 0.06);
   }
 
   .glass-card-hover {
     @apply glass-card;
     transition: transform 400ms ease-out,
-                box-shadow 400ms ease-out;
+                box-shadow 400ms ease-out,
+                background 400ms ease-out;
   }
 
   .glass-card-hover:hover {
     transform: translateY(-2px);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.90) 0%,
+      rgba(255, 255, 255, 0.80) 50%,
+      rgba(143, 242, 255, 0.12) 100%
+    );
     box-shadow: 
-      0 8px 32px -4px rgba(0, 0, 0, 0.08),
-      0 24px 64px -8px rgba(0, 0, 0, 0.14);
+      0 8px 32px -4px rgba(103, 237, 250, 0.12),
+      0 20px 50px -8px rgba(0, 0, 0, 0.08);
   }
 
-  /* AI Icon container - cognitive accent */
+  /* AI Icon container - cognitive teal accent */
   .ai-icon-container {
     @apply inline-flex items-center justify-center rounded-xl;
-    background: rgba(91, 140, 255, 0.10);
-    color: #5B8CFF;
+    background: rgba(143, 242, 255, 0.15);
+    color: #4fd9e8;
   }
 
-  /* Pill button styles */
+  /* Pill button styles - Cognitive Gradient */
   .pill-button {
     @apply rounded-full px-7 py-3.5 font-medium transition-all duration-400;
     font-size: 15px;
   }
 
   .pill-button-primary {
-    @apply pill-button bg-foreground text-background;
-    box-shadow: 0 2px 8px rgba(11, 11, 13, 0.12);
+    @apply pill-button;
+    background: linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%);
+    color: hsl(0, 0%, 4%);
+    box-shadow: 
+      0 4px 16px rgba(143, 242, 255, 0.35),
+      0 2px 8px rgba(103, 237, 250, 0.25);
   }
 
   .pill-button-primary:hover {
-    transform: translateY(-1px);
     box-shadow: 
-      0 4px 16px rgba(11, 11, 13, 0.16),
-      0 0 0 4px rgba(11, 11, 13, 0.04);
+      0 8px 28px rgba(143, 242, 255, 0.45),
+      0 4px 12px rgba(103, 237, 250, 0.35);
   }
 
   .pill-button-primary:active {
@@ -198,15 +218,16 @@
 
   .pill-button-secondary {
     @apply pill-button;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(8px);
     color: hsl(var(--foreground));
   }
 
   .pill-button-secondary:hover {
-    background: rgba(255, 255, 255, 0.75);
-    border-color: #E6E7EB;
+    background: rgba(255, 255, 255, 0.80);
+    border-color: rgba(143, 242, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(143, 242, 255, 0.15);
   }
 
   /* Text link with animated underline */

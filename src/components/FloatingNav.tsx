@@ -70,8 +70,8 @@ export function FloatingNav() {
               <div 
                 className="w-5 h-5 rounded-full animate-pulse"
                 style={{
-                  background: 'linear-gradient(135deg, #5B8CFF, #8F7CFF, #B983FF, #FF8FB1)',
-                  boxShadow: '0 0 8px rgba(91, 140, 255, 0.4)',
+                  background: 'linear-gradient(135deg, #8ff2ff, #92f6f0, #67edfa)',
+                  boxShadow: '0 0 8px rgba(143, 242, 255, 0.5)',
                 }}
               />
               <span className="font-display text-base font-bold tracking-tight">
@@ -86,16 +86,17 @@ export function FloatingNav() {
             <Button
               size="sm"
               onClick={() => navigate('/love-letter')}
-              className="relative h-8 px-4 text-sm font-medium text-white rounded-full overflow-hidden"
+              className="relative h-8 px-4 text-sm font-medium rounded-full overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
-                boxShadow: '0 2px 12px rgba(91, 140, 255, 0.35)',
+                background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                color: '#0B0B0D',
+                boxShadow: '0 2px 12px rgba(143, 242, 255, 0.4)',
               }}
             >
               <motion.div
                 className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
                 style={{
-                  background: 'linear-gradient(135deg, #6B9CFF 0%, #9F8CFF 35%, #C993FF 65%, #FFA0C1 100%)',
+                  background: 'linear-gradient(135deg, #9ff8ff 0%, #a2fff5 50%, #77f8ff 100%)',
                 }}
               />
               <span className="relative z-10">Love Letters</span>
@@ -105,16 +106,17 @@ export function FloatingNav() {
             <Button
               size="sm"
               onClick={scrollToTop}
-              className="relative h-8 px-4 text-sm font-medium text-white rounded-full overflow-hidden"
+              className="relative h-8 px-4 text-sm font-medium rounded-full overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
-                boxShadow: '0 2px 12px rgba(91, 140, 255, 0.35)',
+                background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                color: '#0B0B0D',
+                boxShadow: '0 2px 12px rgba(143, 242, 255, 0.4)',
               }}
             >
               <motion.div
                 className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
                 style={{
-                  background: 'linear-gradient(135deg, #6B9CFF 0%, #9F8CFF 35%, #C993FF 65%, #FFA0C1 100%)',
+                  background: 'linear-gradient(135deg, #9ff8ff 0%, #a2fff5 50%, #77f8ff 100%)',
                 }}
               />
               <span className="relative z-10">Get Started</span>
