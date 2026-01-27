@@ -91,7 +91,7 @@ export function AISignalOrb({ state, size = 24 }: AISignalOrbProps) {
         }}
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #5B8CFF, #B983FF, #FF8FB1)',
+          background: 'linear-gradient(135deg, #8ff2ff, #92f6f0, #67edfa)',
           filter: `blur(${size * 0.4}px)`,
         }}
       />
@@ -102,8 +102,8 @@ export function AISignalOrb({ state, size = 24 }: AISignalOrbProps) {
         transition={getTransition()}
         className="relative w-full h-full rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 40%, #B983FF 70%, #FF8FB1 100%)',
-          boxShadow: `0 0 ${size * 0.5}px rgba(91, 140, 255, 0.5), 0 0 ${size}px rgba(185, 131, 255, 0.3)`,
+          background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 40%, #67edfa 70%, #8ff2ff 100%)',
+          boxShadow: `0 0 ${size * 0.5}px rgba(143, 242, 255, 0.5), 0 0 ${size}px rgba(103, 237, 250, 0.3)`,
         }}
       >
         {/* Inner highlight */}
@@ -139,7 +139,7 @@ export function AISignalOrb({ state, size = 24 }: AISignalOrbProps) {
           }}
           className="absolute inset-0 rounded-full"
           style={{
-            border: '1px solid rgba(91, 140, 255, 0.4)',
+            border: '1px solid rgba(143, 242, 255, 0.4)',
           }}
         />
       )}

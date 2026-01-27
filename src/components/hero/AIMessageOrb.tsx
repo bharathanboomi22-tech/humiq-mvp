@@ -85,7 +85,7 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #5B8CFF 0%, #B983FF 50%, #FF8FB1 100%)',
+          background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
           filter: 'blur(4px)',
           opacity: 0.4,
         }}
@@ -104,8 +104,8 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #5B8CFF 0%, #B983FF 50%, #FF8FB1 100%)',
-          boxShadow: '0 2px 8px rgba(91, 140, 255, 0.4)',
+          background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+          boxShadow: '0 2px 8px rgba(143, 242, 255, 0.4)',
         }}
         animate={getAnimation()}
         transition={getTransition()}
@@ -136,7 +136,7 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
           className="absolute inset-[-4px] rounded-full"
           style={{
             border: '1px solid',
-            borderColor: 'rgba(185, 131, 255, 0.5)',
+            borderColor: 'rgba(143, 242, 255, 0.5)',
           }}
           animate={{
             scale: [1, 1.8],
