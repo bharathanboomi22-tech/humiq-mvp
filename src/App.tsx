@@ -25,6 +25,7 @@ import TalentOnboarding from "./pages/TalentOnboarding";
 import TalentDashboard from "./pages/TalentDashboard";
 import TalentJobDetail from "./pages/TalentJobDetail";
 import InterviewResult from "./pages/InterviewResult";
+import CompanyOnboarding from "./pages/CompanyOnboarding";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,11 @@ const App = () => (
             } />
             
             {/* Company Routes */}
+            <Route path="/company/onboarding" element={
+              <CompanyRoute>
+                <CompanyOnboarding />
+              </CompanyRoute>
+            } />
             <Route path="/company/setup" element={
               <CompanyRoute>
                 <CompanySetup />
