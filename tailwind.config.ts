@@ -62,10 +62,9 @@ export default {
           low: "hsl(var(--signal-low))",
         },
         cognitive: {
-          blue: "#5B8CFF",
-          lavender: "#B983FF",
-          pink: "#FF8FB1",
-          warm: "#FFD6A5",
+          teal: "#8ff2ff",
+          aqua: "#92f6f0",
+          cyan: "#67edfa",
         },
       },
       borderRadius: {

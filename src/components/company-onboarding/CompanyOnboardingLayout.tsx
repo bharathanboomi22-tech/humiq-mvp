@@ -26,12 +26,46 @@ export const CompanyOnboardingLayout = ({
   const showHeader = currentStep > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F8F9FC] via-[#F5F0FF] to-[#FFF5F7] relative overflow-hidden">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Cognitive Field ambient background */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: `
+            linear-gradient(
+              135deg,
+              rgba(255, 255, 255, 1) 0%,
+              rgba(146, 246, 240, 0.15) 35%,
+              rgba(143, 242, 255, 0.20) 55%,
+              rgba(103, 237, 250, 0.25) 75%,
+              rgba(255, 255, 255, 1) 100%
+            )
+          `,
+        }}
+      />
+      
       {/* Ambient gradient orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#5B8CFF]/8 to-transparent blur-3xl animate-float" />
-        <div className="absolute bottom-[20%] left-[5%] w-[400px] h-[400px] rounded-full bg-gradient-to-br from-[#B983FF]/8 to-transparent blur-3xl animate-float" style={{ animationDelay: '-5s' }} />
-        <div className="absolute top-[50%] right-[30%] w-[300px] h-[300px] rounded-full bg-gradient-to-br from-[#FF8FB1]/6 to-transparent blur-3xl animate-float" style={{ animationDelay: '-10s' }} />
+        <div 
+          className="absolute top-[10%] right-[10%] w-[500px] h-[500px] rounded-full animate-float"
+          style={{
+            background: 'radial-gradient(circle, rgba(143, 242, 255, 0.15) 0%, transparent 70%)',
+          }}
+        />
+        <div 
+          className="absolute bottom-[20%] left-[5%] w-[400px] h-[400px] rounded-full animate-float"
+          style={{
+            animationDelay: '-5s',
+            background: 'radial-gradient(circle, rgba(146, 246, 240, 0.12) 0%, transparent 70%)',
+          }}
+        />
+        <div 
+          className="absolute top-[50%] right-[30%] w-[300px] h-[300px] rounded-full animate-float"
+          style={{
+            animationDelay: '-10s',
+            background: 'radial-gradient(circle, rgba(103, 237, 250, 0.10) 0%, transparent 70%)',
+          }}
+        />
       </div>
 
       {/* Progress indicator header */}
@@ -52,7 +86,12 @@ export const CompanyOnboardingLayout = ({
                 className="flex items-center gap-2"
               >
                 {/* AI Orb Logo */}
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#5B8CFF] via-[#B983FF] to-[#FF8FB1]" />
+                <div 
+                  className="w-6 h-6 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                  }}
+                />
                 <span className="font-display text-lg font-bold text-foreground">
                   HumiQ
                 </span>
@@ -70,11 +109,14 @@ export const CompanyOnboardingLayout = ({
                     className={cn(
                       'h-1.5 rounded-full transition-all duration-500',
                       i < currentStep
-                        ? 'w-6 bg-gradient-to-r from-[#5B8CFF] to-[#B983FF]'
+                        ? 'w-6'
                         : i === currentStep
                         ? 'w-6 bg-foreground'
                         : 'w-4 bg-foreground/15'
                     )}
+                    style={i < currentStep ? {
+                      background: 'linear-gradient(135deg, #8ff2ff 0%, #67edfa 100%)',
+                    } : {}}
                   />
                 ))}
               </div>

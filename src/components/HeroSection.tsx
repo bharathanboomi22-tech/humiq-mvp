@@ -72,57 +72,50 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
   };
 
   return (
-    <section className="min-h-screen relative overflow-hidden">
-      {/* Flowing Gradient Background */}
+    <section className="min-h-screen relative overflow-hidden bg-white">
+      {/* Cognitive Field Background - White base with soft intelligence wash */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: activeTab === 'talent' 
-            ? `linear-gradient(135deg, 
-                hsl(200, 100%, 97%) 0%, 
-                hsl(320, 80%, 92%) 25%, 
-                hsl(280, 70%, 88%) 50%, 
-                hsl(250, 80%, 85%) 75%, 
-                hsl(220, 90%, 88%) 100%
-              )`
-            : `linear-gradient(135deg, 
-                hsl(220, 90%, 97%) 0%, 
-                hsl(240, 80%, 94%) 25%, 
-                hsl(260, 70%, 92%) 50%, 
-                hsl(220, 80%, 90%) 75%, 
-                hsl(200, 90%, 95%) 100%
-              )`,
-          transition: 'background 0.6s ease-in-out',
-        }}
-      />
-      
-      {/* Subtle overlaying gradient layers for depth */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
           background: `
-            radial-gradient(ellipse 80% 60% at 0% 40%, hsl(200, 100%, 97%) 0%, transparent 60%),
-            radial-gradient(ellipse 70% 50% at 100% 30%, hsl(240, 80%, 88%) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 50%, hsl(300, 60%, 90%) 0%, transparent 60%)
+            linear-gradient(
+              135deg,
+              rgba(255, 255, 255, 1) 0%,
+              rgba(146, 246, 240, 0.18) 30%,
+              rgba(143, 242, 255, 0.25) 50%,
+              rgba(103, 237, 250, 0.32) 70%,
+              rgba(255, 255, 255, 1) 100%
+            )
           `,
         }}
       />
       
-      {/* Enhanced AI Orb with stronger visibility */}
+      {/* Stronger intelligence field near AI dialogue card (right side) */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 60% 70% at 75% 50%, rgba(143, 242, 255, 0.22) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 50% at 80% 40%, rgba(146, 246, 240, 0.18) 0%, transparent 60%)
+          `,
+        }}
+      />
+      
+      {/* Enhanced AI Orb with Cognitive Field glow */}
       <div className="absolute inset-0 lg:left-[30%] pointer-events-none">
-        {/* Radial glow behind orb for contrast */}
+        {/* Soft halo behind orb */}
         <div 
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] lg:w-[700px] lg:h-[700px]"
           style={{
-            background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)',
-          }}
-        />
-        {/* Outer glow ring */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] lg:w-[550px] lg:h-[550px] rounded-full opacity-40"
-          style={{
-            background: 'radial-gradient(circle, transparent 50%, rgba(91, 140, 255, 0.15) 70%, transparent 90%)',
-            animation: 'pulse 4s ease-in-out infinite',
+            background: `
+              radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.7) 0%,
+                rgba(143, 242, 255, 0.15) 30%,
+                rgba(146, 246, 240, 0.08) 50%,
+                transparent 70%
+              )
+            `,
           }}
         />
         <AIOrb />
@@ -151,7 +144,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               </span>
             </button>
 
-            {/* Center - Love Letters Button with Glow Animation */}
+            {/* Center - Love Letters Button with Cognitive Glow */}
             <motion.button
               onClick={() => navigate('/love-letter')}
               className="hidden md:flex flex-col items-center gap-0.5 group relative"
@@ -159,9 +152,9 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               transition={{ duration: 0.3 }}
               animate={{
                 boxShadow: [
-                  '0 0 20px rgba(255, 143, 177, 0.3), 0 0 40px rgba(185, 131, 255, 0.2)',
-                  '0 0 30px rgba(255, 143, 177, 0.5), 0 0 60px rgba(185, 131, 255, 0.3)',
-                  '0 0 20px rgba(255, 143, 177, 0.3), 0 0 40px rgba(185, 131, 255, 0.2)',
+                  '0 0 20px rgba(143, 242, 255, 0.3), 0 0 40px rgba(103, 237, 250, 0.2)',
+                  '0 0 30px rgba(143, 242, 255, 0.5), 0 0 60px rgba(103, 237, 250, 0.3)',
+                  '0 0 20px rgba(143, 242, 255, 0.3), 0 0 40px rgba(103, 237, 250, 0.2)',
                 ],
               }}
               style={{ borderRadius: '9999px' }}
@@ -169,13 +162,13 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               <span 
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 relative overflow-hidden"
                 style={{ 
-                  background: 'linear-gradient(135deg, #FF8FB1 0%, #B983FF 50%, #5B8CFF 100%)',
-                  color: '#FFFFFF',
+                  background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                  color: '#0B0B0D',
                 }}
               >
                 {/* Shimmer effect */}
                 <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
                   animate={{
                     x: ['-100%', '100%'],
                   }}
@@ -279,29 +272,29 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                     className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
                     variants={lineVariants}
                   >
-                    {/* Primary CTA - Active Intelligence Gradient with Enhanced Glow */}
+                    {/* Primary CTA - Cognitive Gradient with Soft Glow */}
                     <motion.button
                       onClick={handleTalentClick}
-                      className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
+                      className="relative px-8 py-4 rounded-full text-base font-semibold overflow-hidden"
                       style={{ 
-                        background: 'linear-gradient(135deg, #5B8CFF 0%, #8F7CFF 35%, #B983FF 65%, #FF8FB1 100%)',
-                        boxShadow: '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                        background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                        color: '#0B0B0D',
+                        boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
                       }}
                       whileHover={shouldReduceMotion ? {} : { 
-                        scale: 1.03,
-                        boxShadow: '0 0 30px rgba(91, 140, 255, 0.5), 0 0 60px rgba(185, 131, 255, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
+                        boxShadow: '0 8px 32px rgba(143, 242, 255, 0.5), 0 4px 16px rgba(103, 237, 250, 0.4)',
                       }}
                       whileTap={{ scale: 0.97 }}
                       animate={shouldReduceMotion ? {} : {
                         boxShadow: [
-                          '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
-                          '0 0 28px rgba(91, 140, 255, 0.5), 0 0 50px rgba(185, 131, 255, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
-                          '0 0 20px rgba(91, 140, 255, 0.4), 0 0 40px rgba(185, 131, 255, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
+                          '0 6px 28px rgba(143, 242, 255, 0.5), 0 3px 14px rgba(103, 237, 250, 0.35)',
+                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
                         ],
                       }}
                       transition={{
                         boxShadow: {
-                          duration: 2,
+                          duration: 2.5,
                           repeat: Infinity,
                           ease: 'easeInOut',
                         },
@@ -397,35 +390,35 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
-                    {/* Primary CTA - Bold Company Gradient */}
+                    {/* Primary CTA - Cognitive Gradient */}
                     <motion.button
                       onClick={handleCompanyClick}
-                      className="relative px-8 py-4 rounded-full text-base font-semibold text-white overflow-hidden"
+                      className="relative px-8 py-4 rounded-full text-base font-semibold overflow-hidden"
                       style={{ 
-                        background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 50%, #8B5CF6 100%)',
-                        boxShadow: '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                        background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+                        color: '#0B0B0D',
+                        boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
                       }}
                       whileHover={shouldReduceMotion ? {} : { 
-                        scale: 1.03,
-                        boxShadow: '0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(139, 92, 246, 0.3), 0 8px 24px rgba(0,0,0,0.15)',
+                        boxShadow: '0 8px 32px rgba(143, 242, 255, 0.5), 0 4px 16px rgba(103, 237, 250, 0.4)',
                       }}
                       whileTap={{ scale: 0.97 }}
                       animate={shouldReduceMotion ? {} : {
                         boxShadow: [
-                          '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
-                          '0 0 28px rgba(59, 130, 246, 0.5), 0 0 50px rgba(139, 92, 246, 0.25), 0 4px 16px rgba(0,0,0,0.1)',
-                          '0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2), 0 4px 16px rgba(0,0,0,0.1)',
+                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
+                          '0 6px 28px rgba(143, 242, 255, 0.5), 0 3px 14px rgba(103, 237, 250, 0.35)',
+                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
                         ],
                       }}
                       transition={{
                         boxShadow: {
-                          duration: 2,
+                          duration: 2.5,
                           repeat: Infinity,
                           ease: 'easeInOut',
                         },
                       }}
                     >
-                      Start Hiring Instantly
+                      Start Hiring Instantly →
                     </motion.button>
 
                     {/* Secondary CTA */}
