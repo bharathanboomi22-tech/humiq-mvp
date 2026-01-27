@@ -42,6 +42,7 @@ import {
 } from '@/lib/talent';
 import { TalentProfile, AVAILABLE_TESTS } from '@/types/talent';
 import { InterviewInbox } from '@/components/talent/InterviewInbox';
+import { WorkIntelligenceSection } from '@/components/talent/WorkIntelligenceSection';
 import { getInterviewResultsForTalent, InterviewResult } from '@/lib/interviews';
 import { WorkSession, EvidencePackSummary } from '@/types/workSession';
 import { supabase } from '@/integrations/supabase/client';
@@ -395,6 +396,9 @@ const TalentDashboard = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Work Intelligence Section */}
+          <WorkIntelligenceSection consolidatedProfile={consolidated} />
 
           {/* Grid: Tests & Inbox */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
