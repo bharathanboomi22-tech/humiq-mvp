@@ -9,20 +9,24 @@ interface DualStageCardProps {
   autoSwitchDelay?: number;
 }
 
-// Work Signals Visual (Talent Step 1)
+// Work Signals Visual (Talent Step 1) - HIGH CONTRAST gradient chips
 function WorkSignalsVisual() {
   const shouldReduceMotion = useReducedMotion();
   const signals = ['AI Walkthrough', 'Code/Repo', 'Design/Prototype', 'Docs/Writing'];
   
   return (
-    <div className="flex flex-wrap gap-2 justify-center items-center h-full p-4">
+    <div className="flex flex-wrap gap-3 justify-center items-center h-full p-6">
       {signals.map((signal, i) => (
         <motion.div
           key={signal}
           initial={shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: i * 0.15, duration: 0.4 }}
-          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-violet/20 to-pink-hot/20 text-white border border-white/10"
+          className="px-4 py-2 rounded-full text-sm font-semibold text-white"
+          style={{
+            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
+            boxShadow: '0 4px 12px rgba(255, 47, 178, 0.3)',
+          }}
         >
           {signal}
         </motion.div>
@@ -31,7 +35,7 @@ function WorkSignalsVisual() {
   );
 }
 
-// AI Chat Visual (Talent Step 2)
+// AI Chat Visual (Talent Step 2) - HIGH CONTRAST with Orbi
 function AIChatVisual() {
   const shouldReduceMotion = useReducedMotion();
   const messages = [
@@ -41,19 +45,25 @@ function AIChatVisual() {
   ];
   
   return (
-    <div className="flex flex-col gap-2 p-4 h-full justify-center">
+    <div className="flex flex-col gap-3 p-5 h-full justify-center">
       {messages.map((msg, i) => (
         <motion.div
           key={i}
           initial={shouldReduceMotion ? {} : { opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.3, duration: 0.4 }}
-          className="flex items-start gap-2"
+          className="flex items-start gap-3"
         >
           <div className="flex-shrink-0 mt-0.5">
             <AIOrbi size="sm" isWriting={i === messages.length - 1} />
           </div>
-          <div className="px-3 py-2 rounded-xl bg-white/5 text-xs text-gray-300">
+          <div 
+            className="px-4 py-2.5 rounded-2xl text-sm text-white font-medium"
+            style={{
+              background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(255, 47, 178, 0.3) 100%)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+            }}
+          >
             {msg}
           </div>
         </motion.div>
@@ -62,25 +72,29 @@ function AIChatVisual() {
   );
 }
 
-// Work Identity Visual (Talent Step 3)
+// Work Identity Visual (Talent Step 3) - HIGH CONTRAST chips
 function WorkIdentityVisual() {
   const shouldReduceMotion = useReducedMotion();
   const chips = [
-    { label: 'Strength', color: 'from-green-500/30 to-green-600/20' },
-    { label: 'Weakness', color: 'from-amber-500/30 to-amber-600/20' },
-    { label: 'Risk', color: 'from-gray-500/30 to-gray-600/20' },
+    { label: 'Strength', gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' },
+    { label: 'Risk', gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' },
+    { label: 'Pattern', gradient: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)' },
   ];
   
   return (
-    <div className="flex flex-col gap-3 p-4 h-full justify-center">
-      <div className="flex gap-2 justify-center">
+    <div className="flex flex-col gap-4 p-6 h-full justify-center">
+      <div className="flex gap-3 justify-center flex-wrap">
         {chips.map((chip, i) => (
           <motion.div
             key={chip.label}
             initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.15, duration: 0.3 }}
-            className={`px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${chip.color} text-white border border-white/10`}
+            className="px-4 py-2 rounded-full text-sm font-bold text-white"
+            style={{
+              background: chip.gradient,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+            }}
           >
             {chip.label}
           </motion.div>
@@ -90,7 +104,7 @@ function WorkIdentityVisual() {
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.4 }}
-        className="text-center text-xs text-gray-400"
+        className="text-center text-sm text-white font-medium"
       >
         Strong systems thinking, early in scaling experience
       </motion.p>
@@ -98,20 +112,24 @@ function WorkIdentityVisual() {
   );
 }
 
-// Intent Map Visual (Company Step 1)
+// Intent Map Visual (Company Step 1) - HIGH CONTRAST
 function IntentMapVisual() {
   const shouldReduceMotion = useReducedMotion();
   const chips = ['Outcome', 'Constraints', 'Ownership', 'Collaboration'];
   
   return (
-    <div className="flex flex-wrap gap-2 justify-center items-center h-full p-4">
+    <div className="flex flex-wrap gap-3 justify-center items-center h-full p-6">
       {chips.map((chip, i) => (
         <motion.div
           key={chip}
           initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.12, duration: 0.3 }}
-          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-violet/20 to-pink-hot/20 text-white border border-white/10"
+          className="px-4 py-2 rounded-full text-sm font-semibold text-white"
+          style={{
+            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
+            boxShadow: '0 4px 12px rgba(255, 47, 178, 0.3)',
+          }}
         >
           {chip}
         </motion.div>
@@ -120,22 +138,23 @@ function IntentMapVisual() {
   );
 }
 
-// Shortlist Visual (Company Step 2)
+// Shortlist Visual (Company Step 2) - BOLD avatars
 function ShortlistVisual() {
   const shouldReduceMotion = useReducedMotion();
   const candidates = ['JM', 'AR', 'SK'];
   
   return (
-    <div className="flex gap-2 justify-center items-center h-full p-4">
+    <div className="flex gap-4 justify-center items-center h-full p-6">
       {candidates.map((initials, i) => (
         <motion.div
           key={initials}
           initial={shouldReduceMotion ? {} : { opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.15, duration: 0.4 }}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold"
+          className="w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold text-white"
           style={{
             background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
+            boxShadow: '0 6px 20px rgba(255, 47, 178, 0.4)',
           }}
         >
           {initials}
@@ -145,28 +164,39 @@ function ShortlistVisual() {
   );
 }
 
-// Evidence Panel Visual (Company Step 3)
+// Evidence Panel Visual (Company Step 3) - HIGH CONTRAST
 function EvidencePanelVisual() {
   const shouldReduceMotion = useReducedMotion();
   
   return (
-    <div className="flex flex-col gap-2 p-4 h-full justify-center">
+    <div className="flex flex-col gap-4 p-6 h-full justify-center">
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center gap-2"
+        className="flex items-center gap-3"
       >
-        <div className="w-12 h-8 rounded bg-white/10 flex items-center justify-center">
-          <span className="text-[8px] text-gray-400">▶</span>
+        <div 
+          className="w-16 h-10 rounded-lg flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
+          }}
+        >
+          <span className="text-white text-lg">▶</span>
         </div>
-        <span className="text-xs text-gray-400">Interview excerpt</span>
+        <span className="text-sm text-white font-medium">Interview excerpt</span>
       </motion.div>
       <motion.p
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        className="text-xs text-gray-300 italic"
+        className="text-sm text-white italic font-medium"
+        style={{
+          background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(255, 47, 178, 0.2) 100%)',
+          padding: '12px 16px',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
       >
         "I prioritized speed because..."
       </motion.p>
@@ -223,7 +253,7 @@ export function DualStageCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Title */}
+      {/* Title - WHITE text */}
       <h3 className="text-base font-bold text-[#111111] mb-4 font-display">
         {title}
       </h3>
@@ -240,7 +270,8 @@ export function DualStageCard({
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 flex items-center justify-center p-6"
             >
-              <p className="text-[15px] text-gray-300 text-center leading-relaxed">
+              {/* ALL TEXT PURE WHITE */}
+              <p className="text-[15px] text-white text-center leading-relaxed">
                 {contentText}
               </p>
             </motion.div>

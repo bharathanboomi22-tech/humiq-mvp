@@ -52,12 +52,12 @@ function TestimonialCard({ message, name }: { message: string; name?: string }) 
         transition: { duration: 0.3 },
       }}
     >
-      <p className="text-[15px] leading-relaxed text-gray-300 mb-4">
+      <p className="text-[15px] leading-relaxed text-white mb-4">
         "{message}"
       </p>
       
       {name && (
-        <p className="text-xs text-gray-500 mb-3">— {name}</p>
+        <p className="text-xs text-white/60 mb-3">— {name}</p>
       )}
       
       {/* Gradient underline */}
@@ -74,7 +74,7 @@ function TestimonialCard({ message, name }: { message: string; name?: string }) 
   );
 }
 
-// Infinite scroll marquee component
+// Infinite scroll marquee component - FASTER speed
 function InfiniteMarquee({ items, isPaused }: { items: typeof sampleTestimonials; isPaused: boolean }) {
   const shouldReduceMotion = useReducedMotion();
   
@@ -88,7 +88,7 @@ function InfiniteMarquee({ items, isPaused }: { items: typeof sampleTestimonials
         y: [0, -50 * items.length],
       }}
       transition={{
-        duration: items.length * 8,
+        duration: items.length * 5, // FASTER: reduced from 8 to 5 (~35% faster)
         repeat: Infinity,
         ease: 'linear',
       }}

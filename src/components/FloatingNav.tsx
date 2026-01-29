@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Heart } from 'lucide-react';
 
 export function FloatingNav() {
   const navigate = useNavigate();
@@ -38,10 +37,6 @@ export function FloatingNav() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToLoveLetters = () => {
-    document.getElementById('loveletters')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleTabSwitch = (tab: 'talent' | 'company') => {
@@ -105,17 +100,6 @@ export function FloatingNav() {
 
             {/* Divider */}
             <div className="hidden md:block w-px h-5 bg-gray-200" />
-
-            {/* Send Love Letters Button */}
-            <motion.button
-              onClick={scrollToLoveLetters}
-              className="flex items-center gap-1.5 text-sm font-medium text-pink-hot hover:text-pink-vibrant transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Heart className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Send Love</span>
-            </motion.button>
 
             {/* CTA Button */}
             <motion.button

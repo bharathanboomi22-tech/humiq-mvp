@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { AIOrbi } from './hero/AIOrbi';
-import { Heart } from 'lucide-react';
 
 interface HeroSectionProps {
   onSubmit?: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -40,9 +39,9 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
     urlMode === 'hiring' ? 'company' : 'talent'
   );
   
-  // Sequential dialogue state
+  // Sequential dialogue state - track which line is currently writing
   const [visibleLines, setVisibleLines] = useState<number>(0);
-  const [isWriting, setIsWriting] = useState(false);
+  const [currentWritingLine, setCurrentWritingLine] = useState<number>(0);
 
   // Update URL when tab changes
   const handleTabSwitch = useCallback((tab: 'talent' | 'company') => {
@@ -51,31 +50,28 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
     onViewChange?.(tab);
     // Reset dialogue animation
     setVisibleLines(0);
-    setIsWriting(false);
+    setCurrentWritingLine(0);
   }, [setSearchParams, onViewChange]);
 
-  // Sequential dialogue reveal
+  // Sequential dialogue reveal with per-line writing state
   useEffect(() => {
     const dialogueLines = activeTab === 'talent' ? talentDialogueLines : companyDialogueLines;
     
     if (visibleLines < dialogueLines.length) {
-      setIsWriting(true);
+      setCurrentWritingLine(visibleLines);
       const timer = setTimeout(() => {
         setVisibleLines(prev => prev + 1);
-        if (visibleLines === dialogueLines.length - 1) {
-          setIsWriting(false);
-        }
-      }, shouldReduceMotion ? 0 : 600);
+      }, shouldReduceMotion ? 0 : 800);
       return () => clearTimeout(timer);
     } else {
-      setIsWriting(false);
+      setCurrentWritingLine(-1); // No line is writing
     }
   }, [visibleLines, activeTab, shouldReduceMotion]);
 
   // Initial reveal on mount
   useEffect(() => {
     if (visibleLines === 0) {
-      const timer = setTimeout(() => setVisibleLines(1), 800);
+      const timer = setTimeout(() => setVisibleLines(1), 600);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -88,10 +84,6 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
   const handleCompanyClick = () => {
     setUserType('company');
     navigate('/company/onboarding');
-  };
-
-  const scrollToLoveLetters = () => {
-    document.getElementById('loveletters')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const currentDialogue = activeTab === 'talent' ? talentDialogueLines : companyDialogueLines;
@@ -155,22 +147,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               </button>
             </div>
 
-            {/* Right - CTAs */}
+            {/* Right - CTAs (NO Love Letters button) */}
             <div className="flex items-center gap-3">
-              {/* Send Love Letters Button */}
-              <motion.button
-                onClick={scrollToLoveLetters}
-                className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border-2 border-transparent hover:border-pink-hot/30 transition-all duration-300"
-                style={{
-                  background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%) border-box',
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Heart className="w-4 h-4 text-pink-hot" />
-                <span className="text-pink-hot">Send Love Letters</span>
-              </motion.button>
-
               <motion.button
                 onClick={handleTalentClick}
                 className="px-5 py-2.5 rounded-full text-sm font-semibold text-white"
@@ -337,7 +315,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             </AnimatePresence>
           </motion.div>
 
-          {/* Right Column - AI Card */}
+          {/* Right Column - AI Card with Orbi per line */}
           <motion.div 
             className="order-1 lg:order-2 relative"
             initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
@@ -372,20 +350,20 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             >
               {/* Header with Orbi */}
               <div className="flex items-center gap-3 mb-8">
-                <AIOrbi size="md" isWriting={isWriting} />
+                <AIOrbi size="md" isWriting={currentWritingLine >= 0} />
                 <div>
                   <p className="text-xl font-bold text-white">HumiQ</p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-white/60">
                     {activeTab === 'talent' ? 'Super Career Intelligence' : 'Decision-Ready Hiring Intelligence'}
                   </p>
                 </div>
               </div>
 
-              {/* AI Dialogue - Sequential reveal */}
-              <div className="space-y-3 min-h-[200px] mb-8">
+              {/* AI Dialogue - Sequential reveal with Orbi per line */}
+              <div className="space-y-4 min-h-[220px] mb-8">
                 <AnimatePresence>
                   {currentDialogue.slice(0, visibleLines).map((line, index) => (
-                    <motion.p
+                    <motion.div
                       key={`${activeTab}-${index}`}
                       initial={shouldReduceMotion ? {} : { opacity: 0, y: 8, x: -4 }}
                       animate={{ opacity: 1, y: 0, x: 0 }}
@@ -393,10 +371,20 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                         duration: 0.4, 
                         ease: [0.22, 1, 0.36, 1],
                       }}
-                      className="text-[15px] leading-relaxed text-gray-300"
+                      className="flex items-start gap-3"
                     >
-                      {line}
-                    </motion.p>
+                      {/* Per-line Orbi */}
+                      <div className="flex-shrink-0 mt-0.5">
+                        <AIOrbi 
+                          size="sm" 
+                          isWriting={currentWritingLine === index} 
+                        />
+                      </div>
+                      {/* Line text - PURE WHITE */}
+                      <p className="text-[15px] leading-relaxed text-white">
+                        {line}
+                      </p>
+                    </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
@@ -425,10 +413,10 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 1.2 }}
+        transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
         className="md:hidden absolute bottom-6 left-0 right-0 flex justify-center z-20 px-4"
       >
-        <div className="flex items-center gap-1 bg-white rounded-full p-1 shadow-lg border border-gray-100">
+        <div className="flex items-center gap-0 bg-white rounded-full p-1 shadow-lg border border-gray-100">
           <button
             onClick={() => handleTabSwitch('talent')}
             className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
