@@ -85,7 +85,7 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="min-h-screen blush-gradient">
+    <main className="min-h-screen bg-white">
       <FloatingNav />
       {viewState === 'input' && (
         <>
