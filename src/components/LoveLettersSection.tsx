@@ -44,20 +44,20 @@ function VerticalScrollColumn({ letters, reverse = false }: { letters: LoveLette
         {displayLetters.map((letter, index) => (
           <motion.div
             key={`${letter.id}-${index}`}
-            className="relative rounded-[20px] p-5 bg-[#0B0B0D] text-white group"
+            className="relative rounded-3xl p-5 bg-[#0B0B10] text-white group"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
             {/* Message */}
-            <p className="text-sm leading-relaxed text-gray-300 mb-4">
+            <p className="text-[15px] leading-relaxed text-gray-300 mb-4">
               "{letter.message}"
             </p>
             
-            {/* Pink underline accent */}
+            {/* Gradient underline accent */}
             <div 
               className="w-full h-[3px] rounded-full"
               style={{
-                background: 'linear-gradient(90deg, #E91E8C 0%, #FF69B4 50%, #E91E8C 100%)',
+                background: 'linear-gradient(90deg, #7C3AED 0%, #FF2FB2 50%, #FF6BD6 100%)',
               }}
             />
             
@@ -130,7 +130,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="relative w-full py-20 md:py-28 overflow-hidden bg-pink-wash"
+      className="relative w-full py-24 md:py-32 overflow-hidden bg-pink-wash"
     >
       <div className="container max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -145,17 +145,32 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
             {/* Decorative dots and line */}
             <div className="flex items-center gap-4 mb-6 justify-center lg:justify-start">
               <div className="flex flex-col gap-2">
-                <div className="w-2 h-2 rounded-full bg-pink-vibrant" />
-                <div className="w-2 h-2 rounded-full bg-pink-vibrant" />
-                <div className="w-2 h-2 rounded-full bg-pink-vibrant" />
-                <div className="w-2 h-2 rounded-full bg-pink-vibrant" />
+                <div 
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #FF2FB2)' }}
+                />
+                <div 
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #FF2FB2)' }}
+                />
+                <div 
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #FF2FB2)' }}
+                />
+                <div 
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #FF2FB2)' }}
+                />
               </div>
-              <div className="w-[3px] h-24 bg-pink-vibrant rounded-full" />
+              <div 
+                className="w-[3px] h-24 rounded-full"
+                style={{ background: 'linear-gradient(180deg, #7C3AED, #FF2FB2)' }}
+              />
             </div>
 
             {/* Title */}
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display mb-4">
-              <span className="text-gradient-pink">Love Letters</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display mb-4">
+              <span className="text-gradient">Love Letters</span>
             </h2>
             
             {/* Subtitle */}

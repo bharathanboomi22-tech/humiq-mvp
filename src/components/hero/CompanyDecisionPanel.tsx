@@ -68,8 +68,16 @@ export function CompanyDecisionPanel() {
       transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
       className="relative"
     >
+      {/* Glow effect behind card */}
+      <div 
+        className="absolute -inset-8 rounded-[40px] opacity-60 blur-3xl pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.2) 0%, rgba(255, 47, 178, 0.15) 50%, transparent 70%)',
+        }}
+      />
+
       {/* Dark Card Container */}
-      <div className="relative rounded-[20px] p-6 md:p-8 bg-[#0B0B0D] text-white">
+      <div className="relative rounded-[28px] p-6 md:p-8 bg-[#0B0B10] text-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -77,7 +85,7 @@ export function CompanyDecisionPanel() {
             <motion.div
               className="w-3 h-3 rounded-full"
               style={{
-                background: 'linear-gradient(135deg, #E91E8C 0%, #FF69B4 50%, #C71585 100%)',
+                background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%)',
               }}
               animate={shouldReduceMotion ? {} : {
                 scale: [1, 1.2, 1],
@@ -85,13 +93,13 @@ export function CompanyDecisionPanel() {
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <span className="text-sm font-medium text-gray-400">
+            <span className="text-sm font-semibold text-gray-400">
               AI Decision Panel
             </span>
           </div>
           <span 
-            className="text-xs px-2.5 py-1 rounded-full"
-            style={{ background: 'rgba(233, 30, 140, 0.15)', color: '#E91E8C' }}
+            className="text-xs font-semibold px-2.5 py-1 rounded-full"
+            style={{ background: 'rgba(255, 47, 178, 0.15)', color: '#FF2FB2' }}
           >
             Live
           </span>
@@ -108,20 +116,20 @@ export function CompanyDecisionPanel() {
               className="relative rounded-xl p-4 transition-all duration-300"
               style={{
                 background: activeCard === index 
-                  ? 'rgba(233, 30, 140, 0.08)' 
+                  ? 'rgba(124, 58, 237, 0.08)' 
                   : 'rgba(255, 255, 255, 0.03)',
                 border: activeCard === index 
-                  ? '1px solid rgba(233, 30, 140, 0.25)' 
+                  ? '1px solid rgba(255, 47, 178, 0.25)' 
                   : '1px solid rgba(255, 255, 255, 0.06)',
               }}
             >
               <div className="flex items-start gap-3">
                 {/* Avatar */}
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
                   style={{
                     background: candidate.isReady 
-                      ? 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)' 
+                      ? 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)' 
                       : 'linear-gradient(135deg, #374151 0%, #1F2937 100%)',
                     color: '#FFFFFF',
                   }}
@@ -132,7 +140,7 @@ export function CompanyDecisionPanel() {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-semibold text-white">
                       {candidate.thinkingPattern}
                     </span>
                     {candidate.isReady && (
@@ -140,10 +148,10 @@ export function CompanyDecisionPanel() {
                         initial={shouldReduceMotion ? {} : { scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.8, type: 'spring', stiffness: 300 }}
-                        className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
+                        className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
                         style={{ 
-                          background: 'rgba(233, 30, 140, 0.2)',
-                          color: '#FF69B4',
+                          background: 'rgba(255, 47, 178, 0.2)',
+                          color: '#FF6BD6',
                         }}
                       >
                         <Check className="w-3 h-3" />
@@ -166,8 +174,8 @@ export function CompanyDecisionPanel() {
                         transition={{ duration: 0.3 }}
                         className="flex items-center gap-1.5"
                       >
-                        <Sparkles className="w-3 h-3 text-pink-vibrant" />
-                        <span className="text-xs font-medium text-pink-light">
+                        <Sparkles className="w-3 h-3" style={{ color: '#FF2FB2' }} />
+                        <span className="text-xs font-semibold" style={{ color: '#FF6BD6' }}>
                           {candidate.aiInsight}
                         </span>
                       </motion.div>
@@ -182,7 +190,7 @@ export function CompanyDecisionPanel() {
                   layoutId="activeIndicator"
                   className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 rounded-full"
                   style={{
-                    background: 'linear-gradient(180deg, #E91E8C 0%, #FF69B4 100%)',
+                    background: 'linear-gradient(180deg, #7C3AED 0%, #FF2FB2 100%)',
                   }}
                 />
               )}
@@ -204,7 +212,7 @@ export function CompanyDecisionPanel() {
               3 candidates analyzed
             </span>
           </div>
-          <span className="text-xs font-medium text-pink-vibrant">
+          <span className="text-xs font-semibold" style={{ color: '#FF2FB2' }}>
             1 decision-ready
           </span>
         </motion.div>

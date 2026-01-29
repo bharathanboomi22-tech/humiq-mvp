@@ -27,6 +27,14 @@ export const CompanyOnboardingLayout = ({
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Gradient background */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,230,245,0.3) 50%, rgba(255,182,220,0.4) 80%, rgba(255,47,178,0.12) 100%)',
+        }}
+      />
+
       {/* Progress indicator header */}
       {showHeader && showProgress && (
         <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/90 backdrop-blur-lg border-b border-gray-100">
@@ -37,24 +45,21 @@ export const CompanyOnboardingLayout = ({
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-all duration-300 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                <span className="text-sm font-medium">Back</span>
+                <span className="text-sm font-semibold">Back</span>
               </button>
             ) : (
               <button
                 onClick={() => navigate('/')}
                 className="flex items-center gap-2"
               >
-                <span className="font-display text-lg font-bold text-foreground">
+                <span className="font-display text-lg font-extrabold text-foreground">
                   HumiQ
-                </span>
-                <span className="text-[10px] font-medium text-pink-vibrant px-1 py-0.5 rounded bg-pink-wash">
-                  Beta
                 </span>
               </button>
             )}
 
             <div className="flex items-center gap-3">
-              <span className="text-xs text-muted-foreground font-medium">
+              <span className="text-xs text-muted-foreground font-semibold">
                 Hiring Intent
               </span>
               <div className="flex gap-1.5">
@@ -64,11 +69,14 @@ export const CompanyOnboardingLayout = ({
                     className={cn(
                       'h-1.5 rounded-full transition-all duration-500',
                       i < currentStep
-                        ? 'w-6 bg-pink-vibrant'
+                        ? 'w-6'
                         : i === currentStep
                         ? 'w-6 bg-foreground'
                         : 'w-4 bg-gray-200'
                     )}
+                    style={i < currentStep ? {
+                      background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
+                    } : {}}
                   />
                 ))}
               </div>
