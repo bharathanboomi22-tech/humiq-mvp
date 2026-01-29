@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Heart } from 'lucide-react';
 
 export function FloatingNav() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const shouldReduceMotion = useReducedMotion();
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  
+  const urlMode = searchParams.get('mode');
+  const activeTab = urlMode === 'hiring' ? 'company' : 'talent';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +38,15 @@ export function FloatingNav() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToLoveLetters = () => {
+    document.getElementById('loveletters')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleTabSwitch = (tab: 'talent' | 'company') => {
+    setSearchParams({ mode: tab === 'company' ? 'hiring' : 'talent' });
+    scrollToTop();
   };
 
   return (
@@ -65,13 +79,43 @@ export function FloatingNav() {
             {/* Divider */}
             <div className="w-px h-5 bg-gray-200" />
 
-            {/* Love Letter Button */}
-            <button
-              onClick={() => navigate('/love-letter')}
-              className="text-sm font-medium text-[#111111] hover:text-pink-hot transition-colors"
+            {/* Toggle */}
+            <div className="hidden md:flex items-center gap-0 bg-gray-100 rounded-full p-0.5">
+              <button
+                onClick={() => handleTabSwitch('talent')}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                  activeTab === 'talent' 
+                    ? 'bg-white text-[#111111] shadow-sm' 
+                    : 'text-gray-500 hover:text-[#111111]'
+                }`}
+              >
+                Talent
+              </button>
+              <button
+                onClick={() => handleTabSwitch('company')}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                  activeTab === 'company' 
+                    ? 'bg-white text-[#111111] shadow-sm' 
+                    : 'text-gray-500 hover:text-[#111111]'
+                }`}
+              >
+                Hiring
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block w-px h-5 bg-gray-200" />
+
+            {/* Send Love Letters Button */}
+            <motion.button
+              onClick={scrollToLoveLetters}
+              className="flex items-center gap-1.5 text-sm font-medium text-pink-hot hover:text-pink-vibrant transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Love Letters
-            </button>
+              <Heart className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Send Love</span>
+            </motion.button>
 
             {/* CTA Button */}
             <motion.button
@@ -80,7 +124,10 @@ export function FloatingNav() {
               style={{
                 background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
               }}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
+              }}
               whileTap={{ scale: 0.98 }}
             >
               Get Started
