@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        body: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['Plus Jakarta Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -62,15 +62,16 @@ export default {
           low: "hsl(var(--signal-low))",
         },
         pink: {
-          vibrant: "#E91E8C",
-          light: "#FF69B4",
+          hot: "#FF2FB2",
+          vibrant: "#FF4FD1",
+          light: "#FF6BD6",
           wash: "#FFF0F7",
-          gradient: {
-            start: "#E91E8C",
-            end: "#C71585",
-          },
         },
-        magenta: "#E91E8C",
+        violet: {
+          DEFAULT: "#7C3AED",
+          light: "#A78BFA",
+        },
+        magenta: "#FF2FB2",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -79,6 +80,7 @@ export default {
         xl: "calc(var(--radius) + 4px)",
         "2xl": "calc(var(--radius) + 8px)",
         "3xl": "24px",
+        "4xl": "32px",
       },
       transitionDuration: {
         '400': '400ms',
@@ -87,6 +89,12 @@ export default {
       },
       transitionTimingFunction: {
         'ease-out-soft': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      boxShadow: {
+        'glow-pink': '0 0 20px rgba(255, 47, 178, 0.3)',
+        'glow-pink-lg': '0 0 40px rgba(255, 47, 178, 0.4)',
+        'glow-violet': '0 0 20px rgba(124, 58, 237, 0.3)',
+        'premium': '0 4px 24px -4px rgba(0, 0, 0, 0.06), 0 12px 40px -8px rgba(0, 0, 0, 0.08)',
       },
       keyframes: {
         "accordion-down": {
@@ -114,6 +122,10 @@ export default {
           "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
           "50%": { opacity: "0.8", transform: "scale(1.05)" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(255, 47, 178, 0.3)" },
+          "50%": { boxShadow: "0 0 40px rgba(255, 47, 178, 0.5)" },
+        },
         "scroll-vertical": {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-50%)" },
@@ -126,6 +138,7 @@ export default {
         "fade-in": "fade-in 500ms ease-out forwards",
         "float": "float 16s ease-in-out infinite",
         "pulse-soft": "pulse-soft 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "scroll-vertical": "scroll-vertical 30s linear infinite",
       },
     },

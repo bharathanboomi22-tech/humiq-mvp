@@ -50,21 +50,15 @@ export function FloatingNav() {
           className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
         >
           <div 
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white border border-gray-100"
-            style={{
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-            }}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white border border-gray-100 shadow-premium"
           >
             {/* Logo */}
             <button
               onClick={scrollToTop}
               className="flex items-center gap-1.5 text-foreground hover:opacity-80 transition-opacity duration-300"
             >
-              <span className="font-display text-base font-bold tracking-tight">
+              <span className="font-display text-base font-extrabold tracking-tight">
                 HumiQ
-              </span>
-              <span className="text-[10px] font-medium text-pink-vibrant px-1 py-0.5 rounded bg-pink-wash">
-                Beta
               </span>
             </button>
 
@@ -74,8 +68,9 @@ export function FloatingNav() {
             {/* Love Letter Button */}
             <Button
               size="sm"
+              variant="outline"
               onClick={() => navigate('/love-letter')}
-              className="h-8 px-4 text-sm font-medium"
+              className="h-8 px-4 text-sm font-semibold"
             >
               Love Letters
             </Button>

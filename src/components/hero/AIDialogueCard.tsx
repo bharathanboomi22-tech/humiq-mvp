@@ -149,12 +149,20 @@ export function AIDialogueCard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     >
+      {/* Glow effect behind card */}
+      <div 
+        className="absolute -inset-8 rounded-[40px] opacity-60 blur-3xl pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(255, 47, 178, 0.25) 0%, rgba(124, 58, 237, 0.15) 50%, transparent 70%)',
+        }}
+      />
+
       {/* Dark Card */}
-      <div className="relative rounded-[20px] p-6 md:p-7 bg-[#0B0B0D] text-white">
+      <div className="relative rounded-[28px] p-7 md:p-8 bg-[#0B0B10] text-white shadow-2xl">
         {/* Header */}
         <div className="mb-6">
-          <p className="text-base font-semibold text-white">HumiQ</p>
-          <p className="text-sm text-gray-400">Super Career Intelligence</p>
+          <p className="text-lg font-bold text-white">HumiQ</p>
+          <p className="text-sm text-gray-400 mt-0.5">Super Career Intelligence</p>
         </div>
 
         {/* Messages */}
@@ -181,7 +189,7 @@ export function AIDialogueCard() {
                   <span 
                     className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
                     style={{ 
-                      background: showCursor ? '#FFFFFF' : 'transparent',
+                      background: showCursor ? '#FF2FB2' : 'transparent',
                       transition: 'background 0.1s',
                     }}
                   />
@@ -206,13 +214,13 @@ export function AIDialogueCard() {
                   e.stopPropagation();
                   handleStartClick();
                 }}
-                className="px-6 py-3 rounded-full text-[15px] font-medium text-white"
+                className="px-7 py-3.5 rounded-full text-[15px] font-bold text-white"
                 style={{
-                  background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)',
+                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%)',
                 }}
                 whileHover={{ 
                   scale: 1.02,
-                  boxShadow: '0 8px 24px -8px rgba(233, 30, 140, 0.5)',
+                  boxShadow: '0 8px 24px -8px rgba(255, 47, 178, 0.5)',
                 }}
                 whileTap={{ scale: 0.98 }}
               >

@@ -33,9 +33,9 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="font-display text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
+            className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-6"
           >
-            <span className="text-gradient-pink">Ready to show how you really work?</span>
+            <span className="text-gradient">Ready to show how you really work?</span>
           </motion.h2>
 
           {/* Body */}
@@ -57,7 +57,7 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
             <Button
               onClick={handleClick}
               size="lg"
-              className="px-10 py-6 text-base"
+              className="px-10 py-6 text-base font-bold animate-pulse-glow"
             >
               Get Started Free
             </Button>

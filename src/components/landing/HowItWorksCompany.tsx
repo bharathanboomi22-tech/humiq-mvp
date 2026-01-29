@@ -44,7 +44,7 @@ export function HowItWorksCompany() {
       <div 
         className="absolute bottom-0 left-0 right-0 h-[60%] pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,230,245,0.3) 30%, rgba(255,182,220,0.4) 60%, rgba(233,30,140,0.15) 100%)',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,230,245,0.3) 30%, rgba(255,182,220,0.4) 60%, rgba(255,47,178,0.12) 100%)',
         }}
       />
 
@@ -56,8 +56,8 @@ export function HowItWorksCompany() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16 md:mb-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground tracking-tight">
-            How hiring works now
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold tracking-tight">
+            <span className="text-gradient">How hiring works now</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mt-4">
             AI handles the first conversation. You make the final call.
@@ -86,7 +86,7 @@ export function HowItWorksCompany() {
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
             No job posts. No CVs. No screening.
             <br />
-            <span className="text-foreground font-medium">
+            <span className="text-foreground font-semibold">
               Just decisions — backed by intelligence.
             </span>
           </p>
@@ -120,13 +120,20 @@ function StepCard({ step, index, isInView }: StepCardProps) {
       className="flex flex-col"
     >
       {/* Step Title */}
-      <h3 className="text-lg font-semibold text-foreground mb-4">
+      <h3 className="text-lg font-bold text-foreground mb-4 font-display">
         {step.headline}
       </h3>
       
       {/* Dark Card */}
-      <div className="flex-1 rounded-[20px] bg-[#0B0B0D] p-6 min-h-[200px] flex items-center justify-center">
-        <p className="text-gray-600 text-sm text-center">
+      <div className="flex-1 rounded-3xl bg-[#0B0B10] p-6 min-h-[200px] flex items-center justify-center relative overflow-hidden">
+        {/* Subtle gradient glow */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: 'radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.3) 0%, transparent 60%)',
+          }}
+        />
+        <p className="text-gray-400 text-sm text-center relative z-10">
           {step.copy}
         </p>
       </div>

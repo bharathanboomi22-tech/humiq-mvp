@@ -110,9 +110,9 @@ const IntelligenceCard = ({ data }: { data: IntelligenceCardData }) => {
     strength: {
       icon: Sparkles,
       title: 'Strength',
-      iconBg: 'bg-cognitive-teal/20',
-      iconColor: 'text-cognitive-teal',
-      borderHover: 'hover:border-cognitive-teal/30',
+      iconBg: 'bg-violet/10',
+      iconColor: 'text-violet',
+      borderHover: 'hover:border-violet/30',
     },
     weakness: {
       icon: TrendingUp,
@@ -153,8 +153,8 @@ const IntelligenceCard = ({ data }: { data: IntelligenceCardData }) => {
           <Icon className={cn('w-5 h-5', config.iconColor)} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium text-muted-foreground mb-0.5">{config.title}</h3>
-          <p className="text-foreground font-medium truncate">{data.summary}</p>
+          <h3 className="text-sm font-semibold text-muted-foreground mb-0.5">{config.title}</h3>
+          <p className="text-foreground font-semibold truncate">{data.summary}</p>
         </div>
         <motion.div
           animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -182,16 +182,16 @@ const IntelligenceCard = ({ data }: { data: IntelligenceCardData }) => {
 
                 {/* Recommendations */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     {data.type === 'strength' ? 'Recommended Actions' : data.type === 'weakness' ? 'Improvement Paths' : 'Mitigation Strategies'}
                   </h4>
                   {data.recommendations.map((rec, i) => (
                     <div 
                       key={i}
-                      className="p-4 rounded-xl bg-background/50 border border-border/50 space-y-3"
+                      className="p-4 rounded-2xl bg-background/50 border border-border/50 space-y-3"
                     >
                       <div>
-                        <h5 className="font-medium text-foreground text-sm">{rec.title}</h5>
+                        <h5 className="font-semibold text-foreground text-sm">{rec.title}</h5>
                         <p className="text-xs text-muted-foreground mt-0.5">{rec.explanation}</p>
                       </div>
                       <Button 
@@ -211,7 +211,7 @@ const IntelligenceCard = ({ data }: { data: IntelligenceCardData }) => {
 
                 {/* Growth Note */}
                 {data.growthNote && (
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border/30">
                     <p className="text-xs text-muted-foreground italic">
                       {data.growthNote}
                     </p>
@@ -241,7 +241,7 @@ export const WorkIntelligenceSection = ({ consolidatedProfile }: WorkIntelligenc
       className="mb-8"
     >
       <div className="mb-4">
-        <h2 className="text-lg font-display font-semibold text-foreground mb-1">
+        <h2 className="text-lg font-display font-bold text-foreground mb-1">
           Work Intelligence
         </h2>
         <p className="text-sm text-muted-foreground">
