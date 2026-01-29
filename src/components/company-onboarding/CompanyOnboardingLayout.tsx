@@ -27,50 +27,9 @@ export const CompanyOnboardingLayout = ({
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Cognitive Field ambient background */}
-      <div 
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background: `
-            linear-gradient(
-              135deg,
-              rgba(255, 255, 255, 1) 0%,
-              rgba(146, 246, 240, 0.15) 35%,
-              rgba(143, 242, 255, 0.20) 55%,
-              rgba(103, 237, 250, 0.25) 75%,
-              rgba(255, 255, 255, 1) 100%
-            )
-          `,
-        }}
-      />
-      
-      {/* Ambient gradient orbs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute top-[10%] right-[10%] w-[500px] h-[500px] rounded-full animate-float"
-          style={{
-            background: 'radial-gradient(circle, rgba(143, 242, 255, 0.15) 0%, transparent 70%)',
-          }}
-        />
-        <div 
-          className="absolute bottom-[20%] left-[5%] w-[400px] h-[400px] rounded-full animate-float"
-          style={{
-            animationDelay: '-5s',
-            background: 'radial-gradient(circle, rgba(146, 246, 240, 0.12) 0%, transparent 70%)',
-          }}
-        />
-        <div 
-          className="absolute top-[50%] right-[30%] w-[300px] h-[300px] rounded-full animate-float"
-          style={{
-            animationDelay: '-10s',
-            background: 'radial-gradient(circle, rgba(103, 237, 250, 0.10) 0%, transparent 70%)',
-          }}
-        />
-      </div>
-
       {/* Progress indicator header */}
       {showHeader && showProgress && (
-        <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/40 backdrop-blur-lg border-b border-white/20">
+        <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/90 backdrop-blur-lg border-b border-gray-100">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             {showBack && onBack ? (
               <button
@@ -85,15 +44,11 @@ export const CompanyOnboardingLayout = ({
                 onClick={() => navigate('/')}
                 className="flex items-center gap-2"
               >
-                {/* AI Orb Logo */}
-                <div 
-                  className="w-6 h-6 rounded-full"
-                  style={{
-                    background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                  }}
-                />
                 <span className="font-display text-lg font-bold text-foreground">
                   HumiQ
+                </span>
+                <span className="text-[10px] font-medium text-pink-vibrant px-1 py-0.5 rounded bg-pink-wash">
+                  Beta
                 </span>
               </button>
             )}
@@ -109,14 +64,11 @@ export const CompanyOnboardingLayout = ({
                     className={cn(
                       'h-1.5 rounded-full transition-all duration-500',
                       i < currentStep
-                        ? 'w-6'
+                        ? 'w-6 bg-pink-vibrant'
                         : i === currentStep
                         ? 'w-6 bg-foreground'
-                        : 'w-4 bg-foreground/15'
+                        : 'w-4 bg-gray-200'
                     )}
-                    style={i < currentStep ? {
-                      background: 'linear-gradient(135deg, #8ff2ff 0%, #67edfa 100%)',
-                    } : {}}
                   />
                 ))}
               </div>

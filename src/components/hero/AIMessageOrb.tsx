@@ -10,7 +10,6 @@ interface AIMessageOrbProps {
 export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  // Animation variants based on orb state
   const getAnimation = () => {
     if (shouldReduceMotion) {
       return { opacity: state === 'complete' ? 0.8 : 1 };
@@ -85,7 +84,7 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+          background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 50%, #FF69B4 100%)',
           filter: 'blur(4px)',
           opacity: 0.4,
         }}
@@ -104,8 +103,8 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-          boxShadow: '0 2px 8px rgba(143, 242, 255, 0.4)',
+          background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 50%, #FF69B4 100%)',
+          boxShadow: '0 2px 8px rgba(233, 30, 140, 0.4)',
         }}
         animate={getAnimation()}
         transition={getTransition()}
@@ -136,7 +135,7 @@ export function AIMessageOrb({ state, size = 16 }: AIMessageOrbProps) {
           className="absolute inset-[-4px] rounded-full"
           style={{
             border: '1px solid',
-            borderColor: 'rgba(143, 242, 255, 0.5)',
+            borderColor: 'rgba(233, 30, 140, 0.5)',
           }}
           animate={{
             scale: [1, 1.8],

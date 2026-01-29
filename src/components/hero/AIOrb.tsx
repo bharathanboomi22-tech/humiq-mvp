@@ -69,16 +69,16 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-      {/* Ambient Cognitive Field bloom */}
+      {/* Ambient Pink bloom */}
       <motion.div
         className="absolute w-[600px] h-[600px] md:w-[800px] md:h-[800px]"
         style={{
           background: `
             radial-gradient(
               ellipse at center,
-              rgba(143, 242, 255, 0.12) 0%,
-              rgba(146, 246, 240, 0.08) 30%,
-              rgba(103, 237, 250, 0.05) 60%,
+              rgba(233, 30, 140, 0.08) 0%,
+              rgba(255, 105, 180, 0.05) 30%,
+              rgba(199, 21, 133, 0.03) 60%,
               transparent 100%
             )
           `,
@@ -102,16 +102,16 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.5, delay: 0.3, ease: 'easeOut' }}
       >
-        {/* Outer halo glow - Cognitive gradient */}
+        {/* Outer halo glow - Pink gradient */}
         <motion.div
           className="absolute inset-[-20%] rounded-full"
           style={{
             background: `
               radial-gradient(
                 ellipse at 50% 50%,
-                rgba(143, 242, 255, 0.15) 0%,
-                rgba(146, 246, 240, 0.10) 40%,
-                rgba(103, 237, 250, 0.05) 70%,
+                rgba(233, 30, 140, 0.12) 0%,
+                rgba(255, 105, 180, 0.08) 40%,
+                rgba(199, 21, 133, 0.04) 70%,
                 transparent 100%
               )
             `,
@@ -128,26 +128,26 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
           }}
         />
 
-        {/* Main orb body - layered gradients */}
+        {/* Main orb body - layered pink gradients */}
         <motion.div
           className="absolute inset-[10%] rounded-full"
           style={{
             background: `
               radial-gradient(ellipse 60% 50% at 30% 25%, rgba(255, 255, 255, 0.95) 0%, transparent 50%),
-              radial-gradient(ellipse 80% 70% at 40% 40%, rgba(143, 242, 255, 0.4) 0%, transparent 60%),
+              radial-gradient(ellipse 80% 70% at 40% 40%, rgba(233, 30, 140, 0.3) 0%, transparent 60%),
               radial-gradient(ellipse 100% 100% at 50% 50%, 
                 rgba(255, 255, 255, 0.9) 0%, 
-                rgba(143, 242, 255, 0.25) 30%, 
-                rgba(146, 246, 240, 0.2) 50%,
-                rgba(103, 237, 250, 0.15) 70%, 
+                rgba(255, 182, 220, 0.25) 30%, 
+                rgba(255, 105, 180, 0.2) 50%,
+                rgba(233, 30, 140, 0.15) 70%, 
                 rgba(255, 255, 255, 0.85) 100%
               )
             `,
             boxShadow: `
               inset 0 0 80px rgba(255, 255, 255, 0.7),
-              inset 0 -30px 60px rgba(143, 242, 255, 0.15),
-              0 20px 60px -20px rgba(143, 242, 255, 0.25),
-              0 40px 80px -30px rgba(103, 237, 250, 0.20)
+              inset 0 -30px 60px rgba(255, 182, 220, 0.15),
+              0 20px 60px -20px rgba(233, 30, 140, 0.25),
+              0 40px 80px -30px rgba(199, 21, 133, 0.20)
             `,
           }}
           animate={getBreathingAnimation()}
@@ -172,10 +172,10 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
               background: `
                 conic-gradient(
                   from 0deg at 50% 50%,
-                  rgba(143, 242, 255, 0.12) 0deg,
-                  rgba(146, 246, 240, 0.08) 120deg,
-                  rgba(103, 237, 250, 0.10) 240deg,
-                  rgba(143, 242, 255, 0.12) 360deg
+                  rgba(233, 30, 140, 0.10) 0deg,
+                  rgba(255, 105, 180, 0.06) 120deg,
+                  rgba(199, 21, 133, 0.08) 240deg,
+                  rgba(233, 30, 140, 0.10) 360deg
                 )
               `,
               filter: 'blur(20px)',
@@ -204,7 +204,7 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
           <motion.div
             className="absolute inset-[25%] rounded-full"
             style={{
-              background: 'radial-gradient(circle at center, rgba(143, 242, 255, 0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(circle at center, rgba(233, 30, 140, 0.4) 0%, transparent 70%)',
             }}
             animate={{
               scale: [0.8, 1.2, 0.8],
@@ -223,7 +223,7 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
           <motion.div
             className="absolute inset-[-10%] rounded-full"
             style={{
-              background: 'radial-gradient(circle at center, rgba(143, 242, 255, 0.3) 0%, transparent 60%)',
+              background: 'radial-gradient(circle at center, rgba(233, 30, 140, 0.3) 0%, transparent 60%)',
             }}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{
@@ -242,7 +242,7 @@ export function AIOrb({ state = 'idle' }: AIOrbProps) {
           <motion.div
             className="absolute inset-0 rounded-full"
             style={{
-              border: '1px solid rgba(143, 242, 255, 0.2)',
+              border: '1px solid rgba(233, 30, 140, 0.2)',
             }}
             animate={{
               scale: [1, 1.15, 1.3],
