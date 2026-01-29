@@ -6,6 +6,8 @@ import { LoadingExperience } from '@/components/LoadingExperience';
 import { FinalCTASection } from '@/components/landing/FinalCTASection';
 import { HowItWorksTalent } from '@/components/landing/HowItWorksTalent';
 import { HowItWorksCompany } from '@/components/landing/HowItWorksCompany';
+import { WhyDifferentSection } from '@/components/landing/WhyDifferentSection';
+import { FAQSection } from '@/components/landing/FAQSection';
 import { FloatingNav } from '@/components/FloatingNav';
 import { createWorkSession, completeSession } from '@/lib/workSession';
 import { toast } from 'sonner';
@@ -96,6 +98,8 @@ const Index = () => {
           ) : (
             <HowItWorksCompany />
           )}
+          <WhyDifferentSection />
+          <FAQSection />
           <FinalCTASection onCTAClick={scrollToTop} />
         </>
       )}
