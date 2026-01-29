@@ -61,11 +61,16 @@ export default {
           medium: "hsl(var(--signal-medium))",
           low: "hsl(var(--signal-low))",
         },
-        cognitive: {
-          teal: "#8ff2ff",
-          aqua: "#92f6f0",
-          cyan: "#67edfa",
+        pink: {
+          vibrant: "#E91E8C",
+          light: "#FF69B4",
+          wash: "#FFF0F7",
+          gradient: {
+            start: "#E91E8C",
+            end: "#C71585",
+          },
         },
+        magenta: "#E91E8C",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -73,6 +78,7 @@ export default {
         sm: "calc(var(--radius) - 8px)",
         xl: "calc(var(--radius) + 4px)",
         "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "24px",
       },
       transitionDuration: {
         '400': '400ms',
@@ -105,12 +111,12 @@ export default {
           "66%": { transform: "translate(-5px, 5px) scale(0.98)" },
         },
         "pulse-soft": {
-          "0%, 100%": { opacity: "0.12", transform: "scale(1)" },
-          "50%": { opacity: "0.18", transform: "scale(1.05)" },
+          "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.05)" },
         },
-        "orbit": {
-          "0%": { transform: "rotate(0deg) translateX(20px) rotate(0deg)" },
-          "100%": { transform: "rotate(360deg) translateX(20px) rotate(-360deg)" },
+        "scroll-vertical": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
         },
       },
       animation: {
@@ -119,8 +125,8 @@ export default {
         "fade-up": "fade-up 600ms ease-out forwards",
         "fade-in": "fade-in 500ms ease-out forwards",
         "float": "float 16s ease-in-out infinite",
-        "pulse-soft": "pulse-soft 8s ease-in-out infinite",
-        "orbit": "orbit 20s linear infinite",
+        "pulse-soft": "pulse-soft 3s ease-in-out infinite",
+        "scroll-vertical": "scroll-vertical 30s linear infinite",
       },
     },
   },

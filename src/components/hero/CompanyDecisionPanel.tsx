@@ -68,16 +68,8 @@ export function CompanyDecisionPanel() {
       transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
       className="relative"
     >
-      {/* Glass Container */}
-      <div
-        className="relative rounded-3xl p-6 md:p-8"
-        style={{
-          background: 'rgba(255, 255, 255, 0.75)',
-          backdropFilter: 'blur(20px)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)',
-          border: '1px solid rgba(255, 255, 255, 0.6)',
-        }}
-      >
+      {/* Dark Card Container */}
+      <div className="relative rounded-[20px] p-6 md:p-8 bg-[#0B0B0D] text-white">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -85,7 +77,7 @@ export function CompanyDecisionPanel() {
             <motion.div
               className="w-3 h-3 rounded-full"
               style={{
-                background: 'linear-gradient(135deg, #5B8CFF 0%, #B983FF 50%, #FF8FB1 100%)',
+                background: 'linear-gradient(135deg, #E91E8C 0%, #FF69B4 50%, #C71585 100%)',
               }}
               animate={shouldReduceMotion ? {} : {
                 scale: [1, 1.2, 1],
@@ -93,11 +85,14 @@ export function CompanyDecisionPanel() {
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <span className="text-sm font-medium" style={{ color: '#5F6368' }}>
+            <span className="text-sm font-medium text-gray-400">
               AI Decision Panel
             </span>
           </div>
-          <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: 'rgba(91, 140, 255, 0.1)', color: '#5B8CFF' }}>
+          <span 
+            className="text-xs px-2.5 py-1 rounded-full"
+            style={{ background: 'rgba(233, 30, 140, 0.15)', color: '#E91E8C' }}
+          >
             Live
           </span>
         </div>
@@ -113,11 +108,11 @@ export function CompanyDecisionPanel() {
               className="relative rounded-xl p-4 transition-all duration-300"
               style={{
                 background: activeCard === index 
-                  ? 'rgba(91, 140, 255, 0.06)' 
-                  : 'rgba(255, 255, 255, 0.5)',
+                  ? 'rgba(233, 30, 140, 0.08)' 
+                  : 'rgba(255, 255, 255, 0.03)',
                 border: activeCard === index 
-                  ? '1px solid rgba(91, 140, 255, 0.2)' 
-                  : '1px solid rgba(0, 0, 0, 0.04)',
+                  ? '1px solid rgba(233, 30, 140, 0.25)' 
+                  : '1px solid rgba(255, 255, 255, 0.06)',
               }}
             >
               <div className="flex items-start gap-3">
@@ -126,9 +121,9 @@ export function CompanyDecisionPanel() {
                   className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
                   style={{
                     background: candidate.isReady 
-                      ? 'linear-gradient(135deg, #5B8CFF 0%, #B983FF 100%)' 
-                      : 'linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%)',
-                    color: candidate.isReady ? '#FFFFFF' : '#6B7280',
+                      ? 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)' 
+                      : 'linear-gradient(135deg, #374151 0%, #1F2937 100%)',
+                    color: '#FFFFFF',
                   }}
                 >
                   {candidate.initials}
@@ -137,7 +132,7 @@ export function CompanyDecisionPanel() {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm font-medium" style={{ color: '#0B0B0D' }}>
+                    <span className="text-sm font-medium text-white">
                       {candidate.thinkingPattern}
                     </span>
                     {candidate.isReady && (
@@ -147,8 +142,8 @@ export function CompanyDecisionPanel() {
                         transition={{ delay: 0.8, type: 'spring', stiffness: 300 }}
                         className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
                         style={{ 
-                          background: 'linear-gradient(135deg, rgba(91, 140, 255, 0.15) 0%, rgba(185, 131, 255, 0.15) 100%)',
-                          color: '#5B8CFF',
+                          background: 'rgba(233, 30, 140, 0.2)',
+                          color: '#FF69B4',
                         }}
                       >
                         <Check className="w-3 h-3" />
@@ -157,7 +152,7 @@ export function CompanyDecisionPanel() {
                     )}
                   </div>
                   
-                  <p className="text-xs mb-2" style={{ color: '#5F6368' }}>
+                  <p className="text-xs text-gray-500 mb-2">
                     {candidate.decisionBehavior}
                   </p>
 
@@ -171,8 +166,8 @@ export function CompanyDecisionPanel() {
                         transition={{ duration: 0.3 }}
                         className="flex items-center gap-1.5"
                       >
-                        <Sparkles className="w-3 h-3" style={{ color: '#B983FF' }} />
-                        <span className="text-xs font-medium" style={{ color: '#8B5CF6' }}>
+                        <Sparkles className="w-3 h-3 text-pink-vibrant" />
+                        <span className="text-xs font-medium text-pink-light">
                           {candidate.aiInsight}
                         </span>
                       </motion.div>
@@ -187,7 +182,7 @@ export function CompanyDecisionPanel() {
                   layoutId="activeIndicator"
                   className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 rounded-full"
                   style={{
-                    background: 'linear-gradient(180deg, #5B8CFF 0%, #B983FF 100%)',
+                    background: 'linear-gradient(180deg, #E91E8C 0%, #FF69B4 100%)',
                   }}
                 />
               )}
@@ -201,30 +196,19 @@ export function CompanyDecisionPanel() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.5 }}
           className="mt-5 pt-4 flex items-center justify-between"
-          style={{ borderTop: '1px solid rgba(0, 0, 0, 0.05)' }}
+          style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}
         >
           <div className="flex items-center gap-2">
-            <div 
-              className="w-2 h-2 rounded-full"
-              style={{ background: '#10B981' }}
-            />
-            <span className="text-xs" style={{ color: '#5F6368' }}>
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <span className="text-xs text-gray-500">
               3 candidates analyzed
             </span>
           </div>
-          <span className="text-xs font-medium" style={{ color: '#5B8CFF' }}>
+          <span className="text-xs font-medium text-pink-vibrant">
             1 decision-ready
           </span>
         </motion.div>
       </div>
-
-      {/* Ambient glow behind panel */}
-      <div
-        className="absolute -inset-4 -z-10 opacity-50 blur-3xl"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(91, 140, 255, 0.15) 0%, rgba(185, 131, 255, 0.1) 40%, transparent 70%)',
-        }}
-      />
     </motion.div>
   );
 }

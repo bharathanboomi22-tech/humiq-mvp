@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
-import { AIMessageOrb } from './AIMessageOrb';
 
 interface Message {
   id: number;
@@ -18,10 +17,10 @@ const MESSAGES: Message[] = [
 ];
 
 // Typing speed configuration
-const CHAR_DELAY = 35; // ms per character
-const LINE_PAUSE = 150; // pause between lines
-const MESSAGE_PAUSE = 600; // pause between messages
-const INITIAL_DELAY = 800; // delay before starting
+const CHAR_DELAY = 35;
+const LINE_PAUSE = 150;
+const MESSAGE_PAUSE = 600;
+const INITIAL_DELAY = 800;
 
 export function AIDialogueCard() {
   const shouldReduceMotion = useReducedMotion();
@@ -37,7 +36,6 @@ export function AIDialogueCard() {
   const [showCTA, setShowCTA] = useState(false);
   const [skipped, setSkipped] = useState(false);
 
-  // Handle skip animation
   const handleSkip = useCallback(() => {
     if (!skipped && !showCTA) {
       setSkipped(true);
@@ -48,7 +46,6 @@ export function AIDialogueCard() {
     }
   }, [skipped, showCTA]);
 
-  // Cursor blink effect
   useEffect(() => {
     if (skipped || showCTA) {
       setShowCursor(false);
@@ -62,7 +59,6 @@ export function AIDialogueCard() {
     return () => clearInterval(interval);
   }, [skipped, showCTA]);
 
-  // Typing animation
   useEffect(() => {
     if (shouldReduceMotion || skipped) {
       setCompletedMessages(MESSAGES.map(m => m.id));
@@ -72,7 +68,6 @@ export function AIDialogueCard() {
     }
 
     if (currentMessageIndex >= MESSAGES.length && completedMessages.length === MESSAGES.length) {
-      // All messages complete - show CTA
       if (!showCTA) {
         setShowCTA(true);
         setShowCursor(false);
@@ -83,7 +78,6 @@ export function AIDialogueCard() {
     const currentMessage = MESSAGES[currentMessageIndex];
     const currentLine = currentMessage?.lines[currentLineIndex];
 
-    // Initial delay - auto-start typing on mount
     if (currentMessageIndex === 0 && currentLineIndex === 0 && currentCharIndex === 0 && !isTyping) {
       const timeout = setTimeout(() => {
         setIsTyping(true);
@@ -91,24 +85,20 @@ export function AIDialogueCard() {
       return () => clearTimeout(timeout);
     }
 
-    // Skip if not typing yet for the first message
     if (!isTyping || !currentLine) return;
 
     if (currentCharIndex < currentLine.length) {
-      // Type next character
       const timeout = setTimeout(() => {
         setCurrentCharIndex(prev => prev + 1);
       }, CHAR_DELAY);
       return () => clearTimeout(timeout);
     } else if (currentLineIndex < currentMessage.lines.length - 1) {
-      // Move to next line
       const timeout = setTimeout(() => {
         setCurrentLineIndex(prev => prev + 1);
         setCurrentCharIndex(0);
       }, LINE_PAUSE);
       return () => clearTimeout(timeout);
     } else {
-      // Message complete, move to next message
       const timeout = setTimeout(() => {
         setCompletedMessages(prev => [...prev, currentMessage.id]);
         if (currentMessageIndex < MESSAGES.length - 1) {
@@ -116,7 +106,6 @@ export function AIDialogueCard() {
           setCurrentLineIndex(0);
           setCurrentCharIndex(0);
         } else {
-          // All messages done
           setTimeout(() => {
             setShowCTA(true);
             setShowCursor(false);
@@ -132,7 +121,6 @@ export function AIDialogueCard() {
     navigate('/talent/onboarding');
   };
 
-  // Get display text for current message
   const getDisplayText = (message: Message) => {
     if (completedMessages.includes(message.id)) {
       return message.lines.join(' ');
@@ -153,14 +141,6 @@ export function AIDialogueCard() {
     return text;
   };
 
-  const getOrbState = (messageId: number) => {
-    if (completedMessages.includes(messageId)) return 'complete';
-    if (MESSAGES[currentMessageIndex]?.id === messageId) {
-      return isTyping ? 'typing' : 'thinking';
-    }
-    return 'idle';
-  };
-
   return (
     <motion.div
       onClick={handleSkip}
@@ -169,35 +149,16 @@ export function AIDialogueCard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
     >
-      {/* Card */}
-      <div
-        className="relative rounded-[20px] p-6 md:p-7"
-        style={{
-          background: '#FFFFFF',
-          boxShadow: '0px 20px 60px rgba(0, 0, 0, 0.08), 0px 4px 20px rgba(0, 0, 0, 0.04)',
-        }}
-      >
+      {/* Dark Card */}
+      <div className="relative rounded-[20px] p-6 md:p-7 bg-[#0B0B0D] text-white">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <AIMessageOrb state="complete" size={20} />
-          <div>
-            <p 
-              className="text-sm font-semibold"
-              style={{ color: '#0B0B0D' }}
-            >
-              HumiQ AI
-            </p>
-            <p 
-              className="text-xs"
-              style={{ color: '#8A8F98' }}
-            >
-              Personal Career Intelligence
-            </p>
-          </div>
+        <div className="mb-6">
+          <p className="text-base font-semibold text-white">HumiQ</p>
+          <p className="text-sm text-gray-400">Super Career Intelligence</p>
         </div>
 
         {/* Messages */}
-        <div className="space-y-4">
+        <div className="space-y-3 min-h-[180px]">
           {MESSAGES.map((message) => {
             const displayText = getDisplayText(message);
             const isCurrentMessage = MESSAGES[currentMessageIndex]?.id === message.id;
@@ -207,35 +168,25 @@ export function AIDialogueCard() {
             if (!shouldShow) return null;
 
             return (
-              <motion.div
+              <motion.p
                 key={message.id}
-                className="flex items-start gap-3"
+                className="text-[15px] leading-relaxed text-gray-300"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               >
-                <AIMessageOrb 
-                  state={getOrbState(message.id)} 
-                  size={16} 
-                />
-                <p
-                  className="text-[15px] leading-relaxed flex-1"
-                  style={{ color: '#0B0B0D' }}
-                >
-                  {displayText}
-                  {/* Cursor */}
-                  {MESSAGES[currentMessageIndex]?.id === message.id && 
-                   !completedMessages.includes(message.id) && (
-                    <span 
-                      className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
-                      style={{ 
-                        background: showCursor ? '#0B0B0D' : 'transparent',
-                        transition: 'background 0.1s',
-                      }}
-                    />
-                  )}
-                </p>
-              </motion.div>
+                {displayText}
+                {MESSAGES[currentMessageIndex]?.id === message.id && 
+                 !completedMessages.includes(message.id) && (
+                  <span 
+                    className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
+                    style={{ 
+                      background: showCursor ? '#FFFFFF' : 'transparent',
+                      transition: 'background 0.1s',
+                    }}
+                  />
+                )}
+              </motion.p>
             );
           })}
         </div>
@@ -248,32 +199,24 @@ export function AIDialogueCard() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="mt-6 pt-5 border-t"
-              style={{ borderColor: '#E6E7EB' }}
+              className="mt-6"
             >
-              <p 
-                className="text-xs mb-3"
-                style={{ color: '#8A8F98' }}
-              >
-                Start by showing real work.
-              </p>
               <motion.button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleStartClick();
                 }}
-                className="w-full py-3.5 rounded-full text-[15px] font-medium transition-all duration-300"
+                className="px-6 py-3 rounded-full text-[15px] font-medium text-white"
                 style={{
-                  background: '#0B0B0D',
-                  color: '#FFFFFF',
+                  background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)',
                 }}
                 whileHover={{ 
                   scale: 1.02,
-                  boxShadow: '0 8px 24px -8px rgba(11, 11, 13, 0.35)',
+                  boxShadow: '0 8px 24px -8px rgba(233, 30, 140, 0.5)',
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Start Now →
+                Start Now
               </motion.button>
             </motion.div>
           )}

@@ -5,7 +5,6 @@ import { Heart } from 'lucide-react';
 import { LoveLetterModal } from './LoveLetterModal';
 import { useAuth } from '@/hooks/useAuth';
 import { AIDialogueCard } from './hero/AIDialogueCard';
-import { AIOrb } from './hero/AIOrb';
 import { CompanyDecisionPanel } from './hero/CompanyDecisionPanel';
 
 interface HeroSectionProps {
@@ -36,7 +35,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
     navigate('/company/onboarding');
   };
 
-  // Animation variants for staggered text reveal
+  // Animation variants
   const headlineVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -73,146 +72,78 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-white">
-      {/* Cognitive Field Background - White base with soft intelligence wash */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            linear-gradient(
-              135deg,
-              rgba(255, 255, 255, 1) 0%,
-              rgba(146, 246, 240, 0.18) 30%,
-              rgba(143, 242, 255, 0.25) 50%,
-              rgba(103, 237, 250, 0.32) 70%,
-              rgba(255, 255, 255, 1) 100%
-            )
-          `,
-        }}
-      />
-      
-      {/* Stronger intelligence field near AI dialogue card (right side) */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 60% 70% at 75% 50%, rgba(143, 242, 255, 0.22) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 50% at 80% 40%, rgba(146, 246, 240, 0.18) 0%, transparent 60%)
-          `,
-        }}
-      />
-      
-      {/* Enhanced AI Orb with Cognitive Field glow */}
-      <div className="absolute inset-0 lg:left-[30%] pointer-events-none">
-        {/* Soft halo behind orb */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] lg:w-[700px] lg:h-[700px]"
-          style={{
-            background: `
-              radial-gradient(
-                circle,
-                rgba(255, 255, 255, 0.7) 0%,
-                rgba(143, 242, 255, 0.15) 30%,
-                rgba(146, 246, 240, 0.08) 50%,
-                transparent 70%
-              )
-            `,
-          }}
-        />
-        <AIOrb />
-      </div>
-
       {/* Navigation Bar */}
       <motion.header
         initial={shouldReduceMotion ? {} : { opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-20 w-full backdrop-blur-sm"
-        style={{ background: 'rgba(255,255,255,0.4)' }}
+        className="relative z-20 w-full bg-white border-b border-gray-100"
       >
-        <div className="container max-w-6xl mx-auto px-6 py-5">
+        <div className="container max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Left - Logo */}
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center transition-opacity duration-300 hover:opacity-70"
-            >
-              <span 
-                className="font-display text-xl font-bold tracking-tight"
-                style={{ color: '#0B0B0D' }}
-              >
-                HumiQ
-              </span>
-            </button>
-
-            {/* Center - Love Letters Button with Cognitive Glow */}
-            <motion.button
-              onClick={() => navigate('/love-letter')}
-              className="hidden md:flex flex-col items-center gap-0.5 group relative"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-              animate={{
-                boxShadow: [
-                  '0 0 20px rgba(143, 242, 255, 0.3), 0 0 40px rgba(103, 237, 250, 0.2)',
-                  '0 0 30px rgba(143, 242, 255, 0.5), 0 0 60px rgba(103, 237, 250, 0.3)',
-                  '0 0 20px rgba(143, 242, 255, 0.3), 0 0 40px rgba(103, 237, 250, 0.2)',
-                ],
-              }}
-              style={{ borderRadius: '9999px' }}
-            >
-              <span 
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 relative overflow-hidden"
-                style={{ 
-                  background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                  color: '#0B0B0D',
-                }}
-              >
-                {/* Shimmer effect */}
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                  animate={{
-                    x: ['-100%', '100%'],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-                <Heart className="w-4 h-4 relative z-10" />
-                <span className="relative z-10">Love Letters</span>
-              </span>
-              <span 
-                className="text-[11px]"
-                style={{ color: '#5F6368' }}
-              >
-                If you love the product
-              </span>
-            </motion.button>
-
-            {/* Right - Toggle Buttons */}
-            <div 
-              className="flex items-center rounded-full p-1"
-              style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)' }}
-            >
+            <div className="flex items-center gap-6">
               <button
-                onClick={() => handleTabSwitch('talent')}
-                className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
-                style={{
-                  background: activeTab === 'talent' ? '#0B0B0D' : 'transparent',
-                  color: activeTab === 'talent' ? '#FFFFFF' : '#0B0B0D',
-                }}
+                onClick={() => navigate('/')}
+                className="flex items-center gap-1 transition-opacity duration-300 hover:opacity-70"
               >
-                Talent
+                <span className="font-display text-xl font-bold tracking-tight text-foreground">
+                  HumiQ
+                </span>
+                <span className="text-xs font-medium text-pink-vibrant px-1.5 py-0.5 rounded bg-pink-wash">
+                  Beta
+                </span>
               </button>
+              
+              {/* Nav Links */}
+              <nav className="hidden md:flex items-center gap-5">
+                <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  About Us
+                </a>
+                <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  How it works
+                </a>
+              </nav>
+            </div>
+
+            {/* Center - Toggle */}
+            <div className="hidden md:flex items-center gap-2">
+              <span className={`text-sm ${activeTab === 'talent' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Talent
+              </span>
               <button
-                onClick={() => handleTabSwitch('company')}
-                className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
-                style={{
-                  background: activeTab === 'company' ? '#0B0B0D' : 'transparent',
-                  color: activeTab === 'company' ? '#FFFFFF' : '#0B0B0D',
-                }}
+                onClick={() => handleTabSwitch(activeTab === 'talent' ? 'company' : 'talent')}
+                className="relative w-12 h-6 rounded-full bg-pink-vibrant transition-colors"
               >
-                Company
+                <motion.div
+                  className="absolute top-1 w-4 h-4 rounded-full bg-white shadow"
+                  animate={{ left: activeTab === 'talent' ? 4 : 28 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              </button>
+              <span className={`text-sm ${activeTab === 'company' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                Hiring
+              </span>
+            </div>
+
+            {/* Right - CTAs */}
+            <div className="flex items-center gap-3">
+              <motion.button
+                onClick={handleTalentClick}
+                className="px-4 py-2 rounded-full text-sm font-medium text-white"
+                style={{
+                  background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)',
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Sign up as a candidate
+              </motion.button>
+              <button
+                onClick={handleCompanyClick}
+                className="hidden sm:block text-sm font-medium text-pink-vibrant hover:underline"
+              >
+                Sign up as a Company
               </button>
             </div>
           </div>
@@ -220,7 +151,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
       </motion.header>
 
       {/* Hero Content - Two Column Layout */}
-      <div className="relative z-10 container max-w-6xl mx-auto px-6 flex items-center min-h-[calc(100vh-100px)]">
+      <div className="relative z-10 container max-w-6xl mx-auto px-6 flex items-center min-h-[calc(100vh-80px)]">
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-12 lg:py-0">
           
           <AnimatePresence mode="wait">
@@ -247,77 +178,44 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                   animate="visible"
                   exit="exit"
                 >
-                  {/* Headline */}
+                  {/* Headline with pink gradient */}
                   <motion.h1 
-                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
-                    style={{ color: '#0B0B0D' }}
+                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.08] tracking-[-0.02em] mb-6"
                     variants={lineVariants}
                   >
-                    CVs are history.
+                    <span className="text-gradient-pink">CVs are history.</span>
                     <br />
-                    Decisions are the future.
+                    <span className="text-gradient-pink">Decisions</span>{' '}
+                    <span className="text-foreground">are future.</span>
                   </motion.h1>
 
                   {/* Subheadline */}
                   <motion.p
-                    className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
-                    style={{ color: '#4A4A4A' }}
+                    className="text-base md:text-lg max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6] text-muted-foreground"
                     variants={lineVariants}
                   >
-                    HumiQ AI understands how you think, decide, and solve — through real conversations and real work.
+                    HumiQ AI understands how you think, decide, and solve through real conversations and real work.
                   </motion.p>
 
-                  {/* CTAs */}
+                  {/* CTA */}
                   <motion.div
                     className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
                     variants={lineVariants}
                   >
-                    {/* Primary CTA - Cognitive Gradient with Soft Glow */}
                     <motion.button
                       onClick={handleTalentClick}
-                      className="relative px-8 py-4 rounded-full text-base font-semibold overflow-hidden"
-                      style={{ 
-                        background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                        color: '#0B0B0D',
-                        boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
+                      className="px-8 py-4 rounded-full text-base font-semibold text-white"
+                      style={{
+                        background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)',
+                        boxShadow: '0 4px 20px rgba(233, 30, 140, 0.4)',
                       }}
-                      whileHover={shouldReduceMotion ? {} : { 
-                        boxShadow: '0 8px 32px rgba(143, 242, 255, 0.5), 0 4px 16px rgba(103, 237, 250, 0.4)',
+                      whileHover={{ 
+                        boxShadow: '0 8px 32px rgba(233, 30, 140, 0.5)',
+                        scale: 1.02,
                       }}
                       whileTap={{ scale: 0.97 }}
-                      animate={shouldReduceMotion ? {} : {
-                        boxShadow: [
-                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
-                          '0 6px 28px rgba(143, 242, 255, 0.5), 0 3px 14px rgba(103, 237, 250, 0.35)',
-                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
-                        ],
-                      }}
-                      transition={{
-                        boxShadow: {
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        },
-                      }}
                     >
-                      Start with real work →
-                    </motion.button>
-
-                    {/* Secondary CTA */}
-                    <motion.button
-                      onClick={() => {
-                        const section = document.getElementById('how-it-works');
-                        section?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="relative px-4 py-2 text-base font-medium group"
-                      style={{ color: '#0B0B0D' }}
-                      whileHover={{ scale: 1.01 }}
-                    >
-                      See how HumiQ thinks
-                      <span 
-                        className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
-                        style={{ background: '#0B0B0D' }}
-                      />
+                      Start Now
                     </motion.button>
                   </motion.div>
                 </motion.div>
@@ -357,85 +255,50 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  {/* Headline */}
+                  {/* Headline with pink gradient */}
                   <motion.h1 
-                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.05] tracking-[-0.02em] mb-6"
-                    style={{ color: '#0B0B0D' }}
+                    className="font-display text-[38px] sm:text-[46px] md:text-[52px] lg:text-[56px] font-bold leading-[1.08] tracking-[-0.02em] mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.5 }}
                   >
-                    Decisions,
+                    <span className="text-gradient-pink">Decisions,</span>
                     <br />
-                    not resumes.
+                    <span className="text-foreground">not resumes.</span>
                   </motion.h1>
 
                   {/* Subheadline */}
                   <motion.p
-                    className="text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6]"
-                    style={{ color: '#4A4A4A' }}
+                    className="text-base md:text-lg max-w-lg mx-auto lg:mx-0 mb-8 leading-[1.6] text-muted-foreground"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                   >
                     No job posts. No CVs. AI runs the first interviews.
-                    <br />
                     You get decision-ready talent in hours, not weeks.
                   </motion.p>
 
-                  {/* CTAs */}
+                  {/* CTA */}
                   <motion.div
                     className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
-                    {/* Primary CTA - Cognitive Gradient */}
                     <motion.button
                       onClick={handleCompanyClick}
-                      className="relative px-8 py-4 rounded-full text-base font-semibold overflow-hidden"
-                      style={{ 
-                        background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                        color: '#0B0B0D',
-                        boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
+                      className="px-8 py-4 rounded-full text-base font-semibold text-white"
+                      style={{
+                        background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 100%)',
+                        boxShadow: '0 4px 20px rgba(233, 30, 140, 0.4)',
                       }}
-                      whileHover={shouldReduceMotion ? {} : { 
-                        boxShadow: '0 8px 32px rgba(143, 242, 255, 0.5), 0 4px 16px rgba(103, 237, 250, 0.4)',
+                      whileHover={{ 
+                        boxShadow: '0 8px 32px rgba(233, 30, 140, 0.5)',
+                        scale: 1.02,
                       }}
                       whileTap={{ scale: 0.97 }}
-                      animate={shouldReduceMotion ? {} : {
-                        boxShadow: [
-                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
-                          '0 6px 28px rgba(143, 242, 255, 0.5), 0 3px 14px rgba(103, 237, 250, 0.35)',
-                          '0 4px 20px rgba(143, 242, 255, 0.4), 0 2px 12px rgba(103, 237, 250, 0.3)',
-                        ],
-                      }}
-                      transition={{
-                        boxShadow: {
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        },
-                      }}
                     >
-                      Start Hiring Instantly →
-                    </motion.button>
-
-                    {/* Secondary CTA */}
-                    <motion.button
-                      onClick={() => {
-                        const section = document.getElementById('how-it-works');
-                        section?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="relative px-4 py-2 text-base font-medium group"
-                      style={{ color: '#0B0B0D' }}
-                      whileHover={{ scale: 1.01 }}
-                    >
-                      See how it works
-                      <span 
-                        className="absolute bottom-1 left-4 right-4 h-[1px] origin-left scale-x-0 transition-transform duration-300 delay-75 group-hover:scale-x-100"
-                        style={{ background: '#0B0B0D' }}
-                      />
+                      Start Now
                     </motion.button>
                   </motion.div>
                 </motion.div>
@@ -457,25 +320,32 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
         </div>
       </div>
 
-      {/* Mobile Love Letters Button */}
+      {/* Mobile toggle and Love Letters Button */}
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
-        className="md:hidden absolute bottom-6 left-0 right-0 flex justify-center z-20"
+        className="md:hidden absolute bottom-6 left-0 right-0 flex justify-center gap-3 z-20 px-4"
       >
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium shadow-md"
-          style={{ 
-            background: 'rgba(255,255,255,0.85)',
-            color: '#0B0B0D',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <Heart className="w-4 h-4" />
-          Love Letters
-        </button>
+        {/* Mobile Toggle */}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-lg border border-gray-100">
+          <span className={`text-xs ${activeTab === 'talent' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+            Talent
+          </span>
+          <button
+            onClick={() => handleTabSwitch(activeTab === 'talent' ? 'company' : 'talent')}
+            className="relative w-10 h-5 rounded-full bg-pink-vibrant"
+          >
+            <motion.div
+              className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow"
+              animate={{ left: activeTab === 'talent' ? 2 : 22 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
+          </button>
+          <span className={`text-xs ${activeTab === 'company' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+            Hiring
+          </span>
+        </div>
       </motion.div>
 
       {/* Love Letter Modal */}

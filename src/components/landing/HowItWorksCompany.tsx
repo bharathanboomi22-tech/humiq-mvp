@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { CompanyStepIcon } from './company-steps';
 
 interface Step {
   id: 'define' | 'discover' | 'interview' | 'decide';
@@ -38,21 +37,18 @@ export function HowItWorksCompany() {
   return (
     <section 
       ref={sectionRef}
-      className="section-spacing relative overflow-hidden"
+      id="how-it-works"
+      className="py-24 md:py-32 relative overflow-hidden"
     >
-      {/* Subtle gradient wash background */}
+      {/* Pink gradient background at bottom */}
       <div 
-        className="absolute inset-0 -z-10"
+        className="absolute bottom-0 left-0 right-0 h-[60%] pointer-events-none"
         style={{
-          background: `
-            radial-gradient(ellipse 60% 50% at 30% 20%, rgba(91, 140, 255, 0.06) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 40% at 70% 60%, rgba(185, 131, 255, 0.05) 0%, transparent 70%),
-            radial-gradient(ellipse 40% 40% at 50% 80%, rgba(255, 143, 177, 0.04) 0%, transparent 70%)
-          `,
+          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,230,245,0.3) 30%, rgba(255,182,220,0.4) 60%, rgba(233,30,140,0.15) 100%)',
         }}
       />
 
-      <div className="content-container">
+      <div className="container max-w-6xl mx-auto px-6 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -60,37 +56,24 @@ export function HowItWorksCompany() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16 md:mb-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-semibold text-foreground tracking-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground tracking-tight">
             How hiring works now
           </h2>
+          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mt-4">
+            AI handles the first conversation. You make the final call.
+          </p>
         </motion.div>
 
         {/* Steps Grid */}
-        <div className="relative">
-          {/* Connective flow lines (desktop only) */}
-          <div className="hidden lg:block absolute top-10 left-0 right-0 h-px">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-              className="h-full origin-left"
-              style={{
-                background: 'linear-gradient(90deg, transparent 5%, rgba(91, 140, 255, 0.2) 20%, rgba(185, 131, 255, 0.15) 50%, rgba(255, 143, 177, 0.1) 80%, transparent 95%)',
-              }}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+          {steps.map((step, index) => (
+            <StepCard 
+              key={step.id} 
+              step={step} 
+              index={index} 
+              isInView={isInView} 
             />
-          </div>
-
-          {/* Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-            {steps.map((step, index) => (
-              <StepCard 
-                key={step.id} 
-                step={step} 
-                index={index} 
-                isInView={isInView} 
-              />
-            ))}
-          </div>
+          ))}
         </div>
 
         {/* Closing reinforcement */}
@@ -127,51 +110,26 @@ function StepCard({ step, index, isInView }: StepCardProps) {
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 8 }}
-      animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ 
-        duration: 0.4, 
-        delay: index * 0.12,
+        duration: 0.5, 
+        delay: index * 0.1,
         ease: 'easeOut',
       }}
-      className="relative flex flex-col items-center text-center lg:items-start lg:text-left"
+      className="flex flex-col"
     >
-      {/* Icon */}
-      <div className="mb-5">
-        <CompanyStepIcon step={step.id} isInView={shouldAnimate} />
-      </div>
-
-      {/* Content */}
-      <motion.h3
-        initial={{ opacity: 0 }}
-        animate={shouldAnimate ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.12 + 0.15 }}
-        className="text-lg font-display font-semibold text-foreground mb-2"
-      >
+      {/* Step Title */}
+      <h3 className="text-lg font-semibold text-foreground mb-4">
         {step.headline}
-      </motion.h3>
+      </h3>
       
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={shouldAnimate ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.12 + 0.2 }}
-        className="text-sm text-muted-foreground leading-relaxed max-w-[280px]"
-      >
-        {step.copy}
-      </motion.p>
-
-      {/* Mobile/Tablet connector dot */}
-      {index < steps.length - 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={shouldAnimate ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.12 + 0.3 }}
-          className="lg:hidden mt-6 w-1.5 h-1.5 rounded-full"
-          style={{
-            background: 'linear-gradient(135deg, #5B8CFF, #B983FF)',
-          }}
-        />
-      )}
+      {/* Dark Card */}
+      <div className="flex-1 rounded-[20px] bg-[#0B0B0D] p-6 min-h-[200px] flex items-center justify-center">
+        <p className="text-gray-600 text-sm text-center">
+          {step.copy}
+        </p>
+      </div>
     </motion.div>
   );
 }

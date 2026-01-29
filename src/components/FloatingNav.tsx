@@ -13,13 +13,10 @@ export function FloatingNav() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show nav after scrolling past 300px
       if (currentScrollY > 300) {
-        // Show when scrolling up or staying still
         if (currentScrollY < lastScrollY || currentScrollY === lastScrollY) {
           setIsVisible(true);
         } else {
-          // Hide when scrolling down fast
           if (currentScrollY - lastScrollY > 10) {
             setIsVisible(false);
           }
@@ -53,73 +50,42 @@ export function FloatingNav() {
           className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
         >
           <div 
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white border border-gray-100"
             style={{
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.9)',
+              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
             }}
           >
             {/* Logo */}
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity duration-300"
+              className="flex items-center gap-1.5 text-foreground hover:opacity-80 transition-opacity duration-300"
             >
-              {/* AI Orb */}
-              <div 
-                className="w-5 h-5 rounded-full animate-pulse"
-                style={{
-                  background: 'linear-gradient(135deg, #8ff2ff, #92f6f0, #67edfa)',
-                  boxShadow: '0 0 8px rgba(143, 242, 255, 0.5)',
-                }}
-              />
               <span className="font-display text-base font-bold tracking-tight">
                 HumiQ
+              </span>
+              <span className="text-[10px] font-medium text-pink-vibrant px-1 py-0.5 rounded bg-pink-wash">
+                Beta
               </span>
             </button>
 
             {/* Divider */}
-            <div className="w-px h-5 bg-foreground/10" />
+            <div className="w-px h-5 bg-gray-200" />
 
             {/* Love Letter Button */}
             <Button
               size="sm"
               onClick={() => navigate('/love-letter')}
-              className="relative h-8 px-4 text-sm font-medium rounded-full overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                color: '#0B0B0D',
-                boxShadow: '0 2px 12px rgba(143, 242, 255, 0.4)',
-              }}
+              className="h-8 px-4 text-sm font-medium"
             >
-              <motion.div
-                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: 'linear-gradient(135deg, #9ff8ff 0%, #a2fff5 50%, #77f8ff 100%)',
-                }}
-              />
-              <span className="relative z-10">Love Letters</span>
+              Love Letters
             </Button>
 
             {/* CTA Button */}
             <Button
               size="sm"
               onClick={scrollToTop}
-              className="relative h-8 px-4 text-sm font-medium rounded-full overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-                color: '#0B0B0D',
-                boxShadow: '0 2px 12px rgba(143, 242, 255, 0.4)',
-              }}
             >
-              <motion.div
-                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: 'linear-gradient(135deg, #9ff8ff 0%, #a2fff5 50%, #77f8ff 100%)',
-                }}
-              />
-              <span className="relative z-10">Get Started</span>
+              Get Started
             </Button>
           </div>
         </motion.nav>

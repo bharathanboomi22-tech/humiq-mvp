@@ -15,7 +15,7 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
       className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6"
     >
-      {/* AI Orb - Idle breathing state */}
+      {/* AI Orb - Idle breathing state (Pink) */}
       <motion.div
         className="relative mb-12"
         animate={{
@@ -30,14 +30,14 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
         <div 
           className="w-24 h-24 rounded-full opacity-90"
           style={{
-            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-            boxShadow: '0 0 40px rgba(143, 242, 255, 0.4)',
+            background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 50%, #FF69B4 100%)',
+            boxShadow: '0 0 40px rgba(233, 30, 140, 0.4)',
           }}
         />
         <div 
           className="absolute inset-0 w-24 h-24 rounded-full blur-xl opacity-40"
           style={{
-            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
+            background: 'linear-gradient(135deg, #E91E8C 0%, #C71585 50%, #FF69B4 100%)',
           }}
         />
       </motion.div>
@@ -57,7 +57,7 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.6 }}
-        className="text-lg md:text-xl text-foreground/80 max-w-lg mb-4 leading-relaxed"
+        className="text-lg md:text-xl text-muted-foreground max-w-lg mb-4 leading-relaxed"
       >
         You're defining hiring intent.
         <br />
@@ -83,11 +83,7 @@ export const ModeShiftStep = ({ onContinue }: ModeShiftStepProps) => {
         <Button
           onClick={onContinue}
           size="lg"
-          className="gap-3 px-8 py-6 text-base rounded-full text-foreground"
-          style={{
-            background: 'linear-gradient(135deg, #8ff2ff 0%, #92f6f0 50%, #67edfa 100%)',
-            boxShadow: '0 4px 20px rgba(143, 242, 255, 0.4)',
-          }}
+          className="gap-3 px-8 py-6 text-base"
         >
           Continue
           <ArrowRight className="w-4 h-4" />

@@ -10,17 +10,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 
-          "bg-gradient-to-r from-[#8ff2ff] via-[#92f6f0] to-[#67edfa] text-foreground rounded-full shadow-[0_4px_20px_rgba(143,242,255,0.4),0_2px_8px_rgba(103,237,250,0.3)] hover:shadow-[0_8px_32px_rgba(143,242,255,0.5),0_4px_16px_rgba(103,237,250,0.4)] active:scale-[0.97]",
+          "bg-gradient-to-r from-pink-vibrant to-[#C71585] text-white rounded-full shadow-[0_4px_16px_rgba(233,30,140,0.35)] hover:shadow-[0_8px_28px_rgba(233,30,140,0.45)] active:scale-[0.97]",
         destructive: 
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full",
         outline: 
-          "bg-white/65 backdrop-blur-sm border border-white/80 text-foreground hover:bg-white/80 hover:border-[rgba(143,242,255,0.3)] hover:shadow-[0_4px_16px_rgba(143,242,255,0.15)] rounded-full",
+          "bg-white border border-gray-200 text-foreground hover:bg-gray-50 hover:border-pink-vibrant/30 rounded-full",
         secondary: 
-          "bg-white/65 backdrop-blur-sm border border-white/80 text-foreground hover:bg-white/80 hover:shadow-[0_4px_16px_rgba(143,242,255,0.12)] rounded-full",
+          "bg-[#0B0B0D] text-white hover:bg-[#1A1A1A] rounded-full",
         ghost: 
-          "hover:bg-white/50 hover:text-foreground rounded-full",
+          "hover:bg-gray-100 hover:text-foreground rounded-full",
         link: 
-          "text-foreground relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-current after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+          "text-pink-vibrant relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-current after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
       },
       size: {
         default: "h-11 px-7 py-2 text-[15px]",
