@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import { AIOrbi } from './hero/AIOrbi';
+import { Heart } from 'lucide-react';
 
 interface HeroSectionProps {
   onSubmit?: (data: { githubUrl: string; otherLinks: string }) => void;
@@ -9,16 +11,74 @@ interface HeroSectionProps {
   onViewChange?: (view: 'talent' | 'company') => void;
 }
 
+// Dialogue lines with sequential reveal
+const talentDialogueLines = [
+  "I'm not here to read your CV.",
+  "I'm interested in how you think, decide, and solve — in real situations.",
+  "No keywords. No applications.",
+  "Show me something you've worked on.",
+  "It doesn't have to be perfect. Just real.",
+];
+
+const companyDialogueLines = [
+  "I'm not here to collect resumes.",
+  "I want to understand who can actually do the work you need.",
+  "No job boards. No screening.",
+  "Define the outcomes. I'll find the right people.",
+  "Let evidence drive your decisions.",
+];
+
 export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { setUserType } = useAuth();
-  const [activeTab, setActiveTab] = useState<'talent' | 'company'>('talent');
+  
+  // Get mode from URL or default to 'talent'
+  const urlMode = searchParams.get('mode');
+  const [activeTab, setActiveTab] = useState<'talent' | 'company'>(
+    urlMode === 'hiring' ? 'company' : 'talent'
+  );
+  
+  // Sequential dialogue state
+  const [visibleLines, setVisibleLines] = useState<number>(0);
+  const [isWriting, setIsWriting] = useState(false);
 
-  const handleTabSwitch = (tab: 'talent' | 'company') => {
+  // Update URL when tab changes
+  const handleTabSwitch = useCallback((tab: 'talent' | 'company') => {
     setActiveTab(tab);
+    setSearchParams({ mode: tab === 'company' ? 'hiring' : 'talent' });
     onViewChange?.(tab);
-  };
+    // Reset dialogue animation
+    setVisibleLines(0);
+    setIsWriting(false);
+  }, [setSearchParams, onViewChange]);
+
+  // Sequential dialogue reveal
+  useEffect(() => {
+    const dialogueLines = activeTab === 'talent' ? talentDialogueLines : companyDialogueLines;
+    
+    if (visibleLines < dialogueLines.length) {
+      setIsWriting(true);
+      const timer = setTimeout(() => {
+        setVisibleLines(prev => prev + 1);
+        if (visibleLines === dialogueLines.length - 1) {
+          setIsWriting(false);
+        }
+      }, shouldReduceMotion ? 0 : 600);
+      return () => clearTimeout(timer);
+    } else {
+      setIsWriting(false);
+    }
+  }, [visibleLines, activeTab, shouldReduceMotion]);
+
+  // Initial reveal on mount
+  useEffect(() => {
+    if (visibleLines === 0) {
+      const timer = setTimeout(() => setVisibleLines(1), 800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const handleTalentClick = () => {
     setUserType('talent');
@@ -29,6 +89,12 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
     setUserType('company');
     navigate('/company/onboarding');
   };
+
+  const scrollToLoveLetters = () => {
+    document.getElementById('loveletters')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const currentDialogue = activeTab === 'talent' ? talentDialogueLines : companyDialogueLines;
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-white">
@@ -91,23 +157,48 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
 
             {/* Right - CTAs */}
             <div className="flex items-center gap-3">
+              {/* Send Love Letters Button */}
+              <motion.button
+                onClick={scrollToLoveLetters}
+                className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border-2 border-transparent hover:border-pink-hot/30 transition-all duration-300"
+                style={{
+                  background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%) border-box',
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Heart className="w-4 h-4 text-pink-hot" />
+                <span className="text-pink-hot">Send Love Letters</span>
+              </motion.button>
+
               <motion.button
                 onClick={handleTalentClick}
                 className="px-5 py-2.5 rounded-full text-sm font-semibold text-white"
                 style={{
                   background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
                 }}
-                whileHover={{ scale: 1.02, boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)' }}
+                whileHover={{ 
+                  scale: 1.02, 
+                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
+                }}
                 whileTap={{ scale: 0.98 }}
               >
                 Sign up as a candidate
               </motion.button>
-              <button
+              <motion.button
                 onClick={handleCompanyClick}
-                className="hidden sm:block px-5 py-2.5 rounded-full text-sm font-semibold text-pink-hot hover:text-pink-vibrant transition-colors"
+                className="hidden sm:block px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+                style={{
+                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
+                }}
+                whileHover={{ 
+                  scale: 1.02, 
+                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
+                }}
+                whileTap={{ scale: 0.98 }}
               >
                 Sign up as a Company
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -122,101 +213,197 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             className="text-left order-2 lg:order-1"
             initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Headline with gradient */}
-            <h1 className="font-display text-[40px] sm:text-[48px] md:text-[56px] font-extrabold leading-[1.1] tracking-[-0.02em] mb-6">
-              <span 
-                className="block"
-                style={{
-                  background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
               >
-                CVs are history.
-              </span>
-              <span 
-                className="block"
-                style={{
-                  background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Decisions are future.
-              </span>
-            </h1>
+                {/* Headline with gradient */}
+                <h1 className="font-display text-[40px] sm:text-[48px] md:text-[56px] font-extrabold leading-[1.1] tracking-[-0.02em] mb-6">
+                  {activeTab === 'talent' ? (
+                    <>
+                      <motion.span 
+                        className="block"
+                        initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        style={{
+                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        CVs are history.
+                      </motion.span>
+                      <motion.span 
+                        className="block"
+                        initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        style={{
+                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        Decisions are future.
+                      </motion.span>
+                    </>
+                  ) : (
+                    <>
+                      <motion.span 
+                        className="block"
+                        initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        style={{
+                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        Decisions, not resumes.
+                      </motion.span>
+                      <motion.span 
+                        className="block"
+                        initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        style={{
+                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        Hire with evidence.
+                      </motion.span>
+                    </>
+                  )}
+                </h1>
 
-            {/* Subheadline */}
-            <p className="text-base md:text-lg max-w-md mb-8 leading-[1.7] text-[#111111]/70">
-              HumiQ AI understands how you think, decide, and solve through real conversations and real work.
-            </p>
+                {/* Subheadline */}
+                <motion.p 
+                  className="text-base md:text-lg max-w-md mb-8 leading-[1.7] text-[#111111]/70"
+                  initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  {activeTab === 'talent' 
+                    ? "HumiQ AI understands how you think, decide, and solve through real conversations and real work."
+                    : "No job posts. No CVs. AI runs the first interviews. You get decision-ready talent in hours."
+                  }
+                </motion.p>
 
-            {/* CTAs */}
-            <div className="flex items-center gap-6">
-              <motion.button
-                onClick={handleTalentClick}
-                className="px-8 py-3.5 rounded-full text-base font-bold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  boxShadow: '0 8px 32px rgba(255, 47, 178, 0.4)',
-                }}
-                whileTap={{ scale: 0.97 }}
-              >
-                Start Now
-              </motion.button>
-              <button 
-                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-[#111111] text-base font-medium hover:text-pink-hot transition-colors"
-              >
-                How it works →
-              </button>
-            </div>
+                {/* CTAs */}
+                <motion.div 
+                  className="flex items-center gap-6"
+                  initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <motion.button
+                    onClick={activeTab === 'talent' ? handleTalentClick : handleCompanyClick}
+                    className="px-8 py-3.5 rounded-full text-base font-bold text-white relative overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
+                    }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      boxShadow: '0 8px 32px rgba(255, 47, 178, 0.4)',
+                      y: -2,
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    {activeTab === 'talent' ? 'Start Now' : 'Start Hiring'}
+                  </motion.button>
+                  <button 
+                    onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="text-[#111111] text-base font-medium hover:text-pink-hot transition-colors relative group"
+                  >
+                    How it works →
+                    <span className="absolute bottom-0 left-0 w-0 h-px bg-pink-hot transition-all duration-300 group-hover:w-full" />
+                  </button>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
           {/* Right Column - AI Card */}
           <motion.div 
-            className="order-1 lg:order-2"
+            className="order-1 lg:order-2 relative"
             initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
+            {/* Ambient glow behind card */}
+            <motion.div 
+              className="absolute -inset-10 rounded-[50px] pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(255, 47, 178, 0.15) 0%, rgba(124, 58, 237, 0.1) 40%, transparent 70%)',
+                filter: 'blur(40px)',
+              }}
+              animate={shouldReduceMotion ? {} : {
+                scale: [1, 1.05, 1],
+                opacity: [0.6, 0.8, 0.6],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+
             {/* Dark Card */}
-            <div className="relative rounded-[32px] p-8 bg-[#0B0B10] text-white shadow-2xl">
-              {/* Header */}
-              <div className="mb-8">
-                <p className="text-xl font-bold text-white">HumiQ</p>
-                <p className="text-base text-gray-400 mt-1">Super Career Intelligence</p>
+            <motion.div 
+              className="relative rounded-[32px] p-8 bg-[#0B0B10] text-white shadow-2xl"
+              whileHover={{ 
+                boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.4)',
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Header with Orbi */}
+              <div className="flex items-center gap-3 mb-8">
+                <AIOrbi size="md" isWriting={isWriting} />
+                <div>
+                  <p className="text-xl font-bold text-white">HumiQ</p>
+                  <p className="text-sm text-gray-400">
+                    {activeTab === 'talent' ? 'Super Career Intelligence' : 'Decision-Ready Hiring Intelligence'}
+                  </p>
+                </div>
               </div>
 
-              {/* AI Dialogue - Static Text */}
-              <div className="space-y-4 min-h-[200px] mb-8">
-                <p className="text-[15px] leading-relaxed text-gray-300">
-                  I'm not here to read your CV.
-                </p>
-                <p className="text-[15px] leading-relaxed text-gray-300">
-                  I'm interested in how you think, decide, and solve — in real situations.
-                </p>
-                <p className="text-[15px] leading-relaxed text-gray-300">
-                  No keywords. No applications.
-                </p>
-                <p className="text-[15px] leading-relaxed text-gray-300">
-                  Show me something you've worked on.
-                </p>
-                <p className="text-[15px] leading-relaxed text-gray-300">
-                  It doesn't have to be perfect. Just real.
-                </p>
+              {/* AI Dialogue - Sequential reveal */}
+              <div className="space-y-3 min-h-[200px] mb-8">
+                <AnimatePresence>
+                  {currentDialogue.slice(0, visibleLines).map((line, index) => (
+                    <motion.p
+                      key={`${activeTab}-${index}`}
+                      initial={shouldReduceMotion ? {} : { opacity: 0, y: 8, x: -4 }}
+                      animate={{ opacity: 1, y: 0, x: 0 }}
+                      transition={{ 
+                        duration: 0.4, 
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="text-[15px] leading-relaxed text-gray-300"
+                    >
+                      {line}
+                    </motion.p>
+                  ))}
+                </AnimatePresence>
               </div>
 
               {/* CTA */}
               <motion.button
-                onClick={handleTalentClick}
+                onClick={activeTab === 'talent' ? handleTalentClick : handleCompanyClick}
                 className="px-8 py-3.5 rounded-full text-[15px] font-bold text-white"
                 style={{
                   background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
@@ -227,9 +414,9 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Start Now
+                {activeTab === 'talent' ? 'Start Now' : 'Start Hiring'}
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
