@@ -97,7 +97,7 @@ export function useTypewriter(
 }
 
 /**
- * Multi-line typewriter that types lines sequentially
+ * Multi-line typewriter that types lines sequentially with infinite loop
  */
 export function useMultiLineTypewriter(
   lines: string[],
@@ -106,6 +106,7 @@ export function useMultiLineTypewriter(
     variance?: number;
     linePause?: number;
     initialDelay?: number;
+    loopDelay?: number; // Delay before restarting the loop
   } = {}
 ) {
   const {
@@ -113,6 +114,7 @@ export function useMultiLineTypewriter(
     variance = 0.35,
     linePause = 400,
     initialDelay = 600,
+    loopDelay = 2000, // Wait 2 seconds before restarting
   } = options;
 
   const [currentLineIndex, setCurrentLineIndex] = useState(-1);
@@ -120,6 +122,7 @@ export function useMultiLineTypewriter(
   const [currentLineText, setCurrentLineText] = useState('');
   const [isTypingLine, setIsTypingLine] = useState(false);
   const [charIndex, setCharIndex] = useState(0);
+  const [cycleKey, setCycleKey] = useState(0);
 
   // Start first line after initial delay
   useEffect(() => {
@@ -128,7 +131,7 @@ export function useMultiLineTypewriter(
     }, initialDelay);
 
     return () => clearTimeout(timer);
-  }, [initialDelay]);
+  }, [initialDelay, cycleKey]);
 
   // Reset when lines change
   useEffect(() => {
@@ -137,13 +140,8 @@ export function useMultiLineTypewriter(
     setCurrentLineText('');
     setIsTypingLine(false);
     setCharIndex(0);
-
-    const timer = setTimeout(() => {
-      setCurrentLineIndex(0);
-    }, initialDelay);
-
-    return () => clearTimeout(timer);
-  }, [lines, initialDelay]);
+    setCycleKey(prev => prev + 1);
+  }, [lines]);
 
   // Start typing when line index changes
   useEffect(() => {
@@ -152,7 +150,7 @@ export function useMultiLineTypewriter(
     setCharIndex(0);
     setCurrentLineText('');
     setIsTypingLine(true);
-  }, [currentLineIndex, lines]);
+  }, [currentLineIndex, lines.length, cycleKey]);
 
   // Type characters
   useEffect(() => {
@@ -166,15 +164,24 @@ export function useMultiLineTypewriter(
       setCompletedLines((prev) => [...prev, currentLine]);
       setCurrentLineText('');
       
-      // Move to next line after pause
+      // Move to next line after pause, or restart loop
       if (currentLineIndex < lines.length - 1) {
         const timer = setTimeout(() => {
           setCurrentLineIndex((prev) => prev + 1);
           setCharIndex(0);
         }, linePause);
         return () => clearTimeout(timer);
+      } else {
+        // All lines complete - restart loop after delay
+        const timer = setTimeout(() => {
+          setCompletedLines([]);
+          setCurrentLineText('');
+          setCurrentLineIndex(-1);
+          setCharIndex(0);
+          setCycleKey(prev => prev + 1);
+        }, loopDelay);
+        return () => clearTimeout(timer);
       }
-      return;
     }
 
     // Calculate delay with natural variance
@@ -187,13 +194,13 @@ export function useMultiLineTypewriter(
     }, charDelay);
 
     return () => clearTimeout(timer);
-  }, [isTypingLine, charIndex, currentLineIndex, lines, charSpeed, variance, linePause]);
+  }, [isTypingLine, charIndex, currentLineIndex, lines, charSpeed, variance, linePause, loopDelay, cycleKey]);
 
   return {
     completedLines,
     currentLineText,
     currentLineIndex,
     isTyping: isTypingLine,
-    isAllComplete: currentLineIndex >= lines.length - 1 && !isTypingLine && completedLines.length === lines.length,
+    isAllComplete: false, // Never truly complete since it loops
   };
 }
