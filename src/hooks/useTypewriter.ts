@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface UseTypewriterOptions {
   /** Base speed in ms per character */
@@ -96,6 +96,14 @@ export function useTypewriter(
   };
 }
 
+interface MultiLineState {
+  currentLineIndex: number;
+  completedLines: string[];
+  currentLineText: string;
+  isTypingLine: boolean;
+  charIndex: number;
+}
+
 /**
  * Multi-line typewriter that types lines sequentially with infinite loop
  */
@@ -106,7 +114,7 @@ export function useMultiLineTypewriter(
     variance?: number;
     linePause?: number;
     initialDelay?: number;
-    loopDelay?: number; // Delay before restarting the loop
+    loopDelay?: number;
   } = {}
 ) {
   const {
@@ -114,93 +122,147 @@ export function useMultiLineTypewriter(
     variance = 0.35,
     linePause = 400,
     initialDelay = 600,
-    loopDelay = 2000, // Wait 2 seconds before restarting
+    loopDelay = 2000,
   } = options;
 
-  const [currentLineIndex, setCurrentLineIndex] = useState(-1);
-  const [completedLines, setCompletedLines] = useState<string[]>([]);
-  const [currentLineText, setCurrentLineText] = useState('');
-  const [isTypingLine, setIsTypingLine] = useState(false);
-  const [charIndex, setCharIndex] = useState(0);
-  const [cycleKey, setCycleKey] = useState(0);
+  const [state, setState] = useState<MultiLineState>({
+    currentLineIndex: -1,
+    completedLines: [],
+    currentLineText: '',
+    isTypingLine: false,
+    charIndex: 0,
+  });
 
-  // Start first line after initial delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentLineIndex(0);
-    }, initialDelay);
+  const linesRef = useRef(lines);
+  const timerRef = useRef<number | null>(null);
 
-    return () => clearTimeout(timer);
-  }, [initialDelay, cycleKey]);
+  // Clear any pending timer
+  const clearTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
 
   // Reset when lines change
   useEffect(() => {
-    setCurrentLineIndex(-1);
-    setCompletedLines([]);
-    setCurrentLineText('');
-    setIsTypingLine(false);
-    setCharIndex(0);
-    setCycleKey(prev => prev + 1);
-  }, [lines]);
+    const linesChanged = JSON.stringify(lines) !== JSON.stringify(linesRef.current);
+    linesRef.current = lines;
 
-  // Start typing when line index changes
+    if (linesChanged) {
+      clearTimer();
+      setState({
+        currentLineIndex: -1,
+        completedLines: [],
+        currentLineText: '',
+        isTypingLine: false,
+        charIndex: 0,
+      });
+    }
+  }, [lines, clearTimer]);
+
+  // Start typing after initial delay
   useEffect(() => {
-    if (currentLineIndex < 0 || currentLineIndex >= lines.length) return;
-
-    setCharIndex(0);
-    setCurrentLineText('');
-    setIsTypingLine(true);
-  }, [currentLineIndex, lines.length, cycleKey]);
-
-  // Type characters
-  useEffect(() => {
-    if (!isTypingLine || currentLineIndex < 0 || currentLineIndex >= lines.length) return;
-
-    const currentLine = lines[currentLineIndex];
-    
-    if (charIndex >= currentLine.length) {
-      // Line complete
-      setIsTypingLine(false);
-      setCompletedLines((prev) => [...prev, currentLine]);
-      setCurrentLineText('');
-      
-      // Move to next line after pause, or restart loop
-      if (currentLineIndex < lines.length - 1) {
-        const timer = setTimeout(() => {
-          setCurrentLineIndex((prev) => prev + 1);
-          setCharIndex(0);
-        }, linePause);
-        return () => clearTimeout(timer);
-      } else {
-        // All lines complete - restart loop after delay
-        const timer = setTimeout(() => {
-          setCompletedLines([]);
-          setCurrentLineText('');
-          setCurrentLineIndex(-1);
-          setCharIndex(0);
-          setCycleKey(prev => prev + 1);
-        }, loopDelay);
-        return () => clearTimeout(timer);
-      }
+    if (state.currentLineIndex === -1 && lines.length > 0) {
+      clearTimer();
+      timerRef.current = window.setTimeout(() => {
+        setState(prev => ({
+          ...prev,
+          currentLineIndex: 0,
+          isTypingLine: true,
+          charIndex: 0,
+          currentLineText: '',
+        }));
+      }, initialDelay);
     }
 
-    // Calculate delay with natural variance
+    return clearTimer;
+  }, [state.currentLineIndex, lines.length, initialDelay, clearTimer]);
+
+  // Main typing effect
+  useEffect(() => {
+    if (!state.isTypingLine || state.currentLineIndex < 0 || state.currentLineIndex >= lines.length) {
+      return;
+    }
+
+    const currentLine = lines[state.currentLineIndex];
+
+    // Check if line is complete
+    if (state.charIndex >= currentLine.length) {
+      clearTimer();
+      
+      // Mark line as complete
+      setState(prev => ({
+        ...prev,
+        isTypingLine: false,
+        completedLines: [...prev.completedLines, currentLine],
+        currentLineText: '',
+      }));
+
+      // Schedule next line or loop restart
+      const isLastLine = state.currentLineIndex >= lines.length - 1;
+      const delay = isLastLine ? loopDelay : linePause;
+
+      timerRef.current = window.setTimeout(() => {
+        if (isLastLine) {
+          // Restart loop
+          setState({
+            currentLineIndex: 0,
+            completedLines: [],
+            currentLineText: '',
+            isTypingLine: true,
+            charIndex: 0,
+          });
+        } else {
+          // Move to next line
+          setState(prev => ({
+            ...prev,
+            currentLineIndex: prev.currentLineIndex + 1,
+            isTypingLine: true,
+            charIndex: 0,
+            currentLineText: '',
+          }));
+        }
+      }, delay);
+
+      return;
+    }
+
+    // Type next character
     const randomFactor = 1 + (Math.random() - 0.5) * 2 * variance;
     const charDelay = Math.round(charSpeed * randomFactor);
 
-    const timer = setTimeout(() => {
-      setCurrentLineText(currentLine.slice(0, charIndex + 1));
-      setCharIndex((prev) => prev + 1);
+    timerRef.current = window.setTimeout(() => {
+      setState(prev => ({
+        ...prev,
+        currentLineText: currentLine.slice(0, prev.charIndex + 1),
+        charIndex: prev.charIndex + 1,
+      }));
     }, charDelay);
 
-    return () => clearTimeout(timer);
-  }, [isTypingLine, charIndex, currentLineIndex, lines, charSpeed, variance, linePause, loopDelay, cycleKey]);
+    return clearTimer;
+  }, [
+    state.isTypingLine,
+    state.currentLineIndex,
+    state.charIndex,
+    lines,
+    charSpeed,
+    variance,
+    linePause,
+    loopDelay,
+    clearTimer,
+  ]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return clearTimer;
+  }, [clearTimer]);
 
   return {
-    completedLines,
-    currentLineText,
-    currentLineIndex,
-    isTyping: isTypingLine,
-    isAllComplete: false, // Never truly complete since it loops
+    completedLines: state.completedLines,
+    currentLineText: state.currentLineText,
+    currentLineIndex: state.currentLineIndex,
+    isTyping: state.isTypingLine,
+    isAllComplete: false,
   };
 }
