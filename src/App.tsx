@@ -13,6 +13,9 @@ import WorkSessionStart from "./pages/WorkSessionStart";
 import WorkSessionLive from "./pages/WorkSessionLive";
 import EvidencePack from "./pages/EvidencePack";
 import LoveLetter from "./pages/LoveLetter";
+// Auth pages
+import CandidateAuth from "./pages/CandidateAuth";
+import CompanyAuth from "./pages/CompanyAuth";
 // Company pages
 import CompanySetup from "./pages/CompanySetup";
 import CompanyDashboard from "./pages/CompanyDashboard";
@@ -40,6 +43,10 @@ const App = () => (
           {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/love-letter" element={<LoveLetter />} />
+            
+            {/* Auth Routes */}
+            <Route path="/auth/candidate" element={<CandidateAuth />} />
+            <Route path="/auth/company" element={<CompanyAuth />} />
             
             {/* Work Session */}
             <Route path="/work-session/start" element={

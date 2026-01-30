@@ -68,13 +68,11 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
   }, [setSearchParams, onViewChange]);
 
   const handleTalentClick = () => {
-    setUserType('talent');
-    navigate('/talent/onboarding');
+    navigate('/auth/candidate');
   };
 
   const handleCompanyClick = () => {
-    setUserType('company');
-    navigate('/company/onboarding');
+    navigate('/auth/company');
   };
 
   return (
