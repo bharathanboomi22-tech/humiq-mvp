@@ -361,9 +361,41 @@ export const useImmersiveOnboarding = () => {
     }
   }, [addAssistantMessage]);
 
+  // Handle CV skip - show save progress form
   const skipCv = useCallback(() => {
-    goToIntentAvailability();
-  }, []);
+    setState('save-progress');
+    addAssistantMessage(
+      "No problem.\n\nLet's save your progress with just the basics.",
+      800
+    );
+  }, [addAssistantMessage]);
+
+  // Handle save progress form submission
+  const handleSaveProgress = useCallback((data: {
+    name: string;
+    email: string;
+    workStatus: 'open' | 'exploring';
+    location?: string;
+    timezone?: string;
+  }) => {
+    // Update profile draft with basic details
+    setProfileDraft(prev => ({
+      ...prev,
+      basicDetails: {
+        ...prev.basicDetails,
+        fullName: data.name,
+        email: data.email,
+        location: data.location || null,
+      },
+    }));
+    
+    // Proceed to intent availability question
+    setState('intent-availability');
+    addAssistantMessage(
+      "When would you be open to starting a new role?",
+      800
+    );
+  }, [addAssistantMessage]);
 
   const handleCvReviewComplete = useCallback(() => {
     goToIntentAvailability();
@@ -666,6 +698,7 @@ export const useImmersiveOnboarding = () => {
     goToCvUpload,
     handleCvUpload,
     skipCv,
+    handleSaveProgress,
     handleCvReviewComplete,
     
     // Actions - Layer 1 (Intent)

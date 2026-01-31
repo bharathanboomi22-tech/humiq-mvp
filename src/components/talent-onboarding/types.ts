@@ -87,6 +87,7 @@ export type OnboardingState =
   | 'welcome'
   | 'cv-upload'
   | 'cv-review'
+  | 'save-progress'  // CV skip fallback - inline save progress form
   // Layer 1: Intent & Constraints
   | 'intent-availability'
   | 'intent-work-types'
