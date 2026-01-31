@@ -13,11 +13,11 @@ export function AIOrbiSmall({ isWriting = false }: AIOrbiSmallProps) {
 
   return (
     <div className="relative w-4 h-4 md:w-[16px] md:h-[16px]">
-      {/* Outer glow halo - proportionally smaller */}
+      {/* Outer glow halo - teal/green */}
       <motion.div
         className="absolute inset-[-40%] rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(255, 47, 178, 0.35) 0%, rgba(124, 58, 237, 0.15) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, hsl(var(--primary) / 0.35) 0%, hsl(168 75% 48% / 0.15) 40%, transparent 70%)',
           filter: 'blur(4px)',
         }}
         animate={shouldReduceMotion ? {} : {
@@ -31,14 +31,14 @@ export function AIOrbiSmall({ isWriting = false }: AIOrbiSmallProps) {
         }}
       />
 
-      {/* Main orb sphere */}
+      {/* Main orb sphere - teal gradient */}
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 107, 214, 0.6) 30%, rgba(255, 47, 178, 0.8) 60%, rgba(124, 58, 237, 0.9) 100%)',
+          background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9) 0%, hsl(168 75% 48% / 0.6) 30%, hsl(var(--primary)) 60%, hsl(160 75% 35%) 100%)',
           boxShadow: isWriting 
-            ? '0 0 12px rgba(255, 47, 178, 0.6), inset 0 0 6px rgba(255, 255, 255, 0.3)'
-            : '0 0 8px rgba(255, 47, 178, 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2)',
+            ? '0 0 12px hsl(var(--primary) / 0.6), inset 0 0 6px rgba(255, 255, 255, 0.3)'
+            : '0 0 8px hsl(var(--primary) / 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2)',
         }}
         animate={shouldReduceMotion ? {} : {
           scale: isWriting ? [1, 1.1, 1] : [1, 1.02, 1],

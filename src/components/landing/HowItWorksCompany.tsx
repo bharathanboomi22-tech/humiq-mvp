@@ -29,13 +29,13 @@ export function HowItWorksCompany() {
     <section 
       ref={sectionRef}
       id="how-it-works"
-      className="py-24 md:py-32 relative overflow-hidden bg-white"
+      className="py-24 md:py-32 relative overflow-hidden bg-background"
     >
-      {/* Pink gradient background at bottom */}
+      {/* Atmospheric gradient background */}
       <div 
         className="absolute bottom-0 left-0 right-0 h-[40%] pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,230,245,0.3) 40%, rgba(255,182,220,0.3) 70%, rgba(255,107,214,0.15) 100%)',
+          background: 'radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / 0.1) 0%, transparent 60%)',
         }}
       />
 
@@ -47,10 +47,10 @@ export function HowItWorksCompany() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16 md:mb-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-[44px] font-display font-extrabold tracking-tight text-[#111111]">
+          <h2 className="text-3xl md:text-4xl lg:text-[44px] font-display font-extrabold tracking-tight text-foreground">
             How hiring works now
           </h2>
-          <p className="text-base md:text-lg text-[#111111]/60 max-w-xl mx-auto mt-4">
+          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mt-4">
             AI handles the first conversation. You make the final call.
           </p>
         </motion.div>
@@ -85,10 +85,10 @@ export function HowItWorksCompany() {
           transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mt-16 md:mt-20 text-center"
         >
-          <p className="text-lg md:text-xl text-[#111111]/60 leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
             No job posts. No CVs. No screening.
             <br />
-            <span className="text-[#111111] font-semibold">
+            <span className="text-foreground font-semibold">
               Just decisions — backed by intelligence.
             </span>
           </p>

@@ -58,9 +58,7 @@ export function WhyDifferentSection() {
             }}
             className="group relative"
           >
-            <div 
-              className="rounded-[28px] p-8 bg-white border border-gray-100 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.06)] transition-all duration-300 hover:shadow-[0_8px_32px_-4px_rgba(0,0,0,0.1)] h-full"
-            >
+            <div className="rounded-[28px] p-8 bg-secondary border border-border transition-all duration-300 hover:shadow-lg h-full">
               <h3 className="font-display text-lg font-bold text-muted-foreground mb-6">
                 Traditional Hiring Platforms
               </h3>
@@ -77,7 +75,7 @@ export function WhyDifferentSection() {
                     }}
                     className="flex items-start gap-3"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 mt-2 flex-shrink-0" />
                     <span className="text-[15px] text-muted-foreground leading-relaxed">
                       {point}
                     </span>
@@ -102,15 +100,13 @@ export function WhyDifferentSection() {
             <motion.div 
               className="absolute -inset-2 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(255, 47, 178, 0.08) 0%, transparent 70%)',
+                background: 'radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%)',
               }}
             />
-            <div 
-              className="relative rounded-[28px] p-8 bg-[#0B0B10] text-white transition-all duration-300 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.3)] h-full"
-            >
-              <h3 className="font-display text-lg font-bold text-white mb-6">
+            <div className="relative rounded-[28px] p-8 glass-card transition-all duration-300 hover:shadow-glow-teal h-full">
+              <h3 className="font-display text-lg font-bold text-foreground mb-6">
                 HumiQ AI{' '}
-                <span className="text-white/50 font-normal text-sm">(Human Capability Intelligence)</span>
+                <span className="text-muted-foreground font-normal text-sm">(Human Capability Intelligence)</span>
               </h3>
               <div className="space-y-4">
                 {humiqPoints.map((point, index) => (
@@ -126,13 +122,8 @@ export function WhyDifferentSection() {
                     className="flex items-start gap-3"
                   >
                     {/* Gradient dot */}
-                    <span 
-                      className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                      style={{
-                        background: 'linear-gradient(135deg, #7C3AED, #FF2FB2)',
-                      }}
-                    />
-                    <span className="text-[15px] text-white leading-relaxed">
+                    <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-primary" />
+                    <span className="text-[15px] text-foreground leading-relaxed">
                       {point}
                     </span>
                   </motion.div>
@@ -156,7 +147,7 @@ export function WhyDifferentSection() {
           <p className="font-display text-lg md:text-xl text-foreground leading-relaxed max-w-lg mx-auto font-medium">
             The future of hiring isn't about who looks qualified.
             <br />
-            <span className="text-gradient">It's about who will actually do the work well.</span>
+            <span className="text-gradient-teal">It's about who will actually do the work well.</span>
           </p>
         </motion.div>
       </div>

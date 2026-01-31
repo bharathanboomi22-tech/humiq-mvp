@@ -82,21 +82,16 @@ export function FAQSection() {
               >
                 <AccordionItem
                   value={`item-${index}`}
-                  className="rounded-2xl bg-[#0B0B10] border-none overflow-hidden"
+                  className="rounded-2xl glass-card border-none overflow-hidden"
                 >
-                  <AccordionTrigger className="px-6 py-5 text-left text-white font-semibold text-base hover:no-underline group">
+                  <AccordionTrigger className="px-6 py-5 text-left text-foreground font-semibold text-base hover:no-underline group">
                     <span className="flex-1">{item.question}</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-6 pb-5 pt-0">
                     <div className="relative">
                       {/* Gradient accent line */}
-                      <div 
-                        className="absolute top-0 left-0 right-0 h-px"
-                        style={{
-                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2, #FF6BD6)',
-                        }}
-                      />
-                      <p className="text-white/80 text-[15px] leading-relaxed pt-4">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-teal-400 via-primary to-green-400" />
+                      <p className="text-muted-foreground text-[15px] leading-relaxed pt-4">
                         {item.answer}
                       </p>
                     </div>
@@ -122,13 +117,13 @@ export function FAQSection() {
           <div 
             className="absolute inset-0 -inset-x-8 rounded-3xl pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(255, 47, 178, 0.08) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%)',
             }}
           />
           <p className="font-display text-lg md:text-xl text-foreground leading-relaxed max-w-md mx-auto font-medium relative">
             The future of hiring isn't about proving yourself.
             <br />
-            <span className="text-gradient">It's about being understood.</span>
+            <span className="text-gradient-teal">It's about being understood.</span>
           </p>
         </motion.div>
       </div>

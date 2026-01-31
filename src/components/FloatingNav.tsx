@@ -57,31 +57,31 @@ export function FloatingNav() {
           }}
           className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
         >
-          <div className="flex items-center gap-4 px-5 py-3 rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center gap-4 px-5 py-3 rounded-full glass-card shadow-glow-teal">
             {/* Logo */}
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-2 text-[#111111] hover:opacity-80 transition-opacity duration-300"
+              className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity duration-300"
             >
               <span className="font-display text-base font-extrabold tracking-tight">
                 HumiQ
               </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-pink-hot/10 text-pink-hot">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                 Beta
               </span>
             </button>
 
             {/* Divider */}
-            <div className="w-px h-5 bg-gray-200" />
+            <div className="w-px h-5 bg-border" />
 
             {/* Toggle */}
-            <div className="hidden md:flex items-center gap-0 bg-gray-100 rounded-full p-0.5">
+            <div className="hidden md:flex items-center gap-0 bg-secondary rounded-full p-0.5">
               <button
                 onClick={() => handleTabSwitch('talent')}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
                   activeTab === 'talent' 
-                    ? 'bg-white text-[#111111] shadow-sm' 
-                    : 'text-gray-500 hover:text-[#111111]'
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Talent
@@ -90,8 +90,8 @@ export function FloatingNav() {
                 onClick={() => handleTabSwitch('company')}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
                   activeTab === 'company' 
-                    ? 'bg-white text-[#111111] shadow-sm' 
-                    : 'text-gray-500 hover:text-[#111111]'
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Hiring
@@ -99,19 +99,13 @@ export function FloatingNav() {
             </div>
 
             {/* Divider */}
-            <div className="hidden md:block w-px h-5 bg-gray-200" />
+            <div className="hidden md:block w-px h-5 bg-border" />
 
             {/* CTA Button */}
             <motion.button
               onClick={scrollToTop}
-              className="px-5 py-2 rounded-full text-sm font-semibold text-white"
-              style={{
-                background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-              }}
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
-              }}
+              className="btn-primary px-5 py-2 rounded-full text-sm font-semibold"
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               Get Started

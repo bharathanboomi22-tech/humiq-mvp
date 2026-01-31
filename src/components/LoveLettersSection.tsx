@@ -46,28 +46,25 @@ const sampleTestimonials = [
 function TestimonialCard({ message, name }: { message: string; name?: string }) {
   return (
     <motion.div 
-      className="rounded-[28px] p-6 bg-[#0B0B10] text-white w-full max-w-[380px] flex-shrink-0"
+      className="rounded-[28px] p-6 glass-card w-full max-w-[380px] flex-shrink-0"
       whileHover={{ 
         y: -4,
         transition: { duration: 0.3 },
       }}
     >
-      <p className="text-[15px] leading-relaxed text-white mb-4">
+      <p className="text-[15px] leading-relaxed text-foreground mb-4">
         "{message}"
       </p>
       
       {name && (
-        <p className="text-xs text-white/60 mb-3">— {name}</p>
+        <p className="text-xs text-muted-foreground mb-3">— {name}</p>
       )}
       
       {/* Gradient underline */}
       <motion.div 
-        className="w-full h-[3px] rounded-full"
-        style={{
-          background: 'linear-gradient(90deg, #7C3AED 0%, #FF2FB2 50%, #FF6BD6 100%)',
-        }}
+        className="w-full h-[3px] rounded-full bg-gradient-to-r from-teal-400 via-primary to-green-400"
         whileHover={{
-          boxShadow: '0 0 12px rgba(255, 47, 178, 0.5)',
+          boxShadow: '0 0 12px hsl(var(--primary) / 0.5)',
         }}
       />
     </motion.div>
@@ -88,7 +85,7 @@ function InfiniteMarquee({ items, isPaused }: { items: typeof sampleTestimonials
         y: [0, -50 * items.length],
       }}
       transition={{
-        duration: items.length * 5, // FASTER: reduced from 8 to 5 (~35% faster)
+        duration: items.length * 5,
         repeat: Infinity,
         ease: 'linear',
       }}
@@ -167,20 +164,20 @@ function SendLoveModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div 
-              className="w-full max-w-md bg-white rounded-[28px] p-6 shadow-2xl relative"
+              className="w-full max-w-md glass-card rounded-[28px] p-6 shadow-2xl relative"
               onClick={e => e.stopPropagation()}
             >
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary transition-colors"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-muted-foreground" />
               </button>
 
-              <h3 className="text-xl font-bold text-[#111111] mb-2 font-display">
+              <h3 className="text-xl font-bold text-foreground mb-2 font-display">
                 Send a Love Letter 💌
               </h3>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm text-muted-foreground mb-6">
                 Share your thoughts about HumiQ
               </p>
 
@@ -192,8 +189,8 @@ function SendLoveModal({
                     placeholder="What do you love about HumiQ? *"
                     required
                     className="w-full h-28 px-4 py-3 text-sm rounded-xl resize-none
-                      bg-gray-50 text-[#111111] placeholder:text-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-pink-hot/30
+                      bg-secondary text-foreground placeholder:text-muted-foreground
+                      focus:outline-none focus:ring-2 focus:ring-primary/30
                       transition-all"
                   />
                 </div>
@@ -205,8 +202,8 @@ function SendLoveModal({
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Name (optional)"
                     className="px-4 py-3 text-sm rounded-xl
-                      bg-gray-50 text-[#111111] placeholder:text-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-pink-hot/30"
+                      bg-secondary text-foreground placeholder:text-muted-foreground
+                      focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                   <input
                     type="text"
@@ -214,8 +211,8 @@ function SendLoveModal({
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Role (optional)"
                     className="px-4 py-3 text-sm rounded-xl
-                      bg-gray-50 text-[#111111] placeholder:text-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-pink-hot/30"
+                      bg-secondary text-foreground placeholder:text-muted-foreground
+                      focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
 
@@ -225,26 +222,23 @@ function SendLoveModal({
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="Company (optional)"
                   className="w-full px-4 py-3 text-sm rounded-xl
-                    bg-gray-50 text-[#111111] placeholder:text-gray-400
-                    focus:outline-none focus:ring-2 focus:ring-pink-hot/30"
+                    bg-secondary text-foreground placeholder:text-muted-foreground
+                    focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
 
                 <div className="flex justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                    className="px-5 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Cancel
                   </button>
                   <motion.button
                     type="submit"
                     disabled={isLoading || !message.trim()}
-                    className="px-6 py-2.5 rounded-full text-sm font-semibold text-white disabled:opacity-50"
-                    style={{
-                      background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                    }}
-                    whileHover={{ scale: 1.02, boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)' }}
+                    className="btn-primary px-6 py-2.5 rounded-full text-sm font-semibold disabled:opacity-50"
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     {isLoading ? 'Sending...' : 'Send Love 💛'}
@@ -298,10 +292,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full py-24 md:py-32 overflow-hidden"
-        style={{
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #FFD6EB 60%, #FF6BD6 100%)',
-        }}
+        className="relative w-full py-24 md:py-32 overflow-hidden bg-atmospheric"
       >
         {/* Animated gradient drift - subtle movement */}
         <motion.div
@@ -315,7 +306,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
             ease: 'linear',
           }}
           style={{
-            background: 'radial-gradient(ellipse at 30% 30%, rgba(255, 107, 214, 0.2) 0%, transparent 50%)',
+            background: 'radial-gradient(ellipse at 30% 30%, hsl(var(--primary) / 0.15) 0%, transparent 50%)',
             backgroundSize: '200% 200%',
           }}
         />
@@ -330,12 +321,8 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
               onMouseLeave={() => setIsPaused(false)}
             >
               {/* Fade masks */}
-              <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none" 
-                style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, transparent 100%)' }}
-              />
-              <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none"
-                style={{ background: 'linear-gradient(to top, rgba(255, 107, 214, 0.8) 0%, transparent 100%)' }}
-              />
+              <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
               
               <div className="grid grid-cols-2 gap-4 h-full">
                 <div className="overflow-hidden">
@@ -361,8 +348,7 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
                   {[...Array(4)].map((_, i) => (
                     <motion.div 
                       key={i}
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ background: '#9333EA' }}
+                      className="w-2.5 h-2.5 rounded-full bg-primary"
                       animate={shouldReduceMotion ? {} : {
                         scale: [1, 1.2, 1],
                         opacity: [0.6, 1, 0.6],
@@ -376,41 +362,24 @@ export function LoveLettersSection({ onOpenInput }: LoveLettersSectionProps) {
                     />
                   ))}
                 </div>
-                <div 
-                  className="w-[3px] h-28 rounded-full"
-                  style={{ background: '#9333EA' }}
-                />
+                <div className="w-[3px] h-28 rounded-full bg-primary" />
               </div>
 
               {/* Title */}
-              <h2 
-                className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display mb-4 tracking-tight"
-                style={{
-                  background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display mb-4 tracking-tight text-gradient-teal">
                 Love Letters
               </h2>
               
               {/* Subtitle */}
-              <p className="text-[#111111]/70 text-lg mb-8">
+              <p className="text-muted-foreground text-lg mb-8">
                 Read from my customers
               </p>
 
               {/* Send Love Button */}
               <motion.button
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                }}
-                whileHover={{ 
-                  scale: 1.02, 
-                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
-                }}
+                className="flex items-center gap-2 btn-primary px-6 py-3 rounded-full text-sm font-semibold"
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Heart className="w-4 h-4" />
