@@ -2,42 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HumiQ AI — Human Capability Intelligence Theme
-   Bold black/white/pink/violet design system.
-   Plus Jakarta Sans typography. Premium & intelligent. */
+/* HumiQ AI — Universal Design System
+   Metaview-inspired dark teal/green intelligence theme.
+   Enterprise-grade. Calm. Intelligent. Trustworthy. */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Primary: Pure white base */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 4%;
+    /* ============================================
+       HumiQ UNIVERSAL THEME — METAVIEW STYLE
+       Dark atmospheric teal/green system
+       ============================================ */
 
-    /* Card surfaces - black or white */
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
-    --card-dark: 240 10% 4%;
-    --card-dark-foreground: 0 0% 100%;
+    /* Background: Deep black-green charcoal */
+    --background: 160 35% 3%;
+    --foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
+    /* Surfaces: Dark glass */
+    --card: 160 25% 8%;
+    --card-foreground: 0 0% 98%;
 
-    /* Primary accent: Hot Pink / Magenta */
-    --primary: 326 100% 56%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 160 22% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Secondary: Violet accent */
-    --secondary: 263 70% 58%;
-    --secondary-foreground: 0 0% 100%;
+    /* Primary: Teal/Green Intelligence */
+    --primary: 168 75% 48%;
+    --primary-foreground: 160 35% 3%;
 
-    /* Muted text colors */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Secondary: Elevated dark surface */
+    --secondary: 160 22% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    /* Accent - Pink */
-    --accent: 326 100% 56%;
-    --accent-foreground: 0 0% 100%;
+    /* Muted: Subtle text and backgrounds */
+    --muted: 160 18% 14%;
+    --muted-foreground: 160 10% 60%;
+
+    /* Accent: Bright teal */
+    --accent: 168 85% 55%;
+    --accent-foreground: 160 35% 3%;
 
     /* Verdict colors */
     --verdict-interview: 162 63% 42%;
@@ -45,36 +48,40 @@
     --verdict-pass: 351 80% 55%;
 
     /* Signal levels */
-    --signal-high: 162 63% 42%;
+    --signal-high: 168 75% 48%;
     --signal-medium: 32 89% 55%;
-    --signal-low: 0 0% 50%;
+    --signal-low: 160 10% 45%;
 
     --destructive: 351 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 326 100% 56%;
+    /* Borders: Subtle glow edges */
+    --border: 160 20% 18%;
+    --input: 160 25% 12%;
+    --ring: 168 75% 48%;
 
-    /* Brand color spectrum */
-    --pink-hot: 326 100% 56%;
-    --pink-vibrant: 326 100% 60%;
-    --pink-light: 326 100% 75%;
-    --pink-wash: 326 100% 96%;
-    --violet: 263 70% 58%;
-    --violet-light: 263 70% 75%;
-    --magenta: 326 100% 56%;
+    /* Extended palette */
+    --surface: 160 25% 8%;
+    --surface-elevated: 160 22% 12%;
+    --surface-overlay: 160 20% 6%;
 
-    --radius: 1rem;
+    --accent-bright: 168 85% 55%;
+    --accent-glow: 168 80% 60%;
+    --accent-dim: 168 60% 35%;
 
-    /* Typography — Plus Jakarta Sans */
-    --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+    --text-primary: 0 0% 98%;
+    --text-secondary: 160 10% 60%;
+    --text-subtle: 160 8% 45%;
+
+    --radius: 0.875rem;
+
+    /* Typography — Inter (Enterprise) */
+    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
   }
 
   * {
-    border-color: transparent;
+    border-color: hsl(var(--border));
   }
 
   html {
@@ -82,6 +89,7 @@
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -97,112 +105,137 @@
     letter-spacing: -0.02em;
   }
 
-  /* Primary CTA gradient: Violet → Pink → Light Pink */
-  .gradient-primary {
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%);
+  /* ============================================
+     ATMOSPHERIC BACKGROUNDS
+     ============================================ */
+
+  /* Default page background with subtle gradients */
+  .bg-humiQ {
+    background: hsl(var(--background));
+    position: relative;
   }
 
-  /* Gradient text: Purple → Pink */
-  .text-gradient {
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .bg-humiQ::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 10% 90%, hsla(168, 80%, 45%, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 80%, hsla(145, 70%, 40%, 0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 10%, hsla(160, 40%, 20%, 0.06) 0%, transparent 50%);
+    pointer-events: none;
   }
 
-  /* Pink gradient text (simpler) */
-  .text-gradient-pink {
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Stronger atmospheric gradient */
+  .bg-atmospheric {
+    background: hsl(var(--background));
+    position: relative;
   }
 
-  /* Page background gradient: White → Pink haze */
-  .bg-page-gradient {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 230, 245, 0.3) 40%,
-      rgba(255, 182, 220, 0.4) 70%,
-      rgba(255, 47, 178, 0.12) 100%
-    );
+  .bg-atmospheric::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 90% 70% at 5% 95%, hsla(168, 80%, 45%, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 60% at 95% 85%, hsla(145, 70%, 40%, 0.14) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 50% at 50% 5%, hsla(160, 40%, 20%, 0.08) 0%, transparent 45%);
+    pointer-events: none;
   }
 
-  /* Pink wash background - soft gradient */
-  .bg-pink-wash {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 230, 245, 0.4) 40%,
-      rgba(255, 182, 220, 0.5) 70%,
-      rgba(255, 47, 178, 0.15) 100%
-    );
-  }
+  /* ============================================
+     GLASS SURFACES
+     ============================================ */
 
-  /* Blush gradient for dashboards */
-  .blush-gradient {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 240, 250, 0.6) 50%,
-      rgba(255, 230, 245, 0.4) 100%
-    );
-  }
-
-  /* Dark card styling */
-  .card-dark {
-    background: #0B0B10;
-    border-radius: 24px;
-    color: #FFFFFF;
-  }
-
-  /* Glass card styling — white glassmorphism */
   .glass-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: hsla(160, 25%, 10%, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 16px;
+    border: 1px solid hsla(168, 40%, 40%, 0.08);
+    box-shadow: 
+      0 0 0 1px hsla(0, 0%, 100%, 0.02) inset,
+      0 8px 32px -8px hsla(0, 0%, 0%, 0.5);
+  }
+
+  .glass-card-elevated {
+    background: hsla(160, 22%, 14%, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 
-      0 4px 24px -4px rgba(0, 0, 0, 0.06),
-      0 12px 40px -8px rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    border: 1px solid hsla(168, 35%, 35%, 0.12);
   }
 
   .glass-card-hover {
     @apply glass-card;
-    transition: transform 400ms ease-out,
-                box-shadow 400ms ease-out;
+    transition: transform 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease;
   }
 
   .glass-card-hover:hover {
     transform: translateY(-2px);
+    border-color: hsla(168, 60%, 50%, 0.15);
     box-shadow: 
-      0 8px 32px -4px rgba(0, 0, 0, 0.1),
-      0 20px 50px -8px rgba(0, 0, 0, 0.12);
+      0 0 0 1px hsla(0, 0%, 100%, 0.03) inset,
+      0 12px 40px -8px hsla(0, 0%, 0%, 0.6),
+      0 0 20px hsla(168, 75%, 50%, 0.08);
   }
 
-  /* Primary gradient button */
-  .btn-gradient {
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%);
-    color: #FFFFFF;
-    border-radius: 9999px;
-    padding: 14px 32px;
+  /* ============================================
+     BUTTONS
+     ============================================ */
+
+  /* Primary gradient button: Teal → Green */
+  .btn-primary {
+    background: linear-gradient(135deg, hsl(168, 75%, 48%) 0%, hsl(145, 65%, 42%) 100%);
+    color: hsl(var(--background));
+    border-radius: 10px;
     font-weight: 600;
-    box-shadow: 0 4px 20px rgba(255, 47, 178, 0.35);
+    padding: 12px 24px;
     transition: all 300ms ease;
+    box-shadow: 0 4px 20px hsla(168, 80%, 45%, 0.25);
   }
 
-  .btn-gradient:hover {
-    box-shadow: 0 8px 32px rgba(255, 47, 178, 0.5);
+  .btn-primary:hover {
+    box-shadow: 0 6px 28px hsla(168, 80%, 50%, 0.35);
     transform: translateY(-1px);
   }
 
-  .btn-gradient:active {
-    transform: scale(0.97);
+  .btn-primary:active {
+    transform: scale(0.98);
   }
 
-  /* Pill button styles */
+  /* Secondary button */
+  .btn-secondary {
+    background: hsla(160, 22%, 16%, 0.9);
+    border: 1px solid hsla(168, 40%, 40%, 0.15);
+    color: hsl(var(--foreground));
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 12px 24px;
+    transition: all 200ms ease;
+  }
+
+  .btn-secondary:hover {
+    background: hsla(160, 22%, 20%, 0.95);
+    border-color: hsla(168, 50%, 45%, 0.25);
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 12px 24px;
+    transition: all 200ms ease;
+  }
+
+  .btn-ghost:hover {
+    background: hsla(160, 22%, 14%, 0.6);
+    color: hsl(var(--foreground));
+  }
+
+  /* Pill buttons */
   .pill-button {
     @apply rounded-full px-7 py-3.5 font-semibold transition-all duration-300;
     font-size: 15px;
@@ -210,89 +243,84 @@
 
   .pill-button-primary {
     @apply pill-button;
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%);
-    color: #FFFFFF;
-    box-shadow: 0 4px 20px rgba(255, 47, 178, 0.35);
+    background: linear-gradient(135deg, hsl(168, 75%, 48%) 0%, hsl(145, 65%, 42%) 100%);
+    color: hsl(var(--background));
+    box-shadow: 0 4px 20px hsla(168, 80%, 45%, 0.25);
   }
 
   .pill-button-primary:hover {
-    box-shadow: 0 8px 32px rgba(255, 47, 178, 0.5);
-  }
-
-  .pill-button-primary:active {
-    transform: scale(0.97);
+    box-shadow: 0 8px 32px hsla(168, 80%, 50%, 0.4);
+    transform: translateY(-1px);
   }
 
   .pill-button-secondary {
     @apply pill-button;
-    background: #0B0B10;
-    color: #FFFFFF;
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+    border: 1px solid hsla(168, 40%, 40%, 0.12);
   }
 
   .pill-button-secondary:hover {
-    background: #1A1A1F;
+    background: hsl(var(--surface-elevated));
+    border-color: hsla(168, 50%, 50%, 0.2);
   }
 
-  /* Text link with animated underline */
-  .text-link {
-    @apply relative inline-block text-foreground font-medium;
-    transition: color 200ms ease;
+  /* ============================================
+     INPUTS & FORM ELEMENTS
+     ============================================ */
+
+  .input-field {
+    background: hsla(160, 25%, 8%, 0.9);
+    border: 1px solid hsla(168, 30%, 30%, 0.15);
+    border-radius: 12px;
+    color: hsl(var(--foreground));
+    padding: 12px 16px;
+    transition: all 200ms ease;
   }
 
-  .text-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 300ms ease;
+  .input-field:focus {
+    border-color: hsla(168, 75%, 48%, 0.4);
+    box-shadow: 0 0 0 3px hsla(168, 75%, 48%, 0.1);
+    outline: none;
   }
 
-  .text-link:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
+  .input-field::placeholder {
+    color: hsl(var(--text-subtle));
   }
 
-  /* Pink text link */
-  .text-link-pink {
-    @apply relative inline-block font-medium;
-    color: #FF2FB2;
+  /* ============================================
+     CHIPS & TAGS
+     ============================================ */
+
+  .chip {
+    background: hsla(160, 22%, 14%, 0.9);
+    border: 1px solid hsla(168, 40%, 40%, 0.12);
+    border-radius: 999px;
+    padding: 8px 16px;
+    color: hsl(var(--muted-foreground));
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 200ms ease;
+    cursor: pointer;
   }
 
-  .text-link-pink::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: #FF2FB2;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 300ms ease;
+  .chip:hover {
+    background: hsla(168, 30%, 18%, 0.9);
+    border-color: hsla(168, 60%, 50%, 0.2);
+    color: hsl(var(--foreground));
   }
 
-  .text-link-pink:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
+  .chip.active,
+  .chip[data-active="true"] {
+    background: hsla(168, 60%, 45%, 0.15);
+    border-color: hsla(168, 75%, 48%, 0.4);
+    color: hsl(var(--accent));
   }
 
-  /* AI Orb glow effect */
-  .orb-glow {
-    background: radial-gradient(circle, rgba(255, 47, 178, 0.4) 0%, rgba(124, 58, 237, 0.3) 50%, transparent 70%);
-    filter: blur(40px);
-  }
+  /* ============================================
+     VERDICT STATES
+     ============================================ */
 
-  /* Cognitive gradient (for orbs) */
-  .cognitive-gradient {
-    background: linear-gradient(135deg, #7C3AED 0%, #FF2FB2 55%, #FF6BD6 100%);
-  }
-
-  /* Verdict pills */
   .verdict-interview {
     background: hsla(162, 63%, 42%, 0.12);
     color: hsl(var(--verdict-interview));
@@ -321,177 +349,28 @@
     color: hsl(var(--signal-low));
   }
 
-  /* Section header style */
+  /* ============================================
+     LAYOUT UTILITIES
+     ============================================ */
+
   .section-header {
     @apply text-sm uppercase tracking-[0.12em] text-muted-foreground mb-8;
     font-weight: 600;
   }
 
-  /* Premium section spacing */
   .section-spacing {
     @apply py-20 md:py-28;
   }
 
-  /* Content container */
   .content-container {
     @apply max-w-[1120px] mx-auto px-6;
   }
 
-  /* Pink underline accent */
-  .pink-underline {
-    position: relative;
-  }
-
-  .pink-underline::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #7C3AED, #FF2FB2, #FF6BD6);
-    border-radius: 2px;
-  }
-
   /* ============================================
-     METAVIEW DARK THEME (Immersive Onboarding)
-     Dark teal/green/charcoal atmospheric system
+     DIVIDERS & SEPARATORS
      ============================================ */
 
-  /* Metaview color tokens */
-  --metaview-bg: 160 30% 4%;
-  --metaview-bg-deep: 160 35% 3%;
-  --metaview-surface: 160 25% 8%;
-  --metaview-surface-elevated: 160 22% 12%;
-  --metaview-border: 160 20% 18%;
-  --metaview-border-subtle: 160 18% 14%;
-  
-  /* Teal/Green accents */
-  --metaview-accent: 168 75% 48%;
-  --metaview-accent-bright: 168 85% 55%;
-  --metaview-accent-glow: 168 80% 60%;
-  --metaview-accent-dim: 168 60% 35%;
-  
-  /* Text colors */
-  --metaview-text: 0 0% 98%;
-  --metaview-text-muted: 160 10% 60%;
-  --metaview-text-subtle: 160 8% 45%;
-
-  /* Metaview background with atmospheric gradients */
-  .metaview-bg {
-    background: hsl(var(--metaview-bg-deep));
-    position: relative;
-  }
-
-  .metaview-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse 80% 60% at 10% 90%, hsla(168, 80%, 45%, 0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 70% 50% at 90% 80%, hsla(145, 70%, 40%, 0.12) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 40% at 50% 10%, hsla(160, 40%, 20%, 0.08) 0%, transparent 50%);
-    pointer-events: none;
-  }
-
-  /* Metaview glass card */
-  .metaview-card {
-    background: hsla(160, 25%, 10%, 0.7);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 16px;
-    border: 1px solid hsla(168, 40%, 40%, 0.08);
-    box-shadow: 
-      0 0 0 1px hsla(0, 0%, 100%, 0.02) inset,
-      0 8px 32px -8px hsla(0, 0%, 0%, 0.5);
-  }
-
-  .metaview-card-elevated {
-    background: hsla(160, 22%, 14%, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 14px;
-    border: 1px solid hsla(168, 35%, 35%, 0.1);
-  }
-
-  /* Metaview input styling */
-  .metaview-input {
-    background: hsla(160, 25%, 8%, 0.9);
-    border: 1px solid hsla(168, 30%, 30%, 0.15);
-    border-radius: 12px;
-    color: hsl(var(--metaview-text));
-    transition: all 200ms ease;
-  }
-
-  .metaview-input:focus {
-    border-color: hsla(168, 75%, 48%, 0.4);
-    box-shadow: 0 0 0 3px hsla(168, 75%, 48%, 0.1);
-    outline: none;
-  }
-
-  .metaview-input::placeholder {
-    color: hsl(var(--metaview-text-subtle));
-  }
-
-  /* Metaview primary button */
-  .metaview-btn-primary {
-    background: linear-gradient(135deg, hsl(168, 75%, 48%) 0%, hsl(145, 65%, 42%) 100%);
-    color: hsl(var(--metaview-bg-deep));
-    border-radius: 10px;
-    font-weight: 600;
-    padding: 12px 24px;
-    transition: all 300ms ease;
-    box-shadow: 0 4px 20px hsla(168, 80%, 45%, 0.25);
-  }
-
-  .metaview-btn-primary:hover {
-    box-shadow: 0 6px 28px hsla(168, 80%, 50%, 0.35);
-    transform: translateY(-1px);
-  }
-
-  /* Metaview secondary button */
-  .metaview-btn-secondary {
-    background: hsla(160, 22%, 16%, 0.8);
-    border: 1px solid hsla(168, 40%, 40%, 0.15);
-    color: hsl(var(--metaview-text));
-    border-radius: 10px;
-    font-weight: 500;
-    padding: 12px 24px;
-    transition: all 200ms ease;
-  }
-
-  .metaview-btn-secondary:hover {
-    background: hsla(160, 22%, 20%, 0.9);
-    border-color: hsla(168, 50%, 45%, 0.25);
-  }
-
-  /* Metaview chip */
-  .metaview-chip {
-    background: hsla(160, 22%, 14%, 0.9);
-    border: 1px solid hsla(168, 40%, 40%, 0.12);
-    border-radius: 999px;
-    padding: 8px 16px;
-    color: hsl(var(--metaview-text-muted));
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 200ms ease;
-    cursor: pointer;
-  }
-
-  .metaview-chip:hover {
-    background: hsla(168, 30%, 18%, 0.9);
-    border-color: hsla(168, 60%, 50%, 0.2);
-    color: hsl(var(--metaview-text));
-  }
-
-  .metaview-chip.active {
-    background: hsla(168, 60%, 45%, 0.15);
-    border-color: hsla(168, 75%, 48%, 0.4);
-    color: hsl(var(--metaview-accent-bright));
-  }
-
-  /* Metaview divider glow */
-  .metaview-divider-glow {
+  .divider-glow {
     width: 2px;
     background: linear-gradient(
       180deg,
@@ -505,68 +384,118 @@
     box-shadow: 0 0 20px hsla(168, 80%, 50%, 0.3);
   }
 
-  /* Metaview text glow */
-  .metaview-text-glow {
+  /* ============================================
+     TEXT EFFECTS
+     ============================================ */
+
+  .text-glow {
     text-shadow: 0 0 20px hsla(168, 80%, 55%, 0.4);
   }
 
-  /* Metaview profile trait bullet */
-  .metaview-trait {
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(168, 75%, 50%) 0%, hsl(145, 70%, 48%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ============================================
+     PROFILE TRAITS (Onboarding)
+     ============================================ */
+
+  .trait-item {
     position: relative;
     padding-left: 20px;
-    color: hsl(var(--metaview-text-muted));
+    color: hsl(var(--muted-foreground));
     font-size: 14px;
     line-height: 1.6;
   }
 
-  .metaview-trait::before {
+  .trait-item::before {
     content: '•';
     position: absolute;
     left: 0;
-    color: hsl(var(--metaview-accent));
+    color: hsl(var(--primary));
   }
 
-  .metaview-trait.new {
+  .trait-item.new {
     animation: trait-glow 1.5s ease-out;
   }
 
   @keyframes trait-glow {
     0% {
-      color: hsl(var(--metaview-accent-bright));
+      color: hsl(var(--accent));
       text-shadow: 0 0 15px hsla(168, 80%, 55%, 0.5);
     }
     100% {
-      color: hsl(var(--metaview-text-muted));
+      color: hsl(var(--muted-foreground));
       text-shadow: none;
     }
   }
 
-  /* Metaview panel border glow (for confirmation state) */
-  .metaview-panel-glow {
+  /* Panel border glow (for active states) */
+  .panel-glow {
     box-shadow: 
       0 0 0 1px hsla(168, 75%, 50%, 0.3),
       0 0 30px hsla(168, 80%, 50%, 0.15);
   }
+
+  /* ============================================
+     COGNITIVE / AI ELEMENTS
+     ============================================ */
+
+  .cognitive-gradient {
+    background: linear-gradient(135deg, hsl(168, 75%, 48%) 0%, hsl(145, 70%, 45%) 100%);
+  }
+
+  .orb-glow {
+    background: radial-gradient(
+      circle, 
+      hsla(168, 80%, 50%, 0.3) 0%, 
+      hsla(145, 70%, 45%, 0.2) 50%, 
+      transparent 70%
+    );
+    filter: blur(40px);
+  }
+
+  /* ============================================
+     LEGACY COMPATIBILITY (Metaview classes)
+     ============================================ */
+
+  .metaview-bg { @apply bg-humiQ; }
+  .metaview-card { @apply glass-card; }
+  .metaview-card-elevated { @apply glass-card-elevated; }
+  .metaview-input { @apply input-field; }
+  .metaview-btn-primary { @apply btn-primary; }
+  .metaview-btn-secondary { @apply btn-secondary; }
+  .metaview-chip { @apply chip; }
+  .metaview-divider-glow { @apply divider-glow; }
+  .metaview-text-glow { @apply text-glow; }
+  .metaview-trait { @apply trait-item; }
+  .metaview-panel-glow { @apply panel-glow; }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* ============================================
+   GLOBAL FOCUS & SELECTION STYLES
+   ============================================ */
 
 ::selection {
-  background: rgba(255, 47, 178, 0.3);
+  background: hsla(168, 80%, 50%, 0.3);
 }
 
 :focus-visible {
-  outline: 2px solid rgba(255, 47, 178, 0.5);
+  outline: 2px solid hsla(168, 75%, 50%, 0.5);
   outline-offset: 2px;
 }
 
-/* Calm animations */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -588,30 +517,30 @@ html {
     transform: translate(0, 0) scale(1);
   }
   33% {
-    transform: translate(10px, -10px) scale(1.02);
+    transform: translate(8px, -8px) scale(1.01);
   }
   66% {
-    transform: translate(-5px, 5px) scale(0.98);
+    transform: translate(-4px, 4px) scale(0.99);
   }
 }
 
 @keyframes pulse-soft {
   0%, 100% {
-    opacity: 0.5;
+    opacity: 0.6;
     transform: scale(1);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.05);
+    opacity: 0.9;
+    transform: scale(1.03);
   }
 }
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 47, 178, 0.3);
+    box-shadow: 0 0 20px hsla(168, 80%, 50%, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(255, 47, 178, 0.5);
+    box-shadow: 0 0 40px hsla(168, 80%, 50%, 0.4);
   }
 }
 
@@ -625,11 +554,11 @@ html {
 }
 
 .animate-fade-up {
-  animation: fade-up 600ms ease-out forwards;
+  animation: fade-up 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fade-in 500ms ease-out forwards;
+  animation: fade-in 400ms ease-out forwards;
 }
 
 .animate-float {
@@ -641,7 +570,7 @@ html {
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
 .animate-scroll-vertical {
@@ -649,11 +578,11 @@ html {
 }
 
 /* Staggered animation delays */
-.stagger-1 { animation-delay: 100ms; }
-.stagger-2 { animation-delay: 200ms; }
-.stagger-3 { animation-delay: 300ms; }
-.stagger-4 { animation-delay: 400ms; }
-.stagger-5 { animation-delay: 500ms; }
+.stagger-1 { animation-delay: 80ms; }
+.stagger-2 { animation-delay: 160ms; }
+.stagger-3 { animation-delay: 240ms; }
+.stagger-4 { animation-delay: 320ms; }
+.stagger-5 { animation-delay: 400ms; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -668,14 +597,14 @@ html {
 }
 
 /* Duration utility classes */
+.duration-300 {
+  transition-duration: 300ms;
+}
+
 .duration-400 {
   transition-duration: 400ms;
 }
 
-.duration-600 {
-  transition-duration: 600ms;
-}
-
-.duration-900 {
-  transition-duration: 900ms;
+.duration-500 {
+  transition-duration: 500ms;
 }
