@@ -151,14 +151,16 @@ export const ProfileDraftPanel = ({
   );
 };
 
-// Shared section header component
-const SectionHeader = ({ icon: Icon, title, badge }: { 
-  icon: typeof User; 
+// Shared section header component - inline to avoid ref issues with AnimatePresence
+interface SectionHeaderProps {
+  icon: React.ReactNode;
   title: string;
   badge?: string;
-}) => (
+}
+
+const SectionHeader = ({ icon, title, badge }: SectionHeaderProps) => (
   <div className="flex items-center gap-2 mb-3">
-    <Icon className="w-3.5 h-3.5 text-primary/70" />
+    {icon}
     <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold">
       {title}
     </h3>
@@ -187,7 +189,7 @@ const BasicDetailsSection = ({
 
   return (
     <div className="space-y-2">
-      <SectionHeader icon={User} title="Basic Details" />
+      <SectionHeader icon={<User className="w-3.5 h-3.5 text-primary/70" />} title="Basic Details" />
       <div className="space-y-1.5">
         {fields.map((field) => (
           <motion.div
@@ -228,7 +230,7 @@ const ExperienceSection = ({
   onRemove?: (id: string) => void;
 }) => (
   <div className="space-y-2">
-    <SectionHeader icon={Briefcase} title="Experience" />
+    <SectionHeader icon={<Briefcase className="w-3.5 h-3.5 text-primary/70" />} title="Experience" />
     <div className="space-y-2">
       <AnimatePresence mode="popLayout">
         {experience.map((entry) => (
@@ -282,7 +284,7 @@ const EducationSection = ({
   onRemove?: (id: string) => void;
 }) => (
   <div className="space-y-2">
-    <SectionHeader icon={GraduationCap} title="Education" />
+    <SectionHeader icon={<GraduationCap className="w-3.5 h-3.5 text-primary/70" />} title="Education" />
     <div className="space-y-2">
       <AnimatePresence mode="popLayout">
         {education.map((entry) => (
@@ -336,7 +338,7 @@ const WorkStyleSection = ({
   onRemove?: (sectionId: string, traitIndex: number) => void;
 }) => (
   <div className="space-y-3">
-    <SectionHeader icon={Brain} title="Work Style" badge="Draft" />
+    <SectionHeader icon={<Brain className="w-3.5 h-3.5 text-primary/70" />} title="Work Style" badge="Draft" />
     {sections.map((section) => {
       if (section.traits.length === 0) return null;
       
@@ -398,7 +400,7 @@ const WorkStyleSection = ({
 // Evidence Section
 const EvidenceSection = ({ evidence }: { evidence: ProfileDraft['evidence'] }) => (
   <div className="space-y-2">
-    <SectionHeader icon={Link} title="Evidence" />
+    <SectionHeader icon={<Link className="w-3.5 h-3.5 text-primary/70" />} title="Evidence" />
     {evidence?.map((item, idx) => (
       <motion.div
         key={idx}
