@@ -11,38 +11,64 @@ import {
 } from '@/components/talent-onboarding';
 import { useImmersiveOnboarding } from '@/hooks/useImmersiveOnboarding';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
+import type { TalentIntent } from '@/components/talent-onboarding/types';
 
-const ROLE_OPTIONS = ['Product', 'Design', 'Engineering', 'Data', 'Operations', 'Leadership', 'Something else'];
-const PROBLEM_OPTIONS = ['Ambiguous problems', 'Scaling systems', 'Deep craft work', 'Leading people', 'Fixing what\'s broken'];
+// Layer 1 options
+const AVAILABILITY_OPTIONS = [
+  { value: 'immediately', label: 'Immediately' },
+  { value: 'in-1-3-months', label: 'In 1–3 months' },
+  { value: 'in-3-6-months', label: 'In 3–6 months' },
+  { value: 'exploring', label: 'Just exploring right now' },
+];
+
+const WORK_TYPE_OPTIONS = [
+  { value: 'full-time', label: 'Full-time' },
+  { value: 'contract', label: 'Contract' },
+  { value: 'fractional', label: 'Fractional' },
+  { value: 'advisory', label: 'Advisory' },
+  { value: 'open', label: 'Open to discussing' },
+];
+
+const WORK_STYLE_OPTIONS = [
+  { value: 'remote', label: 'Remote' },
+  { value: 'hybrid', label: 'Hybrid' },
+  { value: 'on-site', label: 'On-site' },
+  { value: 'flexible', label: 'Flexible' },
+];
 
 const TalentOnboardingImmersive = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [rolesConfirmed, setRolesConfirmed] = useState(false);
-  const [problemsConfirmed, setProblemsConfirmed] = useState(false);
+  const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([]);
 
   const {
     state,
     messages,
     cvEntries,
     setCvEntries,
-    selectedRoles,
-    selectedProblems,
     profileDraft,
     isTyping,
     isParsingCV,
+    isTransitioning,
     handleWelcome,
     goToCvUpload,
     handleCvUpload,
     skipCv,
     handleCvReviewComplete,
-    handleRolesSelected,
-    handleProblemsSelected,
-    startSimulation,
-    handleSimulationResponse,
+    handleAvailabilitySelected,
+    handleWorkTypesSelected,
+    handleWorkStyleSelected,
+    handleAnchorResponse,
+    handlePrioritizationResponse,
+    handleJudgmentResponse,
+    handleReflectionResponse,
+    handleSelfInsightResponse,
+    handleConfirmInterpretation,
+    handleTweakInterpretation,
+    handleTweakResponse,
     skipEvidence,
     addEvidence,
-    confirmProfile,
+    goToComplete,
     removeTrait,
     removeExperience,
     removeEducation,
@@ -100,6 +126,27 @@ const TalentOnboardingImmersive = () => {
     );
   }
 
+  // Get the current message handler based on state
+  const getMessageHandler = () => {
+    switch (state) {
+      case 'decision-anchor':
+        return handleAnchorResponse;
+      case 'decision-prioritization':
+        return handlePrioritizationResponse;
+      case 'decision-judgment':
+        return handleJudgmentResponse;
+      case 'decision-reflection':
+        return handleReflectionResponse;
+      case 'decision-self-insight':
+        return handleSelfInsightResponse;
+      case 'decision-interpretation':
+        // If user is tweaking
+        return handleTweakResponse;
+      default:
+        return () => {};
+    }
+  };
+
   // Build quick actions based on state
   const getQuickActions = () => {
     switch (state) {
@@ -108,9 +155,10 @@ const TalentOnboardingImmersive = () => {
           { label: 'Start here...', variant: 'primary' as const, onClick: goToCvUpload }
         ] : [];
 
-      case 'simulation-intro':
+      case 'decision-interpretation':
         return [
-          { label: 'Continue', variant: 'primary' as const, onClick: startSimulation }
+          { label: 'Yes, looks right', variant: 'primary' as const, onClick: handleConfirmInterpretation },
+          { label: 'I want to tweak this', variant: 'secondary' as const, onClick: handleTweakInterpretation }
         ];
 
       case 'evidence':
@@ -119,15 +167,7 @@ const TalentOnboardingImmersive = () => {
             // TODO: Open file/link modal
             addEvidence({ type: 'link', name: 'Sample Project', description: 'Built a dashboard', decision: 'Owned architecture' });
           }},
-          { label: 'I\'ll add this later', variant: 'secondary' as const, onClick: skipEvidence }
-        ];
-
-      case 'confirmation':
-        return [
-          { label: 'Yes, looks right', variant: 'primary' as const, onClick: confirmProfile },
-          { label: 'I want to tweak this', variant: 'secondary' as const, onClick: () => {
-            // Profile panel allows editing
-          }}
+          { label: "I'll add this later", variant: 'secondary' as const, onClick: skipEvidence }
         ];
 
       case 'complete':
@@ -143,9 +183,10 @@ const TalentOnboardingImmersive = () => {
 
   // Build helper actions
   const getHelperActions = () => {
-    if (state === 'simulation') {
+    const decisionStates = ['decision-anchor', 'decision-prioritization', 'decision-judgment', 'decision-reflection', 'decision-self-insight'];
+    if (decisionStates.includes(state)) {
       return [
-        { label: 'Not sure', onClick: () => handleSimulationResponse("I'm not sure about this one.") },
+        { label: 'Not sure', onClick: () => getMessageHandler()("I'm not sure about this one.") },
         { label: 'Make it simpler', onClick: () => addAssistantMessage("Let me rephrase that in a simpler way.", 500) },
       ];
     }
@@ -186,50 +227,99 @@ const TalentOnboardingImmersive = () => {
           </motion.div>
         );
 
-      case 'exploration':
+      // Layer 1: Intent & Constraints
+      case 'intent-availability':
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="py-4 space-y-6"
+            className="py-4 space-y-4"
           >
-            {!rolesConfirmed && (
-              <div className="space-y-4">
-                <ChipSelector
-                  options={ROLE_OPTIONS}
-                  selected={selectedRoles}
-                  onChange={(roles) => handleRolesSelected(roles)}
-                  multiSelect={false}
-                />
-                {selectedRoles.length > 0 && (
-                  <button
-                    onClick={() => setRolesConfirmed(true)}
-                    className="btn-primary text-sm"
-                  >
-                    Continue
-                  </button>
-                )}
-              </div>
-            )}
+            <ChipSelector
+              options={AVAILABILITY_OPTIONS.map(o => o.label)}
+              selected={[]}
+              onChange={(selected) => {
+                const option = AVAILABILITY_OPTIONS.find(o => o.label === selected[0]);
+                if (option) {
+                  handleAvailabilitySelected(option.value as TalentIntent['availability']);
+                }
+              }}
+              multiSelect={false}
+            />
+            <p className="text-xs text-muted-foreground/60 px-1">
+              This doesn't commit you to anything. It just sets expectations.
+            </p>
+          </motion.div>
+        );
 
-            {rolesConfirmed && !problemsConfirmed && (
-              <div className="space-y-4">
-                <ChipSelector
-                  options={PROBLEM_OPTIONS}
-                  selected={selectedProblems}
-                  onChange={(problems) => handleProblemsSelected(problems)}
-                  multiSelect={true}
-                />
-                {selectedProblems.length > 0 && (
-                  <button
-                    onClick={() => setProblemsConfirmed(true)}
-                    className="btn-primary text-sm"
-                  >
-                    Continue
-                  </button>
-                )}
-              </div>
+      case 'intent-work-types':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="py-4 space-y-4"
+          >
+            <ChipSelector
+              options={WORK_TYPE_OPTIONS.map(o => o.label)}
+              selected={selectedWorkTypes}
+              onChange={(selected) => setSelectedWorkTypes(selected)}
+              multiSelect={true}
+            />
+            {selectedWorkTypes.length > 0 && (
+              <button
+                onClick={() => {
+                  const values = selectedWorkTypes.map(label => 
+                    WORK_TYPE_OPTIONS.find(o => o.label === label)?.value
+                  ).filter(Boolean) as TalentIntent['workTypes'];
+                  handleWorkTypesSelected(values);
+                }}
+                className="btn-primary text-sm"
+              >
+                Continue
+              </button>
             )}
+            <p className="text-xs text-muted-foreground/60 px-1">
+              You can change this anytime.
+            </p>
+          </motion.div>
+        );
+
+      case 'intent-work-style':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="py-4 space-y-4"
+          >
+            <ChipSelector
+              options={WORK_STYLE_OPTIONS.map(o => o.label)}
+              selected={[]}
+              onChange={(selected) => {
+                const option = WORK_STYLE_OPTIONS.find(o => o.label === selected[0]);
+                if (option) {
+                  handleWorkStyleSelected(option.value as TalentIntent['workStyle']);
+                }
+              }}
+              multiSelect={false}
+            />
+          </motion.div>
+        );
+
+      // Transition state
+      case 'transition':
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="py-8 flex items-center justify-center"
+          >
+            <div 
+              className="w-16 h-16 rounded-full animate-pulse"
+              style={{
+                background: 'radial-gradient(circle, hsla(168, 80%, 50%, 0.4) 0%, hsla(145, 70%, 45%, 0.2) 50%, transparent 70%)',
+                boxShadow: '0 0 40px hsla(168, 80%, 50%, 0.3)',
+              }}
+            />
           </motion.div>
         );
 
@@ -239,12 +329,22 @@ const TalentOnboardingImmersive = () => {
   };
 
   // Determine if we should show the standard input
-  const isInputEnabled = state === 'simulation';
+  const isInputEnabled = [
+    'decision-anchor',
+    'decision-prioritization', 
+    'decision-judgment',
+    'decision-reflection',
+    'decision-self-insight',
+    'decision-interpretation',
+  ].includes(state);
+
+  // Show profile glow during interpretation/confirmation states
+  const showProfileGlow = state === 'decision-interpretation' || isTransitioning;
 
   return (
     <ImmersiveOnboardingLayout
       profileDraft={profileDraft}
-      showProfileGlow={state === 'confirmation'}
+      showProfileGlow={showProfileGlow}
       onRemoveExperience={removeExperience}
       onRemoveEducation={removeEducation}
       onRemoveTrait={removeTrait}
@@ -252,7 +352,7 @@ const TalentOnboardingImmersive = () => {
     >
       <ChatInterface
         messages={messages}
-        onSendMessage={handleSimulationResponse}
+        onSendMessage={getMessageHandler()}
         isTyping={isTyping}
         quickActions={getQuickActions()}
         helperActions={getHelperActions()}
