@@ -1,15 +1,16 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, FileText, X, Edit2, Trash2 } from 'lucide-react';
+import { Upload, FileText, Edit2, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CVEntry } from './types';
 
 interface CVUploadCardProps {
   onUpload: (file: File) => void;
   onSkip: () => void;
+  isLoading?: boolean;
 }
 
-export const CVUploadCard = ({ onUpload, onSkip }: CVUploadCardProps) => {
+export const CVUploadCard = ({ onUpload, onSkip, isLoading = false }: CVUploadCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,6 +29,22 @@ export const CVUploadCard = ({ onUpload, onSkip }: CVUploadCardProps) => {
       onUpload(file);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-8 rounded-2xl border-2 border-dashed border-metaview-accent/30 bg-metaview-surface/20 flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-metaview-accent" />
+        <div className="text-center">
+          <p className="text-sm font-medium text-metaview-text">
+            Parsing your CV...
+          </p>
+          <p className="text-xs text-metaview-text-subtle mt-1">
+            Extracting your experience and education
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -48,7 +65,7 @@ export const CVUploadCard = ({ onUpload, onSkip }: CVUploadCardProps) => {
         <input
           ref={inputRef}
           type="file"
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,.doc,.docx,.txt"
           onChange={handleFileSelect}
           className="hidden"
         />
@@ -60,7 +77,7 @@ export const CVUploadCard = ({ onUpload, onSkip }: CVUploadCardProps) => {
             Upload CV
           </p>
           <p className="text-xs text-metaview-text-subtle mt-1">
-            PDF or Word document
+            PDF, Word, or text document
           </p>
         </div>
       </div>
