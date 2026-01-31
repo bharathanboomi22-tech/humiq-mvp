@@ -1,0 +1,223 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Mic, Upload, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ChatMessage } from './types';
+
+interface ChatInterfaceProps {
+  messages: ChatMessage[];
+  onSendMessage: (message: string) => void;
+  isTyping?: boolean;
+  helperActions?: Array<{
+    label: string;
+    onClick: () => void;
+  }>;
+  quickActions?: Array<{
+    label: string;
+    variant?: 'primary' | 'secondary';
+    onClick: () => void;
+  }>;
+  placeholder?: string;
+  showInput?: boolean;
+  inputDisabled?: boolean;
+}
+
+export const ChatInterface = ({
+  messages,
+  onSendMessage,
+  isTyping = false,
+  helperActions,
+  quickActions,
+  placeholder = 'Type your response...',
+  showInput = true,
+  inputDisabled = false,
+}: ChatInterfaceProps) => {
+  const [inputValue, setInputValue] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
+
+  const handleSend = () => {
+    if (inputValue.trim() && !inputDisabled) {
+      onSendMessage(inputValue.trim());
+      setInputValue('');
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex-shrink-0 px-8 pt-8 pb-4">
+        <h1 className="text-xl font-semibold text-metaview-text metaview-text-glow">
+          HumiQ AI
+        </h1>
+        <p className="text-sm text-metaview-text-subtle mt-1">
+          Let's see how you work
+        </p>
+      </div>
+
+      {/* Messages */}
+      <div 
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-8 py-4 space-y-4"
+      >
+        <AnimatePresence mode="popLayout">
+          {messages.map((message) => (
+            <MessageBubble key={message.id} message={message} />
+          ))}
+        </AnimatePresence>
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3"
+          >
+            <div className="metaview-card-elevated px-4 py-3 rounded-2xl">
+              <div className="flex gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_infinite]" />
+                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_0.2s_infinite]" />
+                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_0.4s_infinite]" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Quick action buttons */}
+        {quickActions && quickActions.length > 0 && !isTyping && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap gap-3 pt-4"
+          >
+            {quickActions.map((action, idx) => (
+              <button
+                key={idx}
+                onClick={action.onClick}
+                className={cn(
+                  "px-5 py-2.5 rounded-xl text-sm font-medium transition-all",
+                  action.variant === 'primary' 
+                    ? "metaview-btn-primary"
+                    : "metaview-btn-secondary"
+                )}
+              >
+                {action.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Input Area */}
+      {showInput && (
+        <div className="flex-shrink-0 p-6 border-t border-metaview-border/20">
+          {/* Helper actions */}
+          {helperActions && helperActions.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {helperActions.map((action, idx) => (
+                <button
+                  key={idx}
+                  onClick={action.onClick}
+                  className="text-xs text-metaview-text-subtle hover:text-metaview-text transition-colors"
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input bar */}
+          <div className="relative">
+            <textarea
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              disabled={inputDisabled}
+              rows={1}
+              className={cn(
+                "w-full metaview-input px-4 py-3 pr-24 resize-none",
+                "text-sm leading-relaxed",
+                inputDisabled && "opacity-50 cursor-not-allowed"
+              )}
+            />
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button
+                className="p-2 rounded-lg text-metaview-text-subtle hover:text-metaview-text hover:bg-metaview-surface transition-colors"
+                aria-label="Voice input"
+              >
+                <Mic className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleSend}
+                disabled={!inputValue.trim() || inputDisabled}
+                className={cn(
+                  "p-2 rounded-lg transition-all",
+                  inputValue.trim() && !inputDisabled
+                    ? "text-metaview-accent hover:bg-metaview-accent/10"
+                    : "text-metaview-text-subtle"
+                )}
+                aria-label="Send message"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface MessageBubbleProps {
+  message: ChatMessage;
+}
+
+const MessageBubble = ({ message }: MessageBubbleProps) => {
+  const isAssistant = message.role === 'assistant';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className={cn(
+        "max-w-[85%]",
+        isAssistant ? "" : "ml-auto"
+      )}
+    >
+      <div
+        className={cn(
+          "px-5 py-4 rounded-2xl text-sm leading-relaxed",
+          isAssistant 
+            ? "metaview-card-elevated border border-metaview-accent/10"
+            : "bg-metaview-surface/80 border border-metaview-border/20"
+        )}
+        style={isAssistant ? {
+          boxShadow: '0 0 20px hsla(168, 80%, 50%, 0.08)'
+        } : undefined}
+      >
+        <p className="text-metaview-text whitespace-pre-wrap">
+          {message.content}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
