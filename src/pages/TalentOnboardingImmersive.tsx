@@ -9,6 +9,7 @@ import {
   CVUploadCard,
   CVReviewCard,
   AddEvidenceCard,
+  SaveProgressCard,
 } from '@/components/talent-onboarding';
 import { useImmersiveOnboarding } from '@/hooks/useImmersiveOnboarding';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
@@ -55,6 +56,7 @@ const TalentOnboardingImmersive = () => {
     goToCvUpload,
     handleCvUpload,
     skipCv,
+    handleSaveProgress,
     handleCvReviewComplete,
     handleAvailabilitySelected,
     handleWorkTypesSelected,
@@ -219,6 +221,18 @@ const TalentOnboardingImmersive = () => {
               onRemove={(id) => setCvEntries(prev => prev.filter(e => e.id !== id))}
               onContinue={handleCvReviewComplete}
             />
+          </motion.div>
+        );
+
+      // CV Skip fallback - Save Progress inline
+      case 'save-progress':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="py-4"
+          >
+            <SaveProgressCard onSave={handleSaveProgress} />
           </motion.div>
         );
 

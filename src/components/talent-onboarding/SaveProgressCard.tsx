@@ -14,6 +14,22 @@ interface SaveProgressCardProps {
   isLoading?: boolean;
 }
 
+const TIMEZONE_OPTIONS = [
+  { value: '', label: 'Select timezone...' },
+  { value: 'UTC', label: 'UTC' },
+  { value: 'America/New_York', label: 'Eastern Time (US)' },
+  { value: 'America/Chicago', label: 'Central Time (US)' },
+  { value: 'America/Denver', label: 'Mountain Time (US)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (US)' },
+  { value: 'Europe/London', label: 'London (GMT)' },
+  { value: 'Europe/Paris', label: 'Paris (CET)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET)' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
+];
+
 export const SaveProgressCard = ({ onSave, isLoading = false }: SaveProgressCardProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +44,7 @@ export const SaveProgressCard = ({ onSave, isLoading = false }: SaveProgressCard
         email: email.trim(),
         workStatus,
         location: location.trim() || undefined,
-        timezone: timezone.trim() || undefined,
+        timezone: timezone || undefined,
       });
     }
   };
@@ -70,7 +86,7 @@ export const SaveProgressCard = ({ onSave, isLoading = false }: SaveProgressCard
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
-            className="input-field w-full"
+            className="input-field w-full text-sm"
           />
         </div>
 
@@ -86,7 +102,7 @@ export const SaveProgressCard = ({ onSave, isLoading = false }: SaveProgressCard
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
-            className="input-field w-full"
+            className="input-field w-full text-sm"
           />
         </div>
 
@@ -147,13 +163,17 @@ export const SaveProgressCard = ({ onSave, isLoading = false }: SaveProgressCard
                 <Globe className="w-3 h-3" />
                 Timezone
               </label>
-              <input
-                type="text"
+              <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                placeholder="Europe/Paris"
-                className="input-field w-full text-sm"
-              />
+                className="input-field w-full text-sm appearance-none cursor-pointer"
+              >
+                {TIMEZONE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
