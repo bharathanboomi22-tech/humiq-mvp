@@ -9,7 +9,7 @@ interface DualStageCardProps {
   autoSwitchDelay?: number;
 }
 
-// Work Signals Visual (Talent Step 1) - HIGH CONTRAST gradient chips
+// Work Signals Visual (Talent Step 1) - Teal/green gradient chips
 function WorkSignalsVisual() {
   const shouldReduceMotion = useReducedMotion();
   const signals = ['AI Walkthrough', 'Code/Repo', 'Design/Prototype', 'Docs/Writing'];
@@ -22,11 +22,7 @@ function WorkSignalsVisual() {
           initial={shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: i * 0.15, duration: 0.4 }}
-          className="px-4 py-2 rounded-full text-sm font-semibold text-white"
-          style={{
-            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
-            boxShadow: '0 4px 12px rgba(255, 47, 178, 0.3)',
-          }}
+          className="px-4 py-2 rounded-full text-sm font-semibold text-primary-foreground bg-gradient-to-r from-teal-500 to-primary shadow-glow-teal"
         >
           {signal}
         </motion.div>
@@ -35,7 +31,7 @@ function WorkSignalsVisual() {
   );
 }
 
-// AI Chat Visual (Talent Step 2) - HIGH CONTRAST with Orbi
+// AI Chat Visual (Talent Step 2) - With Orbi
 function AIChatVisual() {
   const shouldReduceMotion = useReducedMotion();
   const messages = [
@@ -57,13 +53,7 @@ function AIChatVisual() {
           <div className="flex-shrink-0 mt-0.5">
             <AIOrbi size="sm" isWriting={i === messages.length - 1} />
           </div>
-          <div 
-            className="px-4 py-2.5 rounded-2xl text-sm text-white font-medium"
-            style={{
-              background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.4) 0%, rgba(255, 47, 178, 0.3) 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-            }}
-          >
+          <div className="px-4 py-2.5 rounded-2xl text-sm text-foreground font-medium bg-secondary border border-border">
             {msg}
           </div>
         </motion.div>
@@ -72,13 +62,13 @@ function AIChatVisual() {
   );
 }
 
-// Work Identity Visual (Talent Step 3) - HIGH CONTRAST chips
+// Work Identity Visual (Talent Step 3) - Semantic chips
 function WorkIdentityVisual() {
   const shouldReduceMotion = useReducedMotion();
   const chips = [
-    { label: 'Strength', gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' },
-    { label: 'Risk', gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' },
-    { label: 'Pattern', gradient: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)' },
+    { label: 'Strength', className: 'bg-green-500/80 text-white' },
+    { label: 'Risk', className: 'bg-amber-500/80 text-white' },
+    { label: 'Pattern', className: 'bg-primary text-primary-foreground' },
   ];
   
   return (
@@ -90,11 +80,7 @@ function WorkIdentityVisual() {
             initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.15, duration: 0.3 }}
-            className="px-4 py-2 rounded-full text-sm font-bold text-white"
-            style={{
-              background: chip.gradient,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-            }}
+            className={`px-4 py-2 rounded-full text-sm font-bold shadow-md ${chip.className}`}
           >
             {chip.label}
           </motion.div>
@@ -104,7 +90,7 @@ function WorkIdentityVisual() {
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.4 }}
-        className="text-center text-sm text-white font-medium"
+        className="text-center text-sm text-foreground font-medium"
       >
         Strong systems thinking, early in scaling experience
       </motion.p>
@@ -112,7 +98,7 @@ function WorkIdentityVisual() {
   );
 }
 
-// Intent Map Visual (Company Step 1) - HIGH CONTRAST
+// Intent Map Visual (Company Step 1) - Teal chips
 function IntentMapVisual() {
   const shouldReduceMotion = useReducedMotion();
   const chips = ['Outcome', 'Constraints', 'Ownership', 'Collaboration'];
@@ -125,11 +111,7 @@ function IntentMapVisual() {
           initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.12, duration: 0.3 }}
-          className="px-4 py-2 rounded-full text-sm font-semibold text-white"
-          style={{
-            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
-            boxShadow: '0 4px 12px rgba(255, 47, 178, 0.3)',
-          }}
+          className="px-4 py-2 rounded-full text-sm font-semibold text-primary-foreground bg-gradient-to-r from-teal-500 to-primary shadow-glow-teal"
         >
           {chip}
         </motion.div>
@@ -138,7 +120,7 @@ function IntentMapVisual() {
   );
 }
 
-// Shortlist Visual (Company Step 2) - BOLD avatars
+// Shortlist Visual (Company Step 2) - Teal avatars
 function ShortlistVisual() {
   const shouldReduceMotion = useReducedMotion();
   const candidates = ['JM', 'AR', 'SK'];
@@ -151,11 +133,7 @@ function ShortlistVisual() {
           initial={shouldReduceMotion ? {} : { opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.15, duration: 0.4 }}
-          className="w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold text-white"
-          style={{
-            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
-            boxShadow: '0 6px 20px rgba(255, 47, 178, 0.4)',
-          }}
+          className="w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold text-primary-foreground bg-gradient-to-br from-teal-400 to-primary shadow-glow-teal"
         >
           {initials}
         </motion.div>
@@ -164,7 +142,7 @@ function ShortlistVisual() {
   );
 }
 
-// Evidence Panel Visual (Company Step 3) - HIGH CONTRAST
+// Evidence Panel Visual (Company Step 3)
 function EvidencePanelVisual() {
   const shouldReduceMotion = useReducedMotion();
   
@@ -176,27 +154,16 @@ function EvidencePanelVisual() {
         transition={{ duration: 0.4 }}
         className="flex items-center gap-3"
       >
-        <div 
-          className="w-16 h-10 rounded-lg flex items-center justify-center"
-          style={{
-            background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 100%)',
-          }}
-        >
-          <span className="text-white text-lg">▶</span>
+        <div className="w-16 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r from-teal-500 to-primary">
+          <span className="text-primary-foreground text-lg">▶</span>
         </div>
-        <span className="text-sm text-white font-medium">Interview excerpt</span>
+        <span className="text-sm text-foreground font-medium">Interview excerpt</span>
       </motion.div>
       <motion.p
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        className="text-sm text-white italic font-medium"
-        style={{
-          background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(255, 47, 178, 0.2) 100%)',
-          padding: '12px 16px',
-          borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
+        className="text-sm text-foreground italic font-medium p-3 rounded-xl bg-secondary border border-border"
       >
         "I prioritized speed because..."
       </motion.p>
@@ -253,13 +220,13 @@ export function DualStageCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Title - WHITE text */}
-      <h3 className="text-base font-bold text-[#111111] mb-4 font-display">
+      {/* Title */}
+      <h3 className="text-base font-bold text-foreground mb-4 font-display">
         {title}
       </h3>
       
       {/* Dark Card with dual stages */}
-      <div className="relative flex-1 rounded-[28px] bg-[#0B0B10] min-h-[320px] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="relative flex-1 rounded-[28px] glass-card min-h-[320px] overflow-hidden">
         <AnimatePresence mode="wait">
           {activeStage === 'content' ? (
             <motion.div
@@ -270,8 +237,7 @@ export function DualStageCard({
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 flex items-center justify-center p-6"
             >
-              {/* ALL TEXT PURE WHITE */}
-              <p className="text-[15px] text-white text-center leading-relaxed">
+              <p className="text-[15px] text-foreground text-center leading-relaxed">
                 {contentText}
               </p>
             </motion.div>
@@ -295,8 +261,8 @@ export function DualStageCard({
             onClick={() => setActiveStage('content')}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
               activeStage === 'content' 
-                ? 'bg-pink-hot shadow-[0_0_8px_rgba(255,47,178,0.6)]' 
-                : 'bg-gray-600 hover:bg-gray-500'
+                ? 'bg-primary shadow-glow-teal' 
+                : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
             }`}
             aria-label="Show content"
           />
@@ -304,8 +270,8 @@ export function DualStageCard({
             onClick={() => setActiveStage('visual')}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
               activeStage === 'visual' 
-                ? 'bg-pink-hot shadow-[0_0_8px_rgba(255,47,178,0.6)]' 
-                : 'bg-gray-600 hover:bg-gray-500'
+                ? 'bg-primary shadow-glow-teal' 
+                : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
             }`}
             aria-label="Show visual"
           />

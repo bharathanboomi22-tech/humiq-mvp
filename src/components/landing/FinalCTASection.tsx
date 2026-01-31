@@ -23,8 +23,16 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 relative overflow-hidden bg-white"
+      className="py-24 md:py-32 relative overflow-hidden bg-background"
     >
+      {/* Atmospheric glow */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / 0.15) 0%, transparent 60%)',
+        }}
+      />
+
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           {/* Primary Text */}
@@ -32,13 +40,7 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-6"
-            style={{
-              background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
+            className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-6 text-gradient-teal"
           >
             Ready to show how you really work?
           </motion.h2>
@@ -48,7 +50,7 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
-            className="text-base md:text-lg text-[#111111]/60 leading-relaxed mb-10"
+            className="text-base md:text-lg text-muted-foreground leading-relaxed mb-10"
           >
             Skip the resume. Start a real conversation with AI that understands your thinking.
           </motion.p>
@@ -61,14 +63,8 @@ export function FinalCTASection({ onCTAClick }: FinalCTASectionProps) {
           >
             <motion.button
               onClick={handleClick}
-              className="px-10 py-4 rounded-full text-base font-bold text-white"
-              style={{
-                background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-              }}
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: '0 8px 32px rgba(255, 47, 178, 0.4)',
-              }}
+              className="btn-primary px-10 py-4 rounded-full text-base font-bold"
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
             >
               Get Started Free

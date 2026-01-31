@@ -29,9 +29,17 @@ export function HowItWorksTalent() {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="relative w-full py-24 md:py-32 overflow-hidden bg-white"
+      className="relative w-full py-24 md:py-32 overflow-hidden bg-background"
     >
-      <div className="container max-w-6xl mx-auto px-6">
+      {/* Atmospheric gradient */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[40%] pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / 0.1) 0%, transparent 60%)',
+        }}
+      />
+
+      <div className="container max-w-6xl mx-auto px-6 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -39,10 +47,10 @@ export function HowItWorksTalent() {
           transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16 md:mb-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold leading-tight mb-4 font-display text-[#111111]">
+          <h2 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold leading-tight mb-4 font-display text-foreground">
             How HumiQ looks beyond CVs
           </h2>
-          <p className="text-base md:text-lg text-[#111111]/60 max-w-xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
             A new way to be evaluated through real work, not polished CVs.
           </p>
         </motion.div>

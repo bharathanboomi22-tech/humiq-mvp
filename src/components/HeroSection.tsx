@@ -76,7 +76,15 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
   };
 
   return (
-    <section className="min-h-screen relative overflow-hidden bg-white">
+    <section className="min-h-screen relative overflow-hidden bg-background">
+      {/* Atmospheric background gradients */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 70% 80%, hsl(var(--primary) / 0.15) 0%, transparent 50%), radial-gradient(ellipse at 30% 20%, hsl(168 75% 48% / 0.1) 0%, transparent 40%)',
+        }}
+      />
+
       {/* Navigation Bar */}
       <motion.header
         initial={shouldReduceMotion ? {} : { opacity: 0, y: -16 }}
@@ -85,39 +93,39 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
         className="relative z-20 w-full pt-6 px-6"
       >
         <div className="container max-w-6xl mx-auto">
-          <div className="flex items-center justify-between bg-white rounded-full px-6 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between glass-card rounded-full px-6 py-3">
             {/* Left - Logo + Beta + Links */}
             <div className="flex items-center gap-6">
               <button
                 onClick={() => navigate('/')}
                 className="flex items-center gap-2"
               >
-                <span className="font-display text-xl font-extrabold tracking-tight text-[#111111]">
+                <span className="font-display text-xl font-extrabold tracking-tight text-foreground">
                   HumiQ
                 </span>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-pink-hot/10 text-pink-hot">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                   Beta
                 </span>
               </button>
               
               <nav className="hidden md:flex items-center gap-6">
-                <a href="#" className="text-sm font-medium text-[#111111] hover:text-pink-hot transition-colors">
+                <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                   About Us
                 </a>
-                <a href="#how-it-works" className="text-sm font-medium text-[#111111] hover:text-pink-hot transition-colors">
+                <a href="#how-it-works" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                   How it works
                 </a>
               </nav>
             </div>
 
             {/* Center - Toggle */}
-            <div className="hidden md:flex items-center gap-0 bg-gray-100 rounded-full p-1">
+            <div className="hidden md:flex items-center gap-0 bg-secondary rounded-full p-1">
               <button
                 onClick={() => handleTabSwitch('talent')}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeTab === 'talent' 
-                    ? 'bg-white text-[#111111] shadow-sm' 
-                    : 'text-gray-500 hover:text-[#111111]'
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Talent
@@ -126,8 +134,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                 onClick={() => handleTabSwitch('company')}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeTab === 'company' 
-                    ? 'bg-white text-[#111111] shadow-sm' 
-                    : 'text-gray-500 hover:text-[#111111]'
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Hiring
@@ -138,28 +146,16 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             <div className="flex items-center gap-3">
               <motion.button
                 onClick={handleTalentClick}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                }}
-                whileHover={{ 
-                  scale: 1.02, 
-                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
-                }}
+                className="btn-primary px-5 py-2.5 rounded-full text-sm font-semibold"
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Sign up as a candidate
               </motion.button>
               <motion.button
                 onClick={handleCompanyClick}
-                className="hidden sm:block px-5 py-2.5 rounded-full text-sm font-semibold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                }}
-                whileHover={{ 
-                  scale: 1.02, 
-                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.4)',
-                }}
+                className="hidden sm:block btn-primary px-5 py-2.5 rounded-full text-sm font-semibold"
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Sign up as a Company
@@ -193,30 +189,18 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                   {activeTab === 'talent' ? (
                     <>
                       <motion.span 
-                        className="block"
+                        className="block text-gradient-teal"
                         initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
                       >
                         CVs are history.
                       </motion.span>
                       <motion.span 
-                        className="block"
+                        className="block text-gradient-teal"
                         initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
                       >
                         Decisions are future.
                       </motion.span>
@@ -224,30 +208,18 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                   ) : (
                     <>
                       <motion.span 
-                        className="block"
+                        className="block text-gradient-teal"
                         initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
                       >
                         Decisions, not resumes.
                       </motion.span>
                       <motion.span 
-                        className="block"
+                        className="block text-gradient-teal"
                         initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        style={{
-                          background: 'linear-gradient(90deg, #7C3AED, #FF2FB2)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
                       >
                         Hire with evidence.
                       </motion.span>
@@ -257,7 +229,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
 
                 {/* Subheadline */}
                 <motion.p 
-                  className="text-base md:text-lg max-w-md mb-8 leading-[1.7] text-[#111111]/70"
+                  className="text-base md:text-lg max-w-md mb-8 leading-[1.7] text-muted-foreground"
                   initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
@@ -277,25 +249,18 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                 >
                   <motion.button
                     onClick={activeTab === 'talent' ? handleTalentClick : handleCompanyClick}
-                    className="px-8 py-3.5 rounded-full text-base font-bold text-white relative overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                    }}
-                    whileHover={{ 
-                      scale: 1.02,
-                      boxShadow: '0 8px 32px rgba(255, 47, 178, 0.4)',
-                      y: -2,
-                    }}
+                    className="btn-primary px-8 py-3.5 rounded-full text-base font-bold relative overflow-hidden"
+                    whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.97 }}
                   >
                     {activeTab === 'talent' ? 'Start Now' : 'Start Hiring'}
                   </motion.button>
                   <button 
                     onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="text-[#111111] text-base font-medium hover:text-pink-hot transition-colors relative group"
+                    className="text-foreground text-base font-medium hover:text-primary transition-colors relative group"
                   >
                     How it works →
-                    <span className="absolute bottom-0 left-0 w-0 h-px bg-pink-hot transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
                   </button>
                 </motion.div>
               </motion.div>
@@ -313,7 +278,7 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             <motion.div 
               className="absolute -inset-10 rounded-[50px] pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(255, 47, 178, 0.15) 0%, rgba(124, 58, 237, 0.1) 40%, transparent 70%)',
+                background: 'radial-gradient(ellipse at center, hsl(var(--primary) / 0.2) 0%, hsl(168 75% 48% / 0.1) 40%, transparent 70%)',
                 filter: 'blur(40px)',
               }}
               animate={shouldReduceMotion ? {} : {
@@ -329,9 +294,9 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
 
             {/* Dark Card */}
             <motion.div 
-              className="relative rounded-[32px] p-8 bg-[#0B0B10] text-white shadow-2xl"
+              className="relative rounded-[32px] p-8 glass-card text-foreground shadow-2xl"
               whileHover={{ 
-                boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.4)',
+                boxShadow: '0 25px 60px -12px hsl(var(--primary) / 0.3)',
               }}
               transition={{ duration: 0.3 }}
             >
@@ -339,8 +304,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               <div className="flex items-center gap-3 mb-8">
                 <AIOrbi size="md" isWriting={isTyping} />
                 <div>
-                  <p className="text-xl font-bold text-white">HumiQ</p>
-                  <p className="text-sm text-white/60">
+                  <p className="text-xl font-bold text-foreground">HumiQ</p>
+                  <p className="text-sm text-muted-foreground">
                     {activeTab === 'talent' ? 'Super Career Intelligence' : 'Decision-Ready Hiring Intelligence'}
                   </p>
                 </div>
@@ -360,8 +325,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                     <div className="flex-shrink-0 mt-0.5">
                       <AIOrbiSmall isWriting={false} />
                     </div>
-                    {/* Line text - PURE WHITE */}
-                    <p className="text-[15px] leading-relaxed text-white">
+                    {/* Line text */}
+                    <p className="text-[15px] leading-relaxed text-foreground">
                       {line}
                     </p>
                   </motion.div>
@@ -381,11 +346,11 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
                       <AIOrbiSmall isWriting={isTyping} />
                     </div>
                     {/* Typing text with cursor */}
-                    <p className="text-[15px] leading-relaxed text-white">
+                    <p className="text-[15px] leading-relaxed text-foreground">
                       {currentLineText}
                       {isTyping && (
                         <motion.span
-                          className="inline-block w-[2px] h-[1em] bg-white ml-0.5 align-middle"
+                          className="inline-block w-[2px] h-[1em] bg-primary ml-0.5 align-middle"
                           animate={{ opacity: [1, 0, 1] }}
                           transition={{ duration: 0.8, repeat: Infinity }}
                         />
@@ -398,14 +363,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
               {/* CTA */}
               <motion.button
                 onClick={activeTab === 'talent' ? handleTalentClick : handleCompanyClick}
-                className="px-8 py-3.5 rounded-full text-[15px] font-bold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  boxShadow: '0 8px 24px rgba(255, 47, 178, 0.5)',
-                }}
+                className="btn-primary px-8 py-3.5 rounded-full text-[15px] font-bold"
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {activeTab === 'talent' ? 'Start Now' : 'Start Hiring'}
@@ -419,16 +378,16 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 1.2, ease: 'easeOut' }}
-        className="md:hidden absolute bottom-6 left-0 right-0 flex justify-center z-20 px-4"
+        transition={{ delay: 0.6, duration: 0.4 }}
+        className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-20"
       >
-        <div className="flex items-center gap-0 bg-white rounded-full p-1 shadow-lg border border-gray-100">
+        <div className="flex items-center gap-0 bg-secondary rounded-full p-1 shadow-lg">
           <button
             onClick={() => handleTabSwitch('talent')}
             className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
               activeTab === 'talent' 
-                ? 'bg-[#0B0B10] text-white' 
-                : 'text-gray-500'
+                ? 'bg-primary text-primary-foreground shadow-sm' 
+                : 'text-muted-foreground'
             }`}
           >
             Talent
@@ -437,8 +396,8 @@ export function HeroSection({ onSubmit, isLoading, onViewChange }: HeroSectionPr
             onClick={() => handleTabSwitch('company')}
             className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
               activeTab === 'company' 
-                ? 'bg-[#0B0B10] text-white' 
-                : 'text-gray-500'
+                ? 'bg-primary text-primary-foreground shadow-sm' 
+                : 'text-muted-foreground'
             }`}
           >
             Hiring
