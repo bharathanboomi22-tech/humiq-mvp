@@ -29,15 +29,20 @@ export const ChipSelector = ({
   };
 
   return (
-    <div className={cn("flex flex-wrap gap-2", className)}>
+    <motion.div 
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      className={cn("flex flex-wrap gap-2.5", className)}
+    >
       {options.map((option, idx) => {
         const isSelected = selected.includes(option);
         return (
           <motion.button
             key={option}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.05 }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05, duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => handleSelect(option)}
             className={cn(
               "chip",
@@ -48,6 +53,6 @@ export const ChipSelector = ({
           </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 };
