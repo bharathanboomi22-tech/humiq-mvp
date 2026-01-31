@@ -180,6 +180,36 @@
       0 0 20px hsla(168, 75%, 50%, 0.08);
   }
 
+  /* Floating glass panels - Premium Metaview style */
+  .floating-glass-panel {
+    background: hsla(160, 25%, 8%, 0.85);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-radius: 24px;
+    border: 1px solid hsla(168, 50%, 45%, 0.1);
+    box-shadow: 
+      0 0 0 1px hsla(0, 0%, 100%, 0.02) inset,
+      0 0 60px -20px hsla(168, 80%, 45%, 0.15),
+      0 20px 60px -20px hsla(0, 0%, 0%, 0.6);
+  }
+
+  .floating-glass-panel:focus-within {
+    border-color: hsla(168, 60%, 48%, 0.15);
+    box-shadow: 
+      0 0 0 1px hsla(0, 0%, 100%, 0.03) inset,
+      0 0 80px -20px hsla(168, 80%, 50%, 0.2),
+      0 20px 60px -20px hsla(0, 0%, 0%, 0.6);
+  }
+
+  /* Panel glow for active/confirmation states */
+  .panel-glow-active {
+    box-shadow: 
+      0 0 0 1px hsla(168, 75%, 50%, 0.2),
+      0 0 40px hsla(168, 80%, 50%, 0.12),
+      0 0 80px -20px hsla(168, 80%, 45%, 0.2);
+    border-color: hsla(168, 70%, 50%, 0.2);
+  }
+
   /* ============================================
      BUTTONS
      ============================================ */
@@ -440,11 +470,32 @@
     }
   }
 
+  /* Highlight fade for new profile items */
+  @keyframes highlight-fade {
+    0% {
+      background: hsla(168, 80%, 50%, 0.15);
+      box-shadow: 0 0 0 1px hsla(168, 70%, 50%, 0.3);
+    }
+    100% {
+      background: transparent;
+      box-shadow: none;
+    }
+  }
+
   /* Panel border glow (for active states) */
   .panel-glow {
     box-shadow: 
       0 0 0 1px hsla(168, 75%, 50%, 0.3),
       0 0 30px hsla(168, 80%, 50%, 0.15);
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* ============================================

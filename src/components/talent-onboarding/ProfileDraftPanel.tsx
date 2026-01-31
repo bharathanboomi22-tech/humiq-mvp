@@ -41,42 +41,55 @@ export const ProfileDraftPanel = ({
   return (
     <div 
       className={cn(
-        "h-full flex flex-col glass-card border-l border-border/30",
-        showGlow && "panel-glow"
+        "h-full flex flex-col relative overflow-hidden",
+        showGlow && "panel-glow-active"
       )}
     >
       {/* Header */}
-      <div className="flex-shrink-0 p-6 border-b border-border/20">
+      <div className="flex-shrink-0 px-6 py-5 border-b border-border/10">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Your Profile</h2>
-            <span className="text-xs text-primary font-medium">(Draft)</span>
+            <h2 className="text-base font-semibold text-foreground">Your Profile</h2>
+            <span className="text-[11px] text-primary/80 font-medium tracking-wide uppercase">Draft</span>
           </div>
           {onClose && (
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-secondary transition-colors"
+              className="p-2 rounded-lg hover:bg-secondary/50 transition-colors"
             >
-              <X className="w-5 h-5 text-muted-foreground" />
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           )}
         </div>
-        <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+        <p className="text-xs text-muted-foreground/80 mt-2.5 leading-relaxed">
           As we talk, I'll build a draft of how you work here. You can edit or remove anything at any time.
         </p>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      {/* Content - scrollable */}
+      <div 
+        className="flex-1 overflow-y-auto px-6 py-5 space-y-5 scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         {!hasContent ? (
-          <div className="text-center py-12">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
-              <FileText className="w-5 h-5 text-muted-foreground" />
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-16"
+          >
+            <div 
+              className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center"
+              style={{
+                background: 'hsla(160, 25%, 12%, 0.6)',
+                border: '1px solid hsla(168, 40%, 40%, 0.1)',
+              }}
+            >
+              <FileText className="w-6 h-6 text-muted-foreground/50" />
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground/70">
               Your profile will appear here as we chat.
             </p>
-          </div>
+          </motion.div>
         ) : (
           <>
             {/* Basic Details Section */}
@@ -124,12 +137,12 @@ export const ProfileDraftPanel = ({
 
       {/* Footer - Privacy Toggle */}
       {hasContent && (
-        <div className="flex-shrink-0 p-6 border-t border-border/20">
+        <div className="flex-shrink-0 px-6 py-4 border-t border-border/10">
           <button 
             onClick={onToggleAnonymous}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-xs text-muted-foreground/70 hover:text-muted-foreground transition-colors"
           >
-            <EyeOff className="w-4 h-4" />
+            <EyeOff className="w-3.5 h-3.5" />
             <span>Keep this anonymous until I say otherwise</span>
           </button>
         </div>
@@ -137,6 +150,25 @@ export const ProfileDraftPanel = ({
     </div>
   );
 };
+
+// Shared section header component
+const SectionHeader = ({ icon: Icon, title, badge }: { 
+  icon: typeof User; 
+  title: string;
+  badge?: string;
+}) => (
+  <div className="flex items-center gap-2 mb-3">
+    <Icon className="w-3.5 h-3.5 text-primary/70" />
+    <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-semibold">
+      {title}
+    </h3>
+    {badge && (
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/40 text-muted-foreground/60">
+        {badge}
+      </span>
+    )}
+  </div>
+);
 
 // Basic Details Section
 const BasicDetailsSection = ({ 
@@ -150,37 +182,32 @@ const BasicDetailsSection = ({
     { key: 'fullName' as const, label: 'Full Name', value: details.fullName },
     { key: 'location' as const, label: 'Location', value: details.location },
     { key: 'email' as const, label: 'Email', value: details.email },
-    { key: 'contactNumber' as const, label: 'Contact Number', value: details.contactNumber },
+    { key: 'contactNumber' as const, label: 'Contact', value: details.contactNumber },
   ];
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <User className="w-4 h-4 text-primary" />
-        <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-          Basic Details
-        </h3>
-      </div>
-      <div className="space-y-2">
+    <div className="space-y-2">
+      <SectionHeader icon={User} title="Basic Details" />
+      <div className="space-y-1.5">
         {fields.map((field) => (
           <motion.div
             key={field.key}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="group flex items-center justify-between p-3 rounded-lg bg-secondary/40 border border-border/10"
+            className="group flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-secondary/20 transition-colors"
           >
-            <div className="flex-1">
-              <span className="text-xs text-muted-foreground">{field.label}</span>
-              <p className="text-sm text-foreground mt-0.5">
-                {field.value || <span className="text-muted-foreground italic">Not provided</span>}
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">{field.label}</span>
+              <p className="text-sm text-foreground/90 truncate">
+                {field.value || <span className="text-muted-foreground/50 italic text-xs">Not provided</span>}
               </p>
             </div>
-            {onEdit && (
+            {onEdit && field.value && (
               <button
                 onClick={() => onEdit(field.key)}
-                className="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-secondary transition-all"
+                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-secondary/40 transition-all"
               >
-                <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
+                <Edit2 className="w-3 h-3 text-muted-foreground/60" />
               </button>
             )}
           </motion.div>
@@ -200,44 +227,39 @@ const ExperienceSection = ({
   onEdit?: (id: string) => void;
   onRemove?: (id: string) => void;
 }) => (
-  <div className="space-y-3">
-    <div className="flex items-center gap-2">
-      <Briefcase className="w-4 h-4 text-primary" />
-      <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-        Experience
-      </h3>
-    </div>
+  <div className="space-y-2">
+    <SectionHeader icon={Briefcase} title="Experience" />
     <div className="space-y-2">
       <AnimatePresence mode="popLayout">
         {experience.map((entry) => (
           <motion.div
             key={entry.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="group p-3 rounded-lg bg-secondary/40 border border-border/10"
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="group py-2.5 px-3 rounded-xl hover:bg-secondary/20 transition-colors"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">{entry.role}</p>
-                <p className="text-sm text-muted-foreground">{entry.company}</p>
-                <p className="text-xs text-muted-foreground mt-1">{entry.timeline}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground/90 truncate">{entry.role}</p>
+                <p className="text-xs text-muted-foreground/70 truncate">{entry.company}</p>
+                <p className="text-[10px] text-muted-foreground/50 mt-0.5">{entry.timeline}</p>
               </div>
-              <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
+              <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
                 {onEdit && (
                   <button
                     onClick={() => onEdit(entry.id)}
-                    className="p-1.5 rounded hover:bg-secondary"
+                    className="p-1.5 rounded-lg hover:bg-secondary/40"
                   >
-                    <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
+                    <Edit2 className="w-3 h-3 text-muted-foreground/50" />
                   </button>
                 )}
                 {onRemove && (
                   <button
                     onClick={() => onRemove(entry.id)}
-                    className="p-1.5 rounded hover:bg-secondary"
+                    className="p-1.5 rounded-lg hover:bg-secondary/40"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                    <Trash2 className="w-3 h-3 text-muted-foreground/50" />
                   </button>
                 )}
               </div>
@@ -259,44 +281,39 @@ const EducationSection = ({
   onEdit?: (id: string) => void;
   onRemove?: (id: string) => void;
 }) => (
-  <div className="space-y-3">
-    <div className="flex items-center gap-2">
-      <GraduationCap className="w-4 h-4 text-primary" />
-      <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-        Education
-      </h3>
-    </div>
+  <div className="space-y-2">
+    <SectionHeader icon={GraduationCap} title="Education" />
     <div className="space-y-2">
       <AnimatePresence mode="popLayout">
         {education.map((entry) => (
           <motion.div
             key={entry.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="group p-3 rounded-lg bg-secondary/40 border border-border/10"
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="group py-2.5 px-3 rounded-xl hover:bg-secondary/20 transition-colors"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">{entry.program}</p>
-                <p className="text-sm text-muted-foreground">{entry.institution}</p>
-                <p className="text-xs text-muted-foreground mt-1">{entry.timeline}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground/90 truncate">{entry.program}</p>
+                <p className="text-xs text-muted-foreground/70 truncate">{entry.institution}</p>
+                <p className="text-[10px] text-muted-foreground/50 mt-0.5">{entry.timeline}</p>
               </div>
-              <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
+              <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
                 {onEdit && (
                   <button
                     onClick={() => onEdit(entry.id)}
-                    className="p-1.5 rounded hover:bg-secondary"
+                    className="p-1.5 rounded-lg hover:bg-secondary/40"
                   >
-                    <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
+                    <Edit2 className="w-3 h-3 text-muted-foreground/50" />
                   </button>
                 )}
                 {onRemove && (
                   <button
                     onClick={() => onRemove(entry.id)}
-                    className="p-1.5 rounded hover:bg-secondary"
+                    className="p-1.5 rounded-lg hover:bg-secondary/40"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                    <Trash2 className="w-3 h-3 text-muted-foreground/50" />
                   </button>
                 )}
               </div>
@@ -318,55 +335,53 @@ const WorkStyleSection = ({
   onEdit?: (sectionId: string, traitIndex: number) => void;
   onRemove?: (sectionId: string, traitIndex: number) => void;
 }) => (
-  <div className="space-y-4">
-    <div className="flex items-center gap-2">
-      <Brain className="w-4 h-4 text-primary" />
-      <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-        Work Style
-      </h3>
-      <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
-        Draft
-      </span>
-    </div>
+  <div className="space-y-3">
+    <SectionHeader icon={Brain} title="Work Style" badge="Draft" />
     {sections.map((section) => {
       if (section.traits.length === 0) return null;
       
       return (
-        <div key={section.id} className="space-y-2">
-          <p className="text-xs text-muted-foreground font-medium">{section.title}</p>
-          <div className="space-y-1">
+        <div key={section.id} className="space-y-1.5">
+          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wide px-1">{section.title}</p>
+          <div className="space-y-0.5">
             <AnimatePresence mode="popLayout">
               {section.traits.map((trait, idx) => (
                 <motion.div
                   key={trait.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
                   className={cn(
-                    "group flex items-start gap-3 p-2 rounded-lg transition-colors",
-                    "hover:bg-secondary/40",
-                    trait.isNew && "animate-[trait-glow_1.5s_ease-out]"
+                    "group flex items-start gap-2.5 py-2 px-3 rounded-xl transition-colors",
+                    "hover:bg-secondary/20",
+                    trait.isNew && "animate-[highlight-fade_1.5s_ease-out]"
                   )}
                 >
-                  <span className="text-primary mt-0.5">•</span>
-                  <span className="flex-1 text-sm text-muted-foreground leading-relaxed">
+                  <span 
+                    className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0"
+                    style={{
+                      background: 'hsl(var(--primary))',
+                      boxShadow: '0 0 6px hsla(168, 80%, 50%, 0.4)',
+                    }}
+                  />
+                  <span className="flex-1 text-xs text-muted-foreground/80 leading-relaxed">
                     {trait.text}
                   </span>
-                  <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
+                  <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
                     {onEdit && (
                       <button
                         onClick={() => onEdit(section.id, idx)}
-                        className="p-1 rounded hover:bg-secondary"
+                        className="p-1 rounded hover:bg-secondary/40"
                       >
-                        <Edit2 className="w-3 h-3 text-muted-foreground" />
+                        <Edit2 className="w-2.5 h-2.5 text-muted-foreground/50" />
                       </button>
                     )}
                     {onRemove && (
                       <button
                         onClick={() => onRemove(section.id, idx)}
-                        className="p-1 rounded hover:bg-secondary"
+                        className="p-1 rounded hover:bg-secondary/40"
                       >
-                        <Trash2 className="w-3 h-3 text-muted-foreground" />
+                        <Trash2 className="w-2.5 h-2.5 text-muted-foreground/50" />
                       </button>
                     )}
                   </div>
@@ -382,37 +397,32 @@ const WorkStyleSection = ({
 
 // Evidence Section
 const EvidenceSection = ({ evidence }: { evidence: ProfileDraft['evidence'] }) => (
-  <div className="space-y-3">
-    <div className="flex items-center gap-2">
-      <Link className="w-4 h-4 text-primary" />
-      <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-        Evidence
-      </h3>
-    </div>
+  <div className="space-y-2">
+    <SectionHeader icon={Link} title="Evidence" />
     {evidence?.map((item, idx) => (
       <motion.div
         key={idx}
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-3 rounded-lg bg-secondary/40 border border-border/10"
+        className="py-2.5 px-3 rounded-xl hover:bg-secondary/20 transition-colors"
       >
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2.5">
           {item.type === 'link' ? (
-            <Link className="w-4 h-4 text-primary mt-0.5" />
+            <Link className="w-3.5 h-3.5 text-primary/60 mt-0.5 flex-shrink-0" />
           ) : (
-            <FileText className="w-4 h-4 text-primary mt-0.5" />
+            <FileText className="w-3.5 h-3.5 text-primary/60 mt-0.5 flex-shrink-0" />
           )}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">
+            <p className="text-sm font-medium text-foreground/90 truncate">
               {item.name}
             </p>
             {item.description && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[10px] text-muted-foreground/60 mt-0.5 truncate">
                 Goal: {item.description}
               </p>
             )}
             {item.decision && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[10px] text-muted-foreground/60 truncate">
                 Decision: {item.decision}
               </p>
             )}
