@@ -89,7 +89,7 @@ export const ImmersiveOnboardingLayout = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="flex-1 lg:w-[62%] lg:flex-none flex flex-col floating-glass-panel"
+            className="flex-1 lg:w-[62%] lg:flex-none flex flex-col min-h-0 overflow-hidden floating-glass-panel"
           >
             {children}
           </motion.div>
@@ -110,7 +110,7 @@ export const ImmersiveOnboardingLayout = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:flex lg:w-[38%] flex-col floating-glass-panel"
+            className="hidden lg:flex lg:w-[38%] flex-col min-h-0 overflow-hidden floating-glass-panel"
           >
             <ProfileDraftPanel 
               draft={profileDraft}

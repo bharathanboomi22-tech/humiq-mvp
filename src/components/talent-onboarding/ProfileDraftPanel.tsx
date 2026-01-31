@@ -232,7 +232,7 @@ const ExperienceSection = ({
   <div className="space-y-2">
     <SectionHeader icon={<Briefcase className="w-3.5 h-3.5 text-primary/70" />} title="Experience" />
     <div className="space-y-2">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {experience.map((entry) => (
           <motion.div
             key={entry.id}
@@ -286,7 +286,7 @@ const EducationSection = ({
   <div className="space-y-2">
     <SectionHeader icon={<GraduationCap className="w-3.5 h-3.5 text-primary/70" />} title="Education" />
     <div className="space-y-2">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {education.map((entry) => (
           <motion.div
             key={entry.id}
@@ -346,7 +346,7 @@ const WorkStyleSection = ({
         <div key={section.id} className="space-y-1.5">
           <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wide px-1">{section.title}</p>
           <div className="space-y-0.5">
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence>
               {section.traits.map((trait, idx) => (
                 <motion.div
                   key={trait.id}

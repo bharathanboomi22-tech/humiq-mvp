@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,7 @@ interface ChatInterfaceProps {
   messages: ChatMessage[];
   onSendMessage: (message: string) => void;
   isTyping?: boolean;
+  belowMessagesContent?: ReactNode;
   helperActions?: Array<{
     label: string;
     onClick: () => void;
@@ -26,6 +27,7 @@ export const ChatInterface = ({
   messages,
   onSendMessage,
   isTyping = false,
+  belowMessagesContent,
   helperActions,
   quickActions,
   placeholder = 'Type your response...',
@@ -88,11 +90,11 @@ export const ChatInterface = ({
     }
   };
 
-  // Get only the most recent messages for minimal view (last 3)
-  const visibleMessages = messages.slice(-3);
+  // Focused history: only the most recent exchange
+  const visibleMessages = messages.slice(-2);
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full min-h-0 relative">
       {/* Header */}
       <div className="flex-shrink-0 px-7 pt-7 pb-4 border-b border-border/10">
         <div className="flex items-center gap-3">
@@ -133,7 +135,7 @@ export const ChatInterface = ({
       {/* Messages - scrollable area with stable layout */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-7 py-5 scroll-smooth scrollbar-hide"
+        className="flex-1 min-h-0 overflow-y-auto px-7 py-5 scroll-smooth scrollbar-hide overscroll-contain"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <AnimatePresence mode="popLayout" initial={false}>
@@ -166,6 +168,13 @@ export const ChatInterface = ({
             )}
           </AnimatePresence>
         </div>
+
+        {/* State-specific content (CV upload/review, chip selectors, etc.) lives inside the scroll area */}
+        {belowMessagesContent && (
+          <div className="pt-3">
+            {belowMessagesContent}
+          </div>
+        )}
 
         {/* Quick action buttons */}
         <AnimatePresence>
