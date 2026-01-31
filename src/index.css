@@ -352,6 +352,201 @@
     background: linear-gradient(90deg, #7C3AED, #FF2FB2, #FF6BD6);
     border-radius: 2px;
   }
+
+  /* ============================================
+     METAVIEW DARK THEME (Immersive Onboarding)
+     Dark teal/green/charcoal atmospheric system
+     ============================================ */
+
+  /* Metaview color tokens */
+  --metaview-bg: 160 30% 4%;
+  --metaview-bg-deep: 160 35% 3%;
+  --metaview-surface: 160 25% 8%;
+  --metaview-surface-elevated: 160 22% 12%;
+  --metaview-border: 160 20% 18%;
+  --metaview-border-subtle: 160 18% 14%;
+  
+  /* Teal/Green accents */
+  --metaview-accent: 168 75% 48%;
+  --metaview-accent-bright: 168 85% 55%;
+  --metaview-accent-glow: 168 80% 60%;
+  --metaview-accent-dim: 168 60% 35%;
+  
+  /* Text colors */
+  --metaview-text: 0 0% 98%;
+  --metaview-text-muted: 160 10% 60%;
+  --metaview-text-subtle: 160 8% 45%;
+
+  /* Metaview background with atmospheric gradients */
+  .metaview-bg {
+    background: hsl(var(--metaview-bg-deep));
+    position: relative;
+  }
+
+  .metaview-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 10% 90%, hsla(168, 80%, 45%, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 80%, hsla(145, 70%, 40%, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 10%, hsla(160, 40%, 20%, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Metaview glass card */
+  .metaview-card {
+    background: hsla(160, 25%, 10%, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 16px;
+    border: 1px solid hsla(168, 40%, 40%, 0.08);
+    box-shadow: 
+      0 0 0 1px hsla(0, 0%, 100%, 0.02) inset,
+      0 8px 32px -8px hsla(0, 0%, 0%, 0.5);
+  }
+
+  .metaview-card-elevated {
+    background: hsla(160, 22%, 14%, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 14px;
+    border: 1px solid hsla(168, 35%, 35%, 0.1);
+  }
+
+  /* Metaview input styling */
+  .metaview-input {
+    background: hsla(160, 25%, 8%, 0.9);
+    border: 1px solid hsla(168, 30%, 30%, 0.15);
+    border-radius: 12px;
+    color: hsl(var(--metaview-text));
+    transition: all 200ms ease;
+  }
+
+  .metaview-input:focus {
+    border-color: hsla(168, 75%, 48%, 0.4);
+    box-shadow: 0 0 0 3px hsla(168, 75%, 48%, 0.1);
+    outline: none;
+  }
+
+  .metaview-input::placeholder {
+    color: hsl(var(--metaview-text-subtle));
+  }
+
+  /* Metaview primary button */
+  .metaview-btn-primary {
+    background: linear-gradient(135deg, hsl(168, 75%, 48%) 0%, hsl(145, 65%, 42%) 100%);
+    color: hsl(var(--metaview-bg-deep));
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 300ms ease;
+    box-shadow: 0 4px 20px hsla(168, 80%, 45%, 0.25);
+  }
+
+  .metaview-btn-primary:hover {
+    box-shadow: 0 6px 28px hsla(168, 80%, 50%, 0.35);
+    transform: translateY(-1px);
+  }
+
+  /* Metaview secondary button */
+  .metaview-btn-secondary {
+    background: hsla(160, 22%, 16%, 0.8);
+    border: 1px solid hsla(168, 40%, 40%, 0.15);
+    color: hsl(var(--metaview-text));
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 12px 24px;
+    transition: all 200ms ease;
+  }
+
+  .metaview-btn-secondary:hover {
+    background: hsla(160, 22%, 20%, 0.9);
+    border-color: hsla(168, 50%, 45%, 0.25);
+  }
+
+  /* Metaview chip */
+  .metaview-chip {
+    background: hsla(160, 22%, 14%, 0.9);
+    border: 1px solid hsla(168, 40%, 40%, 0.12);
+    border-radius: 999px;
+    padding: 8px 16px;
+    color: hsl(var(--metaview-text-muted));
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 200ms ease;
+    cursor: pointer;
+  }
+
+  .metaview-chip:hover {
+    background: hsla(168, 30%, 18%, 0.9);
+    border-color: hsla(168, 60%, 50%, 0.2);
+    color: hsl(var(--metaview-text));
+  }
+
+  .metaview-chip.active {
+    background: hsla(168, 60%, 45%, 0.15);
+    border-color: hsla(168, 75%, 48%, 0.4);
+    color: hsl(var(--metaview-accent-bright));
+  }
+
+  /* Metaview divider glow */
+  .metaview-divider-glow {
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      hsla(168, 80%, 50%, 0.4) 20%,
+      hsla(168, 85%, 55%, 0.6) 50%,
+      hsla(145, 70%, 45%, 0.4) 80%,
+      transparent 100%
+    );
+    filter: blur(1px);
+    box-shadow: 0 0 20px hsla(168, 80%, 50%, 0.3);
+  }
+
+  /* Metaview text glow */
+  .metaview-text-glow {
+    text-shadow: 0 0 20px hsla(168, 80%, 55%, 0.4);
+  }
+
+  /* Metaview profile trait bullet */
+  .metaview-trait {
+    position: relative;
+    padding-left: 20px;
+    color: hsl(var(--metaview-text-muted));
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .metaview-trait::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: hsl(var(--metaview-accent));
+  }
+
+  .metaview-trait.new {
+    animation: trait-glow 1.5s ease-out;
+  }
+
+  @keyframes trait-glow {
+    0% {
+      color: hsl(var(--metaview-accent-bright));
+      text-shadow: 0 0 15px hsla(168, 80%, 55%, 0.5);
+    }
+    100% {
+      color: hsl(var(--metaview-text-muted));
+      text-shadow: none;
+    }
+  }
+
+  /* Metaview panel border glow (for confirmation state) */
+  .metaview-panel-glow {
+    box-shadow: 
+      0 0 0 1px hsla(168, 75%, 50%, 0.3),
+      0 0 30px hsla(168, 80%, 50%, 0.15);
+  }
 }
 
 html {

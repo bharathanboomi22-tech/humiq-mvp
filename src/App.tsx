@@ -24,7 +24,7 @@ import CompanyJobEdit from "./pages/CompanyJobEdit";
 import CompanyMatches from "./pages/CompanyMatches";
 import CompanyTalentDetail from "./pages/CompanyTalentDetail";
 // Talent pages
-import TalentOnboarding from "./pages/TalentOnboarding";
+import TalentOnboardingImmersive from "./pages/TalentOnboardingImmersive";
 import TalentDashboard from "./pages/TalentDashboard";
 import TalentJobDetail from "./pages/TalentJobDetail";
 import InterviewResult from "./pages/InterviewResult";
@@ -105,7 +105,7 @@ const App = () => (
             {/* Talent Routes */}
             <Route path="/talent/onboarding" element={
               <TalentRoute>
-                <TalentOnboarding />
+                <TalentOnboardingImmersive />
               </TalentRoute>
             } />
             <Route path="/talent/dashboard" element={
