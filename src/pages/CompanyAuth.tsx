@@ -147,7 +147,7 @@ export default function CompanyAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="p-6">
         <div className="container max-w-6xl mx-auto flex items-center justify-between">
@@ -158,7 +158,7 @@ export default function CompanyAuth() {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back to home</span>
           </button>
-          <span className="font-display text-xl font-extrabold tracking-tight">
+          <span className="font-display text-xl font-extrabold tracking-tight text-foreground">
             HumiQ
           </span>
         </div>
@@ -174,13 +174,13 @@ export default function CompanyAuth() {
         >
           {/* Context Label */}
           <div className="text-center mb-8">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
               For Companies
             </span>
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-[32px] p-8 shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-gray-100">
+          <div className="glass-card rounded-[24px] p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={mode}
@@ -203,7 +203,7 @@ export default function CompanyAuth() {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Work email</Label>
+                    <Label htmlFor="email" className="text-foreground">Work email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -211,12 +211,12 @@ export default function CompanyAuth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-12 rounded-xl"
+                      className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-foreground">Password</Label>
                     <div className="relative">
                       <Input
                         id="password"
@@ -225,7 +225,7 @@ export default function CompanyAuth() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="h-12 rounded-xl pr-10"
+                        className="h-12 rounded-xl pr-10 bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
                       />
                       <button
                         type="button"
@@ -239,7 +239,7 @@ export default function CompanyAuth() {
 
                   {mode === 'signup' && (
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm password</Label>
+                      <Label htmlFor="confirmPassword" className="text-foreground">Confirm password</Label>
                       <Input
                         id="confirmPassword"
                         type={showPassword ? 'text' : 'password'}
@@ -247,7 +247,7 @@ export default function CompanyAuth() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="h-12 rounded-xl"
+                        className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
                   )}
@@ -256,10 +256,7 @@ export default function CompanyAuth() {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-12 rounded-full text-base font-bold"
-                    style={{
-                      background: 'linear-gradient(135deg, #7C3AED 0%, #FF2FB2 60%, #FF6BD6 100%)',
-                    }}
+                    className="w-full h-12 rounded-full text-base font-bold btn-primary"
                   >
                     {isLoading 
                       ? 'Please wait...' 
@@ -282,7 +279,7 @@ export default function CompanyAuth() {
                         setPassword('');
                         setConfirmPassword('');
                       }}
-                      className="font-medium text-purple-600 hover:underline"
+                      className="font-medium text-primary hover:underline"
                     >
                       {mode === 'signup' ? 'Sign in' : 'Create a company account'}
                     </button>
@@ -291,9 +288,9 @@ export default function CompanyAuth() {
 
                 {/* Divider */}
                 <div className="my-6 flex items-center gap-4">
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className="flex-1 h-px bg-border/30" />
                   <span className="text-xs text-muted-foreground">or</span>
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className="flex-1 h-px bg-border/30" />
                 </div>
 
                 {/* Secondary Action */}
@@ -305,7 +302,7 @@ export default function CompanyAuth() {
                     setPassword('');
                     setConfirmPassword('');
                   }}
-                  className="w-full h-12 rounded-full text-base font-medium"
+                  className="w-full h-12 rounded-full text-base font-medium border-border/30 text-foreground hover:bg-secondary/50"
                 >
                   {mode === 'signup' ? 'Sign in instead' : 'Create an account'}
                 </Button>

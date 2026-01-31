@@ -176,8 +176,8 @@ const TalentDashboard = () => {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen blush-gradient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-foreground" />
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </main>
     );
   }
@@ -185,7 +185,7 @@ const TalentDashboard = () => {
   // No profile yet - show onboarding with test selection
   if (!talentId || !profile) {
     return (
-      <main className="min-h-screen blush-gradient">
+      <main className="min-h-screen bg-background">
         <div className="container max-w-2xl mx-auto px-6 py-16 md:py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -246,7 +246,7 @@ const TalentDashboard = () => {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <main className="min-h-screen blush-gradient">
+      <main className="min-h-screen bg-background">
         <Navigation variant="talent" />
       <div className="container max-w-6xl mx-auto px-6 py-8">
         <motion.div
