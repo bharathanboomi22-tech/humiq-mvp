@@ -32,6 +32,30 @@ export interface ProfileSection {
   isDraft?: boolean;
 }
 
+// Intent & Constraints (Layer 1)
+export interface TalentIntent {
+  availability: 'immediately' | 'in-1-3-months' | 'in-3-6-months' | 'exploring' | null;
+  workTypes: ('full-time' | 'contract' | 'fractional' | 'advisory' | 'open')[];
+  workStyle: 'remote' | 'hybrid' | 'on-site' | 'flexible' | null;
+  locationConstraints: string | null;
+}
+
+// Decision Evidence (Layer 2)
+export interface DecisionScenario {
+  contextSummary: string | null;
+  constraintsSummary: string | null;
+  prioritizationResponse: string | null;
+  judgmentResponse: string | null;
+  reflectionResponse: string | null;
+  selfInsightResponse: string | null;
+}
+
+export interface DecisionTrace {
+  scenario: DecisionScenario;
+  interpretation: string | null;
+  userConfirmed: boolean;
+}
+
 export interface ProfileDraft {
   basicDetails: BasicDetails;
   experience: ExperienceEntry[];
@@ -45,6 +69,10 @@ export interface ProfileDraft {
     decision?: string;
   }[];
   isAnonymous?: boolean;
+  // Layer 1
+  intent?: TalentIntent;
+  // Layer 2
+  decisionTrace?: DecisionTrace;
 }
 
 export interface ChatMessage {
@@ -54,16 +82,34 @@ export interface ChatMessage {
   timestamp?: Date;
 }
 
+// New state machine
 export type OnboardingState = 
   | 'welcome'
   | 'cv-upload'
   | 'cv-review'
+  // Layer 1: Intent & Constraints
+  | 'intent-availability'
+  | 'intent-work-types'
+  | 'intent-work-style'
+  // Transition
+  | 'transition'
+  // Layer 2: Decision Evidence
+  | 'decision-anchor'
+  | 'decision-prioritization'
+  | 'decision-judgment'
+  | 'decision-reflection'
+  | 'decision-self-insight'
+  | 'decision-interpretation'
+  | 'decision-confirmation'
+  | 'evidence'
+  | 'complete';
+
+// Legacy states kept for compatibility
+export type LegacyOnboardingState = 
   | 'exploration'
   | 'simulation-intro'
   | 'simulation'
-  | 'evidence'
-  | 'confirmation'
-  | 'complete';
+  | 'confirmation';
 
 export interface CVEntry {
   id: string;

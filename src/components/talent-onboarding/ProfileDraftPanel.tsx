@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Edit2, Trash2, EyeOff, Link, FileText, User, Briefcase, GraduationCap, Brain } from 'lucide-react';
+import { X, Edit2, Trash2, EyeOff, Link, FileText, User, Briefcase, GraduationCap, Brain, Calendar, MapPin, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ProfileDraft, ExperienceEntry, EducationEntry, ProfileSection } from './types';
+import type { ProfileDraft, ExperienceEntry, EducationEntry, ProfileSection, TalentIntent } from './types';
 
 interface ProfileDraftPanelProps {
   draft: ProfileDraft;
@@ -36,7 +36,9 @@ export const ProfileDraftPanel = ({
   const hasEducation = draft.education.length > 0;
   const hasWorkStyle = draft.workStyle.some(s => s.traits.length > 0);
   const hasEvidence = draft.evidence && draft.evidence.length > 0;
-  const hasContent = hasBasicDetails || hasExperience || hasEducation || hasWorkStyle || hasEvidence;
+  const hasIntent = draft.intent && (draft.intent.availability || draft.intent.workTypes.length > 0 || draft.intent.workStyle);
+  const hasDecisionTrace = draft.decisionTrace?.interpretation;
+  const hasContent = hasBasicDetails || hasExperience || hasEducation || hasWorkStyle || hasEvidence || hasIntent || hasDecisionTrace;
 
   return (
     <div 
@@ -92,6 +94,11 @@ export const ProfileDraftPanel = ({
           </motion.div>
         ) : (
           <>
+            {/* Intent Section (Layer 1) */}
+            {hasIntent && (
+              <IntentSection intent={draft.intent!} />
+            )}
+
             {/* Basic Details Section */}
             {hasBasicDetails && (
               <BasicDetailsSection 
@@ -115,6 +122,14 @@ export const ProfileDraftPanel = ({
                 education={draft.education}
                 onEdit={onEditEducation}
                 onRemove={onRemoveEducation}
+              />
+            )}
+
+            {/* Decision Trace Section (Layer 2 interpretation) */}
+            {hasDecisionTrace && (
+              <DecisionTraceSection 
+                interpretation={draft.decisionTrace!.interpretation!}
+                confirmed={draft.decisionTrace!.userConfirmed}
               />
             )}
 
@@ -151,7 +166,7 @@ export const ProfileDraftPanel = ({
   );
 };
 
-// Shared section header component - inline to avoid ref issues with AnimatePresence
+// Shared section header component
 interface SectionHeaderProps {
   icon: React.ReactNode;
   title: string;
@@ -169,6 +184,117 @@ const SectionHeader = ({ icon, title, badge }: SectionHeaderProps) => (
         {badge}
       </span>
     )}
+  </div>
+);
+
+// Intent Section (Layer 1)
+const IntentSection = ({ intent }: { intent: TalentIntent }) => {
+  const availabilityLabels: Record<string, string> = {
+    'immediately': 'Immediately',
+    'in-1-3-months': '1–3 months',
+    'in-3-6-months': '3–6 months',
+    'exploring': 'Exploring',
+  };
+
+  const workTypeLabels: Record<string, string> = {
+    'full-time': 'Full-time',
+    'contract': 'Contract',
+    'fractional': 'Fractional',
+    'advisory': 'Advisory',
+    'open': 'Open',
+  };
+
+  const workStyleLabels: Record<string, string> = {
+    'remote': 'Remote',
+    'hybrid': 'Hybrid',
+    'on-site': 'On-site',
+    'flexible': 'Flexible',
+  };
+
+  return (
+    <div className="space-y-2">
+      <SectionHeader icon={<Zap className="w-3.5 h-3.5 text-primary/70" />} title="Intent" />
+      <div className="space-y-1.5">
+        {intent.availability && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 py-2.5 px-3 rounded-xl bg-secondary/10"
+          >
+            <Calendar className="w-3.5 h-3.5 text-muted-foreground/60" />
+            <span className="text-sm text-foreground/90">
+              {availabilityLabels[intent.availability]}
+            </span>
+          </motion.div>
+        )}
+        
+        {intent.workTypes.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap gap-1.5 py-2.5 px-3 rounded-xl bg-secondary/10"
+          >
+            {intent.workTypes.map(type => (
+              <span 
+                key={type}
+                className="text-xs px-2 py-1 rounded-lg bg-primary/10 text-primary/90"
+              >
+                {workTypeLabels[type]}
+              </span>
+            ))}
+          </motion.div>
+        )}
+        
+        {intent.workStyle && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 py-2.5 px-3 rounded-xl bg-secondary/10"
+          >
+            <MapPin className="w-3.5 h-3.5 text-muted-foreground/60" />
+            <span className="text-sm text-foreground/90">
+              {workStyleLabels[intent.workStyle]}
+            </span>
+            {intent.locationConstraints && (
+              <span className="text-xs text-muted-foreground/60">
+                · {intent.locationConstraints}
+              </span>
+            )}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Decision Trace Section (Layer 2)
+const DecisionTraceSection = ({ 
+  interpretation, 
+  confirmed 
+}: { 
+  interpretation: string;
+  confirmed: boolean;
+}) => (
+  <div className="space-y-2">
+    <SectionHeader 
+      icon={<Brain className="w-3.5 h-3.5 text-primary/70" />} 
+      title="How You Work" 
+      badge={confirmed ? "Confirmed" : "Draft"}
+    />
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn(
+        "py-3 px-4 rounded-xl border transition-all",
+        confirmed 
+          ? "bg-secondary/20 border-primary/20" 
+          : "bg-secondary/10 border-border/10 animate-[highlight-fade_1.5s_ease-out]"
+      )}
+    >
+      <p className="text-sm text-foreground/90 leading-relaxed">
+        {interpretation}
+      </p>
+    </motion.div>
   </div>
 );
 
@@ -338,7 +464,7 @@ const WorkStyleSection = ({
   onRemove?: (sectionId: string, traitIndex: number) => void;
 }) => (
   <div className="space-y-3">
-    <SectionHeader icon={<Brain className="w-3.5 h-3.5 text-primary/70" />} title="Work Style" badge="Draft" />
+    <SectionHeader icon={<Brain className="w-3.5 h-3.5 text-primary/70" />} title="Work Patterns" badge="Draft" />
     {sections.map((section) => {
       if (section.traits.length === 0) return null;
       
