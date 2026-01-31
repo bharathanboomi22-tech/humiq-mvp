@@ -34,29 +34,29 @@ export const ImmersiveOnboardingLayout = ({
   const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen metaview-bg overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden">
       {/* Atmospheric background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-metaview-bg-deep via-metaview-bg to-metaview-bg-deep" />
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-background" />
         {/* Teal glow bottom-left */}
         <div 
           className="absolute bottom-0 left-0 w-[60%] h-[50%]"
           style={{
-            background: 'radial-gradient(ellipse at bottom left, hsla(168, 80%, 45%, 0.12) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse at bottom left, hsla(168, 80%, 45%, 0.15) 0%, transparent 60%)',
           }}
         />
         {/* Green glow bottom-right */}
         <div 
           className="absolute bottom-0 right-0 w-[50%] h-[45%]"
           style={{
-            background: 'radial-gradient(ellipse at bottom right, hsla(145, 70%, 40%, 0.1) 0%, transparent 55%)',
+            background: 'radial-gradient(ellipse at bottom right, hsla(145, 70%, 40%, 0.12) 0%, transparent 55%)',
           }}
         />
         {/* Subtle vignette */}
         <div 
           className="absolute inset-0"
           style={{
-            background: 'radial-gradient(ellipse at center, transparent 40%, hsla(160, 35%, 3%, 0.4) 100%)',
+            background: 'radial-gradient(ellipse at center, transparent 40%, hsla(160, 35%, 3%, 0.5) 100%)',
           }}
         />
       </div>
@@ -70,7 +70,7 @@ export const ImmersiveOnboardingLayout = ({
 
         {/* Glowing divider (desktop only) */}
         <div className="hidden lg:block w-px relative">
-          <div className="metaview-divider-glow absolute inset-0" />
+          <div className="divider-glow absolute inset-0" />
         </div>
 
         {/* Right Panel - Profile Draft (35% on desktop, slide-over on mobile) */}
@@ -92,10 +92,10 @@ export const ImmersiveOnboardingLayout = ({
         {/* Mobile floating button */}
         <button
           onClick={() => setIsMobileProfileOpen(true)}
-          className="lg:hidden fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full metaview-card border border-metaview-accent/30"
+          className="lg:hidden fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full glass-card border border-primary/30"
         >
-          <Eye className="w-4 h-4 text-metaview-accent" />
-          <span className="text-sm text-metaview-text font-medium">View profile draft</span>
+          <Eye className="w-4 h-4 text-primary" />
+          <span className="text-sm text-foreground font-medium">View profile draft</span>
         </button>
 
         {/* Mobile slide-over */}
