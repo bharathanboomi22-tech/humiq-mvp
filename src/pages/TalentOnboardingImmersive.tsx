@@ -160,7 +160,7 @@ const TalentOnboardingImmersive = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="px-8 py-4"
+            className="py-4"
           >
             <CVUploadCard 
               onUpload={handleCvUpload}
@@ -175,7 +175,7 @@ const TalentOnboardingImmersive = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="px-8 py-4"
+            className="py-4"
           >
             <CVReviewCard
               entries={cvEntries}
@@ -191,7 +191,7 @@ const TalentOnboardingImmersive = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="px-8 py-4 space-y-6"
+            className="py-4 space-y-6"
           >
             {!rolesConfirmed && (
               <div className="space-y-4">
@@ -239,7 +239,7 @@ const TalentOnboardingImmersive = () => {
   };
 
   // Determine if we should show the standard input
-  const showInput = state === 'simulation';
+  const isInputEnabled = state === 'simulation';
 
   return (
     <ImmersiveOnboardingLayout
@@ -256,10 +256,11 @@ const TalentOnboardingImmersive = () => {
         isTyping={isTyping}
         quickActions={getQuickActions()}
         helperActions={getHelperActions()}
-        showInput={showInput}
+        showInput={true}
+        inputDisabled={!isInputEnabled}
         placeholder="Share your thoughts..."
+        belowMessagesContent={renderStateContent()}
       />
-      {renderStateContent()}
     </ImmersiveOnboardingLayout>
   );
 };
