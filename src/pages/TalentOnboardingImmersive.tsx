@@ -8,6 +8,7 @@ import {
   ChipSelector,
   CVUploadCard,
   CVReviewCard,
+  AddEvidenceCard,
 } from '@/components/talent-onboarding';
 import { useImmersiveOnboarding } from '@/hooks/useImmersiveOnboarding';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
@@ -147,7 +148,7 @@ const TalentOnboardingImmersive = () => {
     }
   };
 
-  // Build quick actions based on state
+  // Build quick actions based on state (attached to latest assistant message)
   const getQuickActions = () => {
     switch (state) {
       case 'welcome':
@@ -162,13 +163,7 @@ const TalentOnboardingImmersive = () => {
         ];
 
       case 'evidence':
-        return [
-          { label: 'Add a file or link', variant: 'primary' as const, onClick: () => {
-            // TODO: Open file/link modal
-            addEvidence({ type: 'link', name: 'Sample Project', description: 'Built a dashboard', decision: 'Owned architecture' });
-          }},
-          { label: "I'll add this later", variant: 'secondary' as const, onClick: skipEvidence }
-        ];
+        return [];  // Using AddEvidenceCard instead
 
       case 'complete':
         return [
@@ -321,6 +316,16 @@ const TalentOnboardingImmersive = () => {
               }}
             />
           </motion.div>
+        );
+
+      // Evidence collection
+      case 'evidence':
+        return (
+          <AddEvidenceCard
+            onAddLink={(url) => addEvidence({ type: 'link', name: url, description: '', decision: '' })}
+            onAddFile={(file) => addEvidence({ type: 'file', name: file.name, description: '', decision: '' })}
+            onSkip={skipEvidence}
+          />
         );
 
       default:

@@ -147,9 +147,32 @@ export default function CandidateAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Atmospheric background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-background" />
+        <div 
+          className="absolute bottom-0 left-0 w-[70%] h-[60%]"
+          style={{
+            background: 'radial-gradient(ellipse at 20% 80%, hsla(168, 80%, 40%, 0.15) 0%, transparent 55%)',
+          }}
+        />
+        <div 
+          className="absolute bottom-0 right-0 w-[60%] h-[55%]"
+          style={{
+            background: 'radial-gradient(ellipse at 80% 85%, hsla(145, 70%, 35%, 0.12) 0%, transparent 50%)',
+          }}
+        />
+        <div 
+          className="absolute top-0 left-1/3 w-[50%] h-[40%]"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 0%, hsla(160, 50%, 25%, 0.08) 0%, transparent 60%)',
+          }}
+        />
+      </div>
+
       {/* Header */}
-      <header className="p-6">
+      <header className="p-6 relative z-10">
         <div className="container max-w-6xl mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
@@ -165,7 +188,7 @@ export default function CandidateAuth() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
+      <main className="flex-1 flex items-center justify-center px-6 py-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -180,7 +203,7 @@ export default function CandidateAuth() {
           </div>
 
           {/* Card */}
-          <div className="glass-card rounded-[24px] p-8">
+          <div className="floating-glass-panel p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={mode}
@@ -211,7 +234,7 @@ export default function CandidateAuth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
+                      className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20"
                     />
                   </div>
 
@@ -225,7 +248,7 @@ export default function CandidateAuth() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="h-12 rounded-xl pr-10 bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
+                        className="h-12 rounded-xl pr-10 bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20"
                       />
                       <button
                         type="button"
@@ -247,16 +270,16 @@ export default function CandidateAuth() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground"
+                        className="h-12 rounded-xl bg-secondary/50 border-border/30 text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:ring-primary/20"
                       />
                     </div>
                   )}
 
-                  {/* Primary CTA */}
-                  <Button
+                  {/* Primary CTA - HumiQ gradient */}
+                  <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-12 rounded-full text-base font-bold btn-primary"
+                    className="w-full h-12 rounded-full text-base font-bold btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading 
                       ? 'Please wait...' 
@@ -264,13 +287,13 @@ export default function CandidateAuth() {
                         ? 'Create account' 
                         : 'Sign in'
                     }
-                  </Button>
+                  </button>
                 </form>
 
                 {/* Switch Mode */}
                 <div className="mt-6 text-center">
                   <p className="text-sm text-muted-foreground">
-                    {mode === 'signup' ? 'Already have an account?' : 'New to HumIQ?'}
+                    {mode === 'signup' ? 'Already have an account?' : 'New to HumiQ?'}
                     {' '}
                     <button
                       type="button"
@@ -293,19 +316,18 @@ export default function CandidateAuth() {
                   <div className="flex-1 h-px bg-border/30" />
                 </div>
 
-                {/* Secondary Action */}
-                <Button
+                {/* Secondary Action - muted dark outline */}
+                <button
                   type="button"
-                  variant="outline"
                   onClick={() => {
                     setMode(mode === 'signup' ? 'signin' : 'signup');
                     setPassword('');
                     setConfirmPassword('');
                   }}
-                  className="w-full h-12 rounded-full text-base font-medium border-border/30 text-foreground hover:bg-secondary/50"
+                  className="w-full h-12 rounded-full text-base font-medium btn-secondary"
                 >
                   {mode === 'signup' ? 'Sign in instead' : 'Create an account'}
-                </Button>
+                </button>
               </motion.div>
             </AnimatePresence>
           </div>
