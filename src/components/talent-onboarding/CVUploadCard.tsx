@@ -32,13 +32,13 @@ export const CVUploadCard = ({ onUpload, onSkip, isLoading = false }: CVUploadCa
 
   if (isLoading) {
     return (
-      <div className="p-8 rounded-2xl border-2 border-dashed border-metaview-accent/30 bg-metaview-surface/20 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-metaview-accent" />
+      <div className="p-8 rounded-2xl border-2 border-dashed border-primary/30 bg-secondary/20 flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <div className="text-center">
-          <p className="text-sm font-medium text-metaview-text">
+          <p className="text-sm font-medium text-foreground">
             Parsing your CV...
           </p>
-          <p className="text-xs text-metaview-text-subtle mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Extracting your experience and education
           </p>
         </div>
@@ -58,8 +58,8 @@ export const CVUploadCard = ({ onUpload, onSkip, isLoading = false }: CVUploadCa
           "relative p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all",
           "flex flex-col items-center justify-center gap-4",
           isDragging 
-            ? "border-metaview-accent bg-metaview-accent/5"
-            : "border-metaview-border/30 hover:border-metaview-accent/40 hover:bg-metaview-surface/30"
+            ? "border-primary bg-primary/5"
+            : "border-border/30 hover:border-primary/40 hover:bg-secondary/30"
         )}
       >
         <input
@@ -69,14 +69,14 @@ export const CVUploadCard = ({ onUpload, onSkip, isLoading = false }: CVUploadCa
           onChange={handleFileSelect}
           className="hidden"
         />
-        <div className="w-12 h-12 rounded-full bg-metaview-surface flex items-center justify-center">
-          <Upload className="w-5 h-5 text-metaview-accent" />
+        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+          <Upload className="w-5 h-5 text-primary" />
         </div>
         <div className="text-center">
-          <p className="text-sm font-medium text-metaview-text">
+          <p className="text-sm font-medium text-foreground">
             Upload CV
           </p>
-          <p className="text-xs text-metaview-text-subtle mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             PDF, Word, or text document
           </p>
         </div>
@@ -85,13 +85,13 @@ export const CVUploadCard = ({ onUpload, onSkip, isLoading = false }: CVUploadCa
       {/* Skip button */}
       <button
         onClick={onSkip}
-        className="w-full py-3 text-sm text-metaview-text-muted hover:text-metaview-text transition-colors"
+        className="w-full py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         Skip, I'll explain it instead
       </button>
 
       {/* Microcopy */}
-      <p className="text-xs text-metaview-text-subtle text-center">
+      <p className="text-xs text-muted-foreground text-center">
         Optional. You're always in control.
       </p>
     </div>
@@ -114,21 +114,21 @@ export const CVReviewCard = ({ entries, onEdit, onRemove, onContinue }: CVReview
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.1 }}
-          className="p-4 rounded-xl metaview-card-elevated group"
+          className="p-4 rounded-xl glass-card-elevated group"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3 flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-metaview-surface flex items-center justify-center flex-shrink-0">
-                <FileText className="w-4 h-4 text-metaview-accent" />
+              <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-metaview-text truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {entry.title}
                 </p>
-                <p className="text-xs text-metaview-text-muted mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {entry.organization}
                 </p>
-                <p className="text-xs text-metaview-text-subtle mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   {entry.startDate} – {entry.endDate || 'Present'}
                 </p>
               </div>
@@ -136,28 +136,28 @@ export const CVReviewCard = ({ entries, onEdit, onRemove, onContinue }: CVReview
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => onEdit(entry.id)}
-                className="p-2 rounded-lg hover:bg-metaview-surface transition-colors"
+                className="p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <Edit2 className="w-4 h-4 text-metaview-text-subtle" />
+                <Edit2 className="w-4 h-4 text-muted-foreground" />
               </button>
               <button
                 onClick={() => onRemove(entry.id)}
-                className="p-2 rounded-lg hover:bg-metaview-surface transition-colors"
+                className="p-2 rounded-lg hover:bg-secondary transition-colors"
               >
-                <Trash2 className="w-4 h-4 text-metaview-text-subtle" />
+                <Trash2 className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
           </div>
         </motion.div>
       ))}
 
-      <p className="text-xs text-metaview-text-subtle text-center pt-2">
+      <p className="text-xs text-muted-foreground text-center pt-2">
         This is background context only.
       </p>
 
       <button
         onClick={onContinue}
-        className="w-full metaview-btn-primary mt-4"
+        className="w-full btn-primary mt-4"
       >
         Continue
       </button>

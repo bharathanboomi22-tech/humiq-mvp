@@ -72,10 +72,10 @@ export const ChatInterface = ({
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 px-8 pt-8 pb-4">
-        <h1 className="text-xl font-semibold text-metaview-text metaview-text-glow">
+        <h1 className="text-xl font-semibold text-foreground text-glow">
           HumiQ AI
         </h1>
-        <p className="text-sm text-metaview-text-subtle mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Let's see how you work
         </p>
       </div>
@@ -98,11 +98,11 @@ export const ChatInterface = ({
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3"
           >
-            <div className="metaview-card-elevated px-4 py-3 rounded-2xl">
+            <div className="glass-card-elevated px-4 py-3 rounded-2xl">
               <div className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_infinite]" />
-                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_0.2s_infinite]" />
-                <span className="w-2 h-2 rounded-full bg-metaview-accent animate-[pulse_1.4s_ease-in-out_0.4s_infinite]" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-[pulse_1.4s_ease-in-out_infinite]" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-[pulse_1.4s_ease-in-out_0.2s_infinite]" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-[pulse_1.4s_ease-in-out_0.4s_infinite]" />
               </div>
             </div>
           </motion.div>
@@ -122,8 +122,8 @@ export const ChatInterface = ({
                 className={cn(
                   "px-5 py-2.5 rounded-xl text-sm font-medium transition-all",
                   action.variant === 'primary' 
-                    ? "metaview-btn-primary"
-                    : "metaview-btn-secondary"
+                    ? "btn-primary"
+                    : "btn-secondary"
                 )}
               >
                 {action.label}
@@ -138,7 +138,7 @@ export const ChatInterface = ({
 
       {/* Input Area */}
       {showInput && (
-        <div className="flex-shrink-0 p-6 border-t border-metaview-border/20">
+        <div className="flex-shrink-0 p-6 border-t border-border/20">
           {/* Helper actions */}
           {helperActions && helperActions.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -146,7 +146,7 @@ export const ChatInterface = ({
                 <button
                   key={idx}
                   onClick={action.onClick}
-                  className="text-xs text-metaview-text-subtle hover:text-metaview-text transition-colors"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {action.label}
                 </button>
@@ -165,15 +165,15 @@ export const ChatInterface = ({
               disabled={inputDisabled}
               rows={1}
               className={cn(
-                "w-full metaview-input px-4 py-3 pr-24 resize-none",
+                "w-full input-field px-4 py-3 pr-24 resize-none",
                 "text-sm leading-relaxed",
-                "text-metaview-text placeholder:text-metaview-text-muted",
+                "text-foreground placeholder:text-muted-foreground",
                 inputDisabled && "opacity-50 cursor-not-allowed"
               )}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
               <button
-                className="p-2 rounded-lg text-metaview-text-subtle hover:text-metaview-text hover:bg-metaview-surface transition-colors"
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 aria-label="Voice input"
               >
                 <Mic className="w-4 h-4" />
@@ -184,8 +184,8 @@ export const ChatInterface = ({
                 className={cn(
                   "p-2 rounded-lg transition-all",
                   inputValue.trim() && !inputDisabled
-                    ? "text-metaview-accent hover:bg-metaview-accent/10"
-                    : "text-metaview-text-subtle"
+                    ? "text-primary hover:bg-primary/10"
+                    : "text-muted-foreground"
                 )}
                 aria-label="Send message"
               >
@@ -221,14 +221,14 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
         className={cn(
           "px-5 py-4 rounded-2xl text-sm leading-relaxed",
           isAssistant 
-            ? "metaview-card-elevated border border-metaview-accent/10"
-            : "bg-metaview-surface/80 border border-metaview-border/20"
+            ? "glass-card-elevated border border-primary/10"
+            : "bg-secondary/80 border border-border/20"
         )}
         style={isAssistant ? {
           boxShadow: '0 0 20px hsla(168, 80%, 50%, 0.08)'
         } : undefined}
       >
-        <p className="text-metaview-text whitespace-pre-wrap">
+        <p className="text-foreground whitespace-pre-wrap">
           {message.content}
         </p>
       </div>

@@ -40,7 +40,7 @@ export const ChipSelector = ({
             transition={{ delay: idx * 0.05 }}
             onClick={() => handleSelect(option)}
             className={cn(
-              "metaview-chip",
+              "chip",
               isSelected && "active"
             )}
           >

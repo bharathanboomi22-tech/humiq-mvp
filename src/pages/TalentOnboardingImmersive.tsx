@@ -91,10 +91,10 @@ const TalentOnboardingImmersive = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-metaview-bg-deep flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-metaview-accent mx-auto mb-4" />
-          <p className="text-sm text-metaview-text-muted">Preparing your experience...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Preparing your experience...</p>
         </div>
       </div>
     );
@@ -204,7 +204,7 @@ const TalentOnboardingImmersive = () => {
                 {selectedRoles.length > 0 && (
                   <button
                     onClick={() => setRolesConfirmed(true)}
-                    className="metaview-btn-primary text-sm"
+                    className="btn-primary text-sm"
                   >
                     Continue
                   </button>
@@ -223,7 +223,7 @@ const TalentOnboardingImmersive = () => {
                 {selectedProblems.length > 0 && (
                   <button
                     onClick={() => setProblemsConfirmed(true)}
-                    className="metaview-btn-primary text-sm"
+                    className="btn-primary text-sm"
                   >
                     Continue
                   </button>
