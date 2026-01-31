@@ -1,7 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { ProfileDraftPanel } from './ProfileDraftPanel';
 import type { ProfileDraft } from './types';
 
@@ -9,16 +8,28 @@ interface ImmersiveOnboardingLayoutProps {
   children: ReactNode;
   profileDraft: ProfileDraft;
   showProfileGlow?: boolean;
+  onEditBasicDetail?: (field: keyof ProfileDraft['basicDetails']) => void;
+  onEditExperience?: (id: string) => void;
+  onRemoveExperience?: (id: string) => void;
+  onEditEducation?: (id: string) => void;
+  onRemoveEducation?: (id: string) => void;
   onEditTrait?: (sectionId: string, traitIndex: number) => void;
   onRemoveTrait?: (sectionId: string, traitIndex: number) => void;
+  onToggleAnonymous?: () => void;
 }
 
 export const ImmersiveOnboardingLayout = ({
   children,
   profileDraft,
   showProfileGlow = false,
+  onEditBasicDetail,
+  onEditExperience,
+  onRemoveExperience,
+  onEditEducation,
+  onRemoveEducation,
   onEditTrait,
   onRemoveTrait,
+  onToggleAnonymous,
 }: ImmersiveOnboardingLayoutProps) => {
   const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
 
@@ -67,8 +78,14 @@ export const ImmersiveOnboardingLayout = ({
           <ProfileDraftPanel 
             draft={profileDraft}
             showGlow={showProfileGlow}
-            onEdit={onEditTrait}
-            onRemove={onRemoveTrait}
+            onEditBasicDetail={onEditBasicDetail}
+            onEditExperience={onEditExperience}
+            onRemoveExperience={onRemoveExperience}
+            onEditEducation={onEditEducation}
+            onRemoveEducation={onRemoveEducation}
+            onEditTrait={onEditTrait}
+            onRemoveTrait={onRemoveTrait}
+            onToggleAnonymous={onToggleAnonymous}
           />
         </div>
 
@@ -102,8 +119,14 @@ export const ImmersiveOnboardingLayout = ({
                 <ProfileDraftPanel 
                   draft={profileDraft}
                   showGlow={showProfileGlow}
-                  onEdit={onEditTrait}
-                  onRemove={onRemoveTrait}
+                  onEditBasicDetail={onEditBasicDetail}
+                  onEditExperience={onEditExperience}
+                  onRemoveExperience={onRemoveExperience}
+                  onEditEducation={onEditEducation}
+                  onRemoveEducation={onRemoveEducation}
+                  onEditTrait={onEditTrait}
+                  onRemoveTrait={onRemoveTrait}
+                  onToggleAnonymous={onToggleAnonymous}
                   onClose={() => setIsMobileProfileOpen(false)}
                 />
               </motion.div>

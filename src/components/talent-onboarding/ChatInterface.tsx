@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, Upload, ChevronRight } from 'lucide-react';
+import { Send, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from './types';
 
@@ -35,13 +35,23 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new messages
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  // Smooth auto-scroll to bottom on new messages
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end'
+      });
     }
-  }, [messages, isTyping]);
+  }, []);
+
+  // Auto-scroll when messages change or typing indicator appears
+  useEffect(() => {
+    const timeoutId = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timeoutId);
+  }, [messages, isTyping, scrollToBottom]);
 
   const handleSend = () => {
     if (inputValue.trim() && !inputDisabled) {
@@ -73,7 +83,7 @@ export const ChatInterface = ({
       {/* Messages */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-8 py-4 space-y-4"
+        className="flex-1 overflow-y-auto px-8 py-4 space-y-4 scroll-smooth"
       >
         <AnimatePresence mode="popLayout">
           {messages.map((message) => (
@@ -121,6 +131,9 @@ export const ChatInterface = ({
             ))}
           </motion.div>
         )}
+
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}
@@ -154,6 +167,7 @@ export const ChatInterface = ({
               className={cn(
                 "w-full metaview-input px-4 py-3 pr-24 resize-none",
                 "text-sm leading-relaxed",
+                "text-metaview-text placeholder:text-metaview-text-muted",
                 inputDisabled && "opacity-50 cursor-not-allowed"
               )}
             />

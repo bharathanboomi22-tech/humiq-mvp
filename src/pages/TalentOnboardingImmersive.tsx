@@ -11,7 +11,6 @@ import {
 } from '@/components/talent-onboarding';
 import { useImmersiveOnboarding } from '@/hooks/useImmersiveOnboarding';
 import { getStoredTalentId, getTalentProfile } from '@/lib/talent';
-import { cn } from '@/lib/utils';
 
 const ROLE_OPTIONS = ['Product', 'Design', 'Engineering', 'Data', 'Operations', 'Leadership', 'Something else'];
 const PROBLEM_OPTIONS = ['Ambiguous problems', 'Scaling systems', 'Deep craft work', 'Leading people', 'Fixing what\'s broken'];
@@ -31,6 +30,7 @@ const TalentOnboardingImmersive = () => {
     selectedProblems,
     profileDraft,
     isTyping,
+    isParsingCV,
     handleWelcome,
     goToCvUpload,
     handleCvUpload,
@@ -44,8 +44,10 @@ const TalentOnboardingImmersive = () => {
     addEvidence,
     confirmProfile,
     removeTrait,
+    removeExperience,
+    removeEducation,
+    toggleAnonymous,
     addAssistantMessage,
-    addUserMessage,
   } = useImmersiveOnboarding();
 
   // Check onboarding status
@@ -163,6 +165,7 @@ const TalentOnboardingImmersive = () => {
             <CVUploadCard 
               onUpload={handleCvUpload}
               onSkip={skipCv}
+              isLoading={isParsingCV}
             />
           </motion.div>
         );
@@ -242,7 +245,10 @@ const TalentOnboardingImmersive = () => {
     <ImmersiveOnboardingLayout
       profileDraft={profileDraft}
       showProfileGlow={state === 'confirmation'}
+      onRemoveExperience={removeExperience}
+      onRemoveEducation={removeEducation}
       onRemoveTrait={removeTrait}
+      onToggleAnonymous={toggleAnonymous}
     >
       <ChatInterface
         messages={messages}
